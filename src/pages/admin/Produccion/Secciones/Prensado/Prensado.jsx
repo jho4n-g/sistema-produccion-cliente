@@ -60,14 +60,8 @@ export default function Prensado() {
       <TablaRetutilizable
         ref={tableRef}
         getObj={getObjs}
-        titulo="Produccion/ Control atomizado"
-        datosBusqueda={[
-          'fecha',
-          'turno',
-          'operador',
-          'hora_inicio',
-          'hora_final',
-        ]}
+        titulo="Produccion/ Control de proceso prensado y secado"
+        datosBusqueda={['fecha', 'turno', 'operador']}
         columnas={columnas}
         handleDetail={() => {}}
         handleEdit={() => {}}

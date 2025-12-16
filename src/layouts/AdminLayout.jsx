@@ -151,8 +151,8 @@ export default function AdminLayout() {
                                   cx(
                                     'mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm',
                                     isActive
-                                      ? 'bg-slate-900 text-white'
-                                      : 'text-slate-700 hover:bg-slate-100'
+                                      ? 'bg-green-900 text-white shadow-sm'
+                                      : 'text-slate-700 hover:bg-slate-100 hover:text-emerald-700'
                                   )
                                 }
                                 end

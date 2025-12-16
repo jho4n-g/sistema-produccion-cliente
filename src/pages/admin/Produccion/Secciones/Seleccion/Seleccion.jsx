@@ -3,27 +3,28 @@ import {
   getObjs,
   UpdateIdObj,
   deleteObj,
-} from '../../../../../service/Produccion/Secciones/Barbotina.services';
+} from '../../../../../service/Produccion/Secciones/Seleccion.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const columnas = [
   { label: 'Fecha', key: 'fecha' },
+  { label: 'Producto', key: 'producto' },
+  { label: 'Horno', key: 'horno' },
+  { label: 'Formato', key: 'formato' },
   { label: 'Turno', key: 'turno' },
   { label: 'Operador', key: 'operador' },
-  { label: 'Equipo', key: 'equipo' },
-  { label: 'Horometro inicio', key: 'horometro_inicio' },
-  { label: 'Horometro final', key: 'horometro_final' },
+  { label: 'Grupo', key: 'grupo' },
   {
     label: 'Observaciones',
-    key: 'ObservacionesBarbotinaDatos',
+    key: 'observacion_embalaje',
     render: (row) =>
-      row.ObservacionesBarbotinaDatos?.map((o) => o.observacion).join(' | '),
+      row.observacion_embalaje?.map((o) => o.observacion).join(' | '),
   },
 ];
 
-export default function Barbotina() {
+export default function Seleccion() {
   const [idRow, setIdRow] = useState(null);
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -60,7 +61,7 @@ export default function Barbotina() {
       <TablaRetutilizable
         ref={tableRef}
         getObj={getObjs}
-        titulo="Produccion/ Control de proceso de moliento barbotina"
+        titulo="Produccion/ Control de proceso de seleccion y embalaje"
         datosBusqueda={['fecha', 'turno', 'operador']}
         columnas={columnas}
         handleDetail={() => {}}

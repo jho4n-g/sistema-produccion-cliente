@@ -31,6 +31,7 @@ export const UpdateIdObj = async (id, updateddata) => {
     const data = await api.put(`/produccion/atomizado/${id}`, updateddata);
     return data.data;
   } catch (e) {
+    console.log(e);
     return e.response.data;
   }
 };

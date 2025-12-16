@@ -5,6 +5,10 @@ import Login from './pages/auth/Login.jsx';
 import Barbotina from './pages/admin/Produccion/Secciones/Barbotina/Barbotina.jsx';
 import Atomizado from './pages/admin/Produccion/Secciones/Atomizado/Atomizado.jsx';
 import Prensado from './pages/admin/Produccion/Secciones/Prensado/Prensado.jsx';
+import Esmalte from './pages/admin/Produccion/Secciones/Esmalte/Esmalte.jsx';
+import Serigrafia from './pages/admin/Produccion/Secciones/Serigrafia/Serigrafia.jsx';
+import Seleccion from './pages/admin/Produccion/Secciones/Seleccion/Seleccion.jsx';
+
 //
 import BeautifulTable from './pages/client/BeautifulTable.jsx';
 //layouts
@@ -21,6 +25,9 @@ function App() {
           <Route path="produccion/barbotina" element={<Barbotina />} />
           <Route path="produccion/atomizado" element={<Atomizado />} />
           <Route path="produccion/prensado" element={<Prensado />} />
+          <Route path="produccion/esmalte" element={<Esmalte />} />
+          <Route path="produccion/serigrafia" element={<Serigrafia />} />
+          <Route path="produccion/seleccion" element={<Seleccion />} />
         </Route>
         <Route path="/cliente" element={<ClienteLayout />} />
       </Routes>

@@ -10,7 +10,7 @@ export const RegisterObj = async (payload) => {
   }
 };
 
-export const getObj = async () => {
+export const getObjs = async () => {
   try {
     // console.log('En service barbotina');
     const data = await api.get('/produccion/barbotina');

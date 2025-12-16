@@ -63,7 +63,7 @@ export default function ConfirmModal({
                   'rounded-xl px-4 py-2 text-white disabled:opacity-60',
                   danger
                     ? 'bg-red-600 hover:bg-red-700'
-                    : 'bg-slate-900 hover:bg-slate-800',
+                    : 'bg-green-900 hover:bg-green-800',
                 ].join(' ')}
               >
                 {loading ? 'Procesando...' : confirmText}

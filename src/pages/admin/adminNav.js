@@ -62,17 +62,17 @@ export const adminNav = [
       },
       {
         label: 'Linea esmaltacion',
-        to: '/admin/afiliados/limites',
+        to: '/admin/produccion/esmalte',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Serigrafica y decorado ',
-        to: '/admin/afiliados/limites',
+        to: '/admin/produccion/serigrafia',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Seleccion y embalaje',
-        to: '/admin/afiliados/limites',
+        to: '/admin/produccion/seleccion',
         icon: Cog6ToothIcon,
       },
     ],
