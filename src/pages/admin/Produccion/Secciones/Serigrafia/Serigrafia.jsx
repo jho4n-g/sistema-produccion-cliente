@@ -3,10 +3,13 @@ import {
   getObjs,
   UpdateIdObj,
   deleteObj,
+  getIdObj,
 } from '../../../../../service/Produccion/Secciones/Serigrafia.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+
+import SerigrafiaModal from './SerigrafiaModal';
 
 const columnas = [
   { label: 'Fecha', key: 'fecha' },
@@ -27,6 +30,10 @@ export default function Serigrafia() {
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalUpdate, setOpenModalUpdate] = useState(false);
+  const [payload, setPayload] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -54,6 +61,40 @@ export default function Serigrafia() {
     setOpenDelete(false);
     setIdRow(null);
   };
+  const hanldeEdit = (id) => {
+    setIdRow(id);
+    setOpenModal(true);
+  };
+
+  const handleOpenConfirmUpdate = (data) => {
+    setPayload(data);
+    setOpenModalUpdate(true);
+  };
+  const handleCloseConfirmUpdate = () => {
+    setIdRow(null);
+    setPayload(null);
+    setOpenModalUpdate(false);
+  };
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const res = await UpdateIdObj(idRow, payload);
+
+      if (res.ok) {
+        toast.success('Registro actualizado con éxito');
+        setOpenModalUpdate(false);
+        tableRef.current?.reload();
+        setOpenModal(false);
+      }
+      if (!res.ok) {
+        toast.error(res.message || 'Error al actualizar el registro');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al actualizar el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <TablaRetutilizable
@@ -63,7 +104,7 @@ export default function Serigrafia() {
         datosBusqueda={['fecha', 'turno', 'operador']}
         columnas={columnas}
         handleDetail={() => {}}
-        handleEdit={() => {}}
+        handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
       />
       <ConfirmModal
@@ -73,10 +114,27 @@ export default function Serigrafia() {
         confirmText="Sí, eliminar"
         cancelText="Cancelar"
         loading={loading}
-        x
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <SerigrafiaModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

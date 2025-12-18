@@ -63,7 +63,7 @@ export default function BarbotinaModal({
     (async () => {
       try {
         const data = await fetchById(id); // ← ahora sí esperamos aquí
-        console.log('Prensado ', data);
+        console.log(data);
         if (!active) return;
         // console.log('atimizado', data);
         if (data?.ok) setForm(data.dato ?? {});

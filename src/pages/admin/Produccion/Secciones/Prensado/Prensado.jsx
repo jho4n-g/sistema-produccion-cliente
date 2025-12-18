@@ -63,7 +63,6 @@ export default function Prensado() {
   };
 
   const hanldeEdit = (id) => {
-    console.log('click Prensado', id);
     setIdRow(id);
     setOpenModal(true);
   };
@@ -81,7 +80,7 @@ export default function Prensado() {
     try {
       setLoading(true);
       const res = await UpdateIdObj(idRow, payload);
-      console.log('respeusta', res);
+
       if (res.ok) {
         toast.success('Registro actualizado con éxito');
         setOpenModalUpdate(false);

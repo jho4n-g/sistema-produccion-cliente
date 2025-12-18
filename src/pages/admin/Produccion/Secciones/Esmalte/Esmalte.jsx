@@ -72,11 +72,8 @@ export default function Esmalte() {
     setOpenModalUpdate(false);
   };
   const hanldeEdit = (id) => {
-    console.log('🔥 PADRE handleEdit ejecutado con id:', id);
-    console.log('🔥 Estado actual openModal:', openModal);
     setIdRow(id);
     setOpenModal(true);
-    console.log('🔥 Después de setOpenModal(true)');
   };
   const handleSave = async () => {
     try {
@@ -100,19 +97,6 @@ export default function Esmalte() {
 
   return (
     <>
-      {console.log('🔍 Renderizando, openModal:', openModal, 'idRow:', idRow)}
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text">{}</h2>
-      </div>
-      <div className="">
-        <button
-          className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-          onClick={() => hanldeEdit(4)}
-        >
-          hola mundo
-        </button>
-      </div>
-
       <TablaRetutilizable
         ref={tableRef}
         getObj={getObjs}

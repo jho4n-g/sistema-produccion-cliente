@@ -2,11 +2,15 @@ import { useState } from 'react';
 import Tabs from '../../../components/Tabs';
 import Atomizado from './Secciones/Atomizado';
 import Barbotina from './Secciones/Barbotina';
+import Prensado from './Secciones/Prensado';
+import Esmalte from './Secciones/Esmalte';
 
 const tabs = [
   { key: 'general', label: 'General' },
   { key: 'atomizado', label: 'Atomizado' },
   { key: 'barbotina', label: 'Barbotina' },
+  { key: 'prensado', label: 'Prensado' },
+  { key: 'esmalte', label: 'Esmalte' },
   { key: 'observaciones', label: 'Observaciones' },
 ];
 
@@ -21,6 +25,8 @@ export default function PlanillaProduccion() {
         {tab === 'general' && <div>Contenido General</div>}
         {tab === 'atomizado' && <Atomizado />}
         {tab === 'barbotina' && <Barbotina />}
+        {tab === 'prensado' && <Prensado />}
+        {tab === 'esmalte' && <Esmalte />}
         {tab === 'observaciones' && <div>Contenido Observaciones</div>}
       </div>
     </div>

@@ -1,35 +1,41 @@
 import { useState, useEffect } from 'react';
-import { DatosEsmalte } from '../../../../../schema/Produccion/Seccion/Esmalte.schema';
+import { DatosSerigrafia } from '../../../../../schema/Produccion/Seccion/Serigrafia.schema';
 import { extractArrayFieldErrors } from '../../../../../helpers/normalze.helpers';
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const NuevaFilaTabla = () => ({
-  hora: '',
-  operador_aplicacion_agua: '',
-  sup_prod_aplicacion_agua: '',
-  operador_aplicacion_engobe: '',
-  sup_prod_aplicacion_engobe: '',
-  operador_vizcosidad_normal: '',
-  sup_prod_vizcosidad_normal: '',
-  operador_densidad_recuperado: '',
-  sup_prod_densidad_recuperado: '',
-  operador_residuo_implemeable: '',
-  sup_prod_residuo_implemeable: '',
-  operador_aplicacion_esmalte: '',
-  sup_prod_aplicacion_esmalte: '',
-  operador_vizcosidad_brillante_recuperado: '',
-  sup_prod_vizcosidad_brillante_recuperado: '',
-  operador_densidad_transparente_satinado: '',
-  sup_prod_densidad_transparente_satinado: '',
-  operador_residuo_digital_blanco: '',
-  sup_prod_residuo_digital_blanco: '',
-});
-
 const rows = 8;
 
-export default function BarbotinaModal({
+const NuevaFilaTabla = () => ({
+  hora: '',
+  operador_apl_pasta1: '',
+  sp_apl_pasta1: '',
+  operador_v_pasta1: '',
+  sp_v_pasta1: '',
+  operador_d_pasta1: '',
+  sp_d_pasta1: '',
+  operador_apl_pasta2: '',
+  sp_apl_pasta2: '',
+  operador_v_pasta2: '',
+  sp_v_pasta2: '',
+  operador_d_pasta2: '',
+  sp_d_pasta2: '',
+  operador_apl_pasta3: '',
+  sp_apl_pasta3: '',
+  operador_v_pasta3: '',
+  sp_v_pasta3: '',
+  operador_d_pasta3: '',
+  sp_d_pasta3: '',
+  operador_apl_pasta4: '',
+  sp_apl_pasta4: '',
+  operador_v_pasta4: '',
+  sp_v_pasta4: '',
+  operador_d_pasta4: '',
+  sp_d_pasta4: '',
+});
+
+export default function SerigrafiaModal({
   open,
   onClose,
   onSave,
@@ -71,13 +77,11 @@ export default function BarbotinaModal({
 
   const addObs = () => {
     const v = obsInput.trim();
+    console.log('valor ', v);
     if (!v) return;
     setForm((f) => ({
       ...f,
-      observaciones_esmalte: [
-        ...(f.observaciones_esmalte ?? []),
-        { observacion: v },
-      ],
+      observacionesSer: [...(f.observacionesSer ?? []), { observacion: v }],
     }));
     setObsInput('');
   };
@@ -85,19 +89,17 @@ export default function BarbotinaModal({
   const removeObs = (index) => {
     setForm((f) => ({
       ...f,
-      observaciones_esmalte: f.observaciones_esmalte.filter(
-        (_, i) => i !== index
-      ),
+      observacionesSer: f.observacionesSer.filter((_, i) => i !== index),
     }));
   };
   const setCargaTabla = (idx, field, value) => {
     setForm((f) => {
-      const rows = Array.isArray(f?.datos_tabla_esmalte)
-        ? [...f.datos_tabla_esmalte]
+      const rows = Array.isArray(f?.datos_tabla_serigrafiado)
+        ? [...f.datos_tabla_serigrafiado]
         : [];
       if (idx < 0 || idx >= rows.length) return f; // evita índices fuera de rango
       rows[idx] = { ...(rows[idx] ?? {}), [field]: value };
-      return { ...f, datos_tabla_esmalte: rows };
+      return { ...f, datos_tabla_serigrafiado: rows };
     });
 
     // Usa el setter real de errores (p.ej., setTablaError)
@@ -115,20 +117,23 @@ export default function BarbotinaModal({
   };
   const addRows = () => {
     setForm((f) => {
-      if (f.datos_tabla_esmalte.length >= rows) return f;
+      if (f.datos_tabla_serigrafiado.length >= rows) return f;
       return {
         ...f,
-        datos_tabla_esmalte: [...f.datos_tabla_esmalte, NuevaFilaTabla()],
+        datos_tabla_serigrafiado: [
+          ...f.datos_tabla_serigrafiado,
+          NuevaFilaTabla(),
+        ],
       };
     });
   };
 
   const removeRows = () => {
     setForm((f) => {
-      if (f.datos_tabla_esmalte.length <= 0) return f;
+      if (f.datos_tabla_serigrafiado.length <= 0) return f;
       return {
         ...f,
-        datos_tabla_esmalte: f.datos_tabla_esmalte.slice(0, -1),
+        datos_tabla_serigrafiado: f.datos_tabla_serigrafiado.slice(0, -1),
       };
     });
   };
@@ -138,9 +143,8 @@ export default function BarbotinaModal({
     setForm((f) => ({ ...f, [name]: value }));
     setError((prev) => ({ ...prev, [name]: undefined }));
   };
-
   const handleValidation = async () => {
-    const result = DatosEsmalte.safeParse(form);
+    const result = DatosSerigrafia.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
 
@@ -273,7 +277,7 @@ export default function BarbotinaModal({
                   />
 
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {(form?.observaciones_esmalte ?? []).map((item, idx) => (
+                    {(form?.observacionesSer ?? []).map((item, idx) => (
                       <span
                         key={idx}
                         className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700 ring-1 ring-slate-200"
@@ -321,7 +325,7 @@ export default function BarbotinaModal({
               </button>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-              <table className="w-full min-w-750 text-sm">
+              <table className="w-full min-w-max text-sm">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                   <tr className="border border-slate-300">
                     <th
@@ -332,126 +336,54 @@ export default function BarbotinaModal({
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
+                      colSpan={6}
                     >
                       <InputField
-                        label="Agua"
+                        label="Pasta 1"
                         type="text"
-                        name="agua_aplicacion"
-                        value={form?.agua_aplicacion || ''}
+                        name="pasta1"
+                        value={form?.pasta1 || ''}
                         onChange={updateBase}
-                        error={error.agua_aplicacion}
+                        error={error.pasta1}
                       />
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
+                      colSpan={6}
                     >
-                      ENGOBE
+                      <InputField
+                        label="Pasta 2"
+                        type="text"
+                        name="pasta2"
+                        value={form?.pasta2 || ''}
+                        onChange={updateBase}
+                        error={error.pasta2}
+                      />
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
+                      colSpan={6}
                     >
                       <InputField
-                        label="Normal"
+                        label="Pasta 3"
                         type="text"
-                        name="normal_viscosidad"
-                        value={form?.normal_viscosidad || ''}
+                        name="pasta3"
+                        value={form?.pasta3 || ''}
                         onChange={updateBase}
-                        error={error.normal_viscosidad}
+                        error={error.pasta3}
                       />
                     </th>
                     <th
-                      className="px-2 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
+                      className="px-10 py-3 text-center border-r border-slate-300"
+                      colSpan={6}
                     >
                       <InputField
-                        label="Recuperado"
+                        label="Pasta 4"
                         type="text"
-                        name="recuperado_densidad"
-                        value={form?.recuperado_densidad || ''}
+                        name="pasta4"
+                        value={form?.pasta4 || ''}
                         onChange={updateBase}
-                        error={error.recuperado_densidad}
-                      />
-                    </th>
-                    <th
-                      className="px-2 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
-                    >
-                      <InputField
-                        label="Implemeable"
-                        type="text"
-                        name="implemeable_residuo"
-                        value={form?.implemeable_residuo || ''}
-                        onChange={updateBase}
-                        error={error.implemeable_residuo}
-                      />
-                    </th>
-                    <th
-                      className="px-2 py-3 text-center border-r border-slate-300"
-                      colSpan={2}
-                    >
-                      ESMALTE
-                    </th>
-                    <th className="px-2 py-3 text-center border-r border-slate-300">
-                      <InputField
-                        label="Brillante"
-                        type="text"
-                        name="brillante_viscosidad"
-                        value={form?.brillante_viscosidad || ''}
-                        onChange={updateBase}
-                        error={error.brillante_viscosidad}
-                      />
-                    </th>
-                    <th className="px-2 py-3 text-center border-r border-slate-300">
-                      <InputField
-                        label="Recuperado"
-                        type="text"
-                        name="recuperado_viscosidad"
-                        value={form?.recuperado_viscosidad || ''}
-                        onChange={updateBase}
-                        error={error.recuperado_viscosidad}
-                      />
-                    </th>
-                    <th className="px-2 py-3 text-center border-r border-slate-300">
-                      <InputField
-                        label="Transparente"
-                        type="text"
-                        name="tranparente_densidad"
-                        value={form?.tranparente_densidad || ''}
-                        onChange={updateBase}
-                        error={error.tranparente_densidad}
-                      />
-                    </th>
-                    <th className="px-2 py-3 text-center border-r border-slate-300">
-                      <InputField
-                        label="Satinado"
-                        type="text"
-                        name="satinado_densidad"
-                        value={form?.satinado_densidad || ''}
-                        onChange={updateBase}
-                        error={error.satinado_densidad}
-                      />
-                    </th>
-                    <th className="px-2 py-3 text-center border-r border-slate-300">
-                      <InputField
-                        label="Digital"
-                        type="text"
-                        name="digital_residuo"
-                        value={form?.digital_residuo || ''}
-                        onChange={updateBase}
-                        error={error.digital_residuo}
-                      />
-                    </th>
-                    <th className="px-2 py-3  border-r border-slate-300">
-                      <InputField
-                        label="* "
-                        type="text"
-                        name="blanco_residuo"
-                        value={form?.blanco_residuo || ''}
-                        onChange={updateBase}
-                        error={error.blanco_residuo}
+                        error={error.pasta4}
                       />
                     </th>
                   </tr>
@@ -460,55 +392,73 @@ export default function BarbotinaModal({
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      APLICACION [G]
+                      APL [G]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      APLICACION [G]
+                      V [s]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      VIZCOCIDAD [S]
+                      D [g/cm³]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      DENSIDAD [G/CM²]
+                      APL [G]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      RESIDUIO [%]
+                      V [s]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      APLICACION [G]
+                      D [g/cm³]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      VIZCOCIDAD [S]
+                      APL [G]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      DENSIDAD [G/CM²]
+                      V [s]
                     </th>
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"
                       colSpan={2}
                     >
-                      RESIDUIO [%]
+                      D [g/cm³]
+                    </th>
+                    <th
+                      className="px-10 py-3 text-center border-r border-slate-300"
+                      colSpan={2}
+                    >
+                      APL [G]
+                    </th>
+                    <th
+                      className="px-10 py-3 text-center border-r border-slate-300"
+                      colSpan={2}
+                    >
+                      V [s]
+                    </th>
+                    <th
+                      className="px-10 py-3 text-center border-r border-slate-300"
+                      colSpan={2}
+                    >
+                      D [g/cm³]
                     </th>
                   </tr>
                   <tr className="border border-slate-300">
@@ -516,60 +466,78 @@ export default function BarbotinaModal({
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       OPERADOR
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      SUP. PROD.
+                      S.P.
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      OPERADOR
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      S.P.
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      OPERADOR
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      S.P.
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      OPERADOR
+                    </th>
+                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                      S.P.
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {form?.datos_tabla_esmalte?.map((row, idx) => (
+                <tbody>
+                  {form?.datos_tabla_serigrafiado?.map((row, idx) => (
                     <tr key={idx} className="border border-slate-300 p-3">
                       <td className="p-2 border-r border-slate-300">
                         <InputField
@@ -587,312 +555,336 @@ export default function BarbotinaModal({
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_aplicacion_agua"
-                          value={row.operador_aplicacion_agua}
+                          name="operador_apl_pasta1"
+                          value={row.operador_apl_pasta1}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'operador_aplicacion_agua',
+                              'operador_apl_pasta1',
                               e.target.value
                             );
                           }}
-                          error={!!tablaError[idx]?.operador_aplicacion_agua}
-                        />
-                      </td>
-                      <td className=" border-r border-slate-300">
-                        <InputField
-                          errorMode="border"
-                          type="number"
-                          name="sup_prod_aplicacion_agua"
-                          value={row.sup_prod_aplicacion_agua}
-                          onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'sup_prod_aplicacion_agua',
-                              e.target.value
-                            );
-                          }}
-                          error={!!tablaError[idx]?.sup_prod_aplicacion_agua}
+                          error={!!tablaError[idx]?.operador_apl_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_aplicacion_engobe"
-                          value={row.operador_aplicacion_engobe}
+                          name="sp_apl_pasta1"
+                          value={row.sp_apl_pasta1}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_aplicacion_engobe',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_apl_pasta1', e.target.value);
                           }}
-                          error={!!tablaError[idx]?.operador_aplicacion_engobe}
+                          error={!!tablaError[idx]?.sp_apl_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_aplicacion_engobe"
-                          value={row.sup_prod_aplicacion_engobe}
+                          name="operador_v_pasta1"
+                          value={row.operador_v_pasta1}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_aplicacion_engobe',
+                              'operador_v_pasta1',
                               e.target.value
                             );
                           }}
-                          error={!!tablaError[idx]?.sup_prod_aplicacion_engobe}
+                          error={!!tablaError[idx]?.operador_v_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_vizcosidad_normal"
-                          value={row.operador_vizcosidad_normal}
+                          name="sp_v_pasta1"
+                          value={row.sp_v_pasta1}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_vizcosidad_normal',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_v_pasta1', e.target.value);
                           }}
-                          error={!!tablaError[idx]?.operador_vizcosidad_normal}
+                          error={!!tablaError[idx]?.sp_v_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_vizcosidad_normal"
-                          value={row.sup_prod_vizcosidad_normal}
+                          name="operador_d_pasta1"
+                          value={row.operador_d_pasta1}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_vizcosidad_normal',
+                              'operador_d_pasta1',
                               e.target.value
                             );
                           }}
-                          error={!!tablaError[idx]?.sup_prod_vizcosidad_normal}
+                          error={!!tablaError[idx]?.operador_d_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_densidad_recuperado"
-                          value={row.operador_densidad_recuperado}
+                          name="sp_d_pasta1"
+                          value={row.sp_d_pasta1}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_densidad_recuperado',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_d_pasta1', e.target.value);
                           }}
-                          error={
-                            !!tablaError[idx]?.operador_densidad_recuperado
-                          }
+                          error={!!tablaError[idx]?.sp_d_pasta1}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_densidad_recuperado"
-                          value={row.sup_prod_densidad_recuperado}
+                          name="operador_apl_pasta2"
+                          value={row.operador_apl_pasta2}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_densidad_recuperado',
+                              'operador_apl_pasta2',
                               e.target.value
                             );
                           }}
-                          error={
-                            !!tablaError[idx]?.sup_prod_densidad_recuperado
-                          }
+                          error={!!tablaError[idx]?.operador_apl_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_residuo_implemeable"
-                          value={row.operador_residuo_implemeable}
+                          name="sp_apl_pasta2"
+                          value={row.sp_apl_pasta2}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_residuo_implemeable',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_apl_pasta2', e.target.value);
                           }}
-                          error={
-                            !!tablaError[idx]?.operador_residuo_implemeable
-                          }
+                          error={!!tablaError[idx]?.sp_apl_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_residuo_implemeable"
-                          value={row.sup_prod_residuo_implemeable}
+                          name="operador_v_pasta2"
+                          value={row.operador_v_pasta2}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_residuo_implemeable',
+                              'operador_v_pasta2',
                               e.target.value
                             );
                           }}
-                          error={
-                            !!tablaError[idx]?.sup_prod_residuo_implemeable
-                          }
+                          error={!!tablaError[idx]?.operador_v_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_aplicacion_esmalte"
-                          value={row.operador_aplicacion_esmalte}
+                          name="sp_v_pasta2"
+                          value={row.sp_v_pasta2}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_aplicacion_esmalte',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_v_pasta2', e.target.value);
                           }}
-                          error={!!tablaError[idx]?.operador_aplicacion_esmalte}
+                          error={!!tablaError[idx]?.sp_v_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_aplicacion_esmalte"
-                          value={row.sup_prod_aplicacion_esmalte}
+                          name="operador_d_pasta2"
+                          value={row.operador_d_pasta2}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_aplicacion_esmalte',
+                              'operador_d_pasta2',
                               e.target.value
                             );
                           }}
-                          error={!!tablaError[idx]?.sup_prod_aplicacion_esmalte}
+                          error={!!tablaError[idx]?.operador_d_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_vizcosidad_brillante_recuperado"
-                          value={row.operador_vizcosidad_brillante_recuperado}
+                          name="sp_d_pasta2"
+                          value={row.sp_d_pasta2}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_vizcosidad_brillante_recuperado',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_d_pasta2', e.target.value);
                           }}
-                          error={
-                            !!tablaError[idx]
-                              ?.operador_vizcosidad_brillante_recuperado
-                          }
+                          error={!!tablaError[idx]?.sp_d_pasta2}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_vizcosidad_brillante_recuperado"
-                          value={row.sup_prod_vizcosidad_brillante_recuperado}
+                          name="operador_apl_pasta3"
+                          value={row.operador_apl_pasta3}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_vizcosidad_brillante_recuperado',
+                              'operador_apl_pasta3',
                               e.target.value
                             );
                           }}
-                          error={
-                            !!tablaError[idx]
-                              ?.sup_prod_vizcosidad_brillante_recuperado
-                          }
+                          error={!!tablaError[idx]?.operador_apl_pasta3}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_densidad_transparente_satinado"
-                          value={row.operador_densidad_transparente_satinado}
+                          name="sp_apl_pasta3"
+                          value={row.sp_apl_pasta3}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_densidad_transparente_satinado',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_apl_pasta3', e.target.value);
                           }}
-                          error={
-                            !!tablaError[idx]
-                              ?.operador_densidad_transparente_satinado
-                          }
+                          error={!!tablaError[idx]?.sp_apl_pasta3}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="sup_prod_densidad_transparente_satinado"
-                          value={row.sup_prod_densidad_transparente_satinado}
+                          name="operador_v_pasta3"
+                          value={row.operador_v_pasta3}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_densidad_transparente_satinado',
+                              'operador_v_pasta3',
                               e.target.value
                             );
                           }}
-                          error={
-                            !!tablaError[idx]
-                              ?.sup_prod_densidad_transparente_satinado
-                          }
+                          error={!!tablaError[idx]?.operador_v_pasta3}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_residuo_digital_blanco"
-                          value={row.operador_residuo_digital_blanco}
+                          name="sp_v_pasta3"
+                          value={row.sp_v_pasta3}
                           onChange={(e) => {
-                            setCargaTabla(
-                              idx,
-                              'operador_residuo_digital_blanco',
-                              e.target.value
-                            );
+                            setCargaTabla(idx, 'sp_v_pasta3', e.target.value);
                           }}
-                          error={
-                            !!tablaError[idx]?.operador_residuo_digital_blanco
-                          }
+                          error={!!tablaError[idx]?.sp_v_pasta3}
                         />
                       </td>
                       <td className="p-2 border-r border-slate-300">
                         <InputField
                           errorMode="border"
                           type="number"
-                          name="operador_residuo_digital_blanco"
-                          value={row.sup_prod_residuo_digital_blanco}
+                          name="operador_d_pasta3"
+                          value={row.operador_d_pasta3}
                           onChange={(e) => {
                             setCargaTabla(
                               idx,
-                              'sup_prod_residuo_digital_blanco',
+                              'operador_d_pasta3',
                               e.target.value
                             );
                           }}
-                          error={
-                            !!tablaError[idx]?.sup_prod_residuo_digital_blanco
-                          }
+                          error={!!tablaError[idx]?.operador_d_pasta3}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="sp_d_pasta3"
+                          value={row.sp_d_pasta3}
+                          onChange={(e) => {
+                            setCargaTabla(idx, 'sp_d_pasta3', e.target.value);
+                          }}
+                          error={!!tablaError[idx]?.sp_d_pasta3}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="operador_apl_pasta4"
+                          value={row.operador_apl_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(
+                              idx,
+                              'operador_apl_pasta4',
+                              e.target.value
+                            );
+                          }}
+                          error={!!tablaError[idx]?.operador_apl_pasta4}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="sp_apl_pasta4"
+                          value={row.sp_apl_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(idx, 'sp_apl_pasta4', e.target.value);
+                          }}
+                          error={!!tablaError[idx]?.sp_apl_pasta4}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="operador_v_pasta4"
+                          value={row.operador_v_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(
+                              idx,
+                              'operador_v_pasta4',
+                              e.target.value
+                            );
+                          }}
+                          error={!!tablaError[idx]?.operador_v_pasta4}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="sp_v_pasta4"
+                          value={row.sp_v_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(idx, 'sp_v_pasta4', e.target.value);
+                          }}
+                          error={!!tablaError[idx]?.sp_v_pasta4}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="operador_d_pasta4"
+                          value={row.operador_d_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(
+                              idx,
+                              'operador_d_pasta4',
+                              e.target.value
+                            );
+                          }}
+                          error={!!tablaError[idx]?.operador_d_pasta4}
+                        />
+                      </td>
+                      <td className="p-2 border-r border-slate-300">
+                        <InputField
+                          errorMode="border"
+                          type="number"
+                          name="sp_d_pasta4"
+                          value={row.sp_d_pasta4}
+                          onChange={(e) => {
+                            setCargaTabla(idx, 'sp_d_pasta4', e.target.value);
+                          }}
+                          error={!!tablaError[idx]?.sp_d_pasta4}
                         />
                       </td>
                     </tr>
