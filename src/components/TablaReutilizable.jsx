@@ -184,7 +184,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                 paginated.map((data, index) => (
                   <tr
                     key={data.id ?? `${data.fecha}-${index}`}
-                    className="divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
+                    className="border border-slate-300  divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
                   >
                     {columnas.map((c) => (
                       <td key={c.key} className="px-4 py-3">
@@ -202,19 +202,21 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                               ring-1 ring-green-900
                               hover:bg-emerald-100
                             "
-                          onClick={() => handleDetail(data.id)}
+                          onClick={() => handleDetail?.(data.id)}
                         >
                           Detalles
                         </button>
                         <button
+                          type="button"
                           className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-                          onClick={() => handleEdit(data.id)}
+                          onClick={() => handleEdit?.(data.id)}
                         >
                           Editar
                         </button>
+
                         <button
                           className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
-                          onClick={() => hanldeDelete(data.id)}
+                          onClick={() => hanldeDelete?.(data.id)}
                         >
                           Eliminar
                         </button>

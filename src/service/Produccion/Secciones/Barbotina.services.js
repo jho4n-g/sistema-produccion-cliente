@@ -1,6 +1,6 @@
 import { api } from '../../api';
 
-export const RegisterObj = async (payload) => {
+export const registerObj = async (payload) => {
   try {
     const res = await api.post('/produccion/barbotina', payload);
     return res.data;
@@ -36,6 +36,7 @@ export const UpdateIdObj = async (id, updateddata) => {
     const data = await api.put(`/produccion/barbotina/${id}`, updateddata);
     return data.data;
   } catch (e) {
+    console.log(e);
     return e.response.data || 'Error del servidor';
   }
 };
