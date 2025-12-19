@@ -4,6 +4,8 @@ import Atomizado from './Secciones/Atomizado';
 import Barbotina from './Secciones/Barbotina';
 import Prensado from './Secciones/Prensado';
 import Esmalte from './Secciones/Esmalte';
+import Serigrafia from './Secciones/Serigrafia';
+import Seleccion from './Secciones/Seleccion';
 
 const tabs = [
   { key: 'general', label: 'General' },
@@ -11,7 +13,8 @@ const tabs = [
   { key: 'barbotina', label: 'Barbotina' },
   { key: 'prensado', label: 'Prensado' },
   { key: 'esmalte', label: 'Esmalte' },
-  { key: 'observaciones', label: 'Observaciones' },
+  { key: 'serigrafia', label: 'Serigrafia' },
+  { key: 'seleccion', label: 'Seleccion' },
 ];
 
 export default function PlanillaProduccion() {
@@ -27,7 +30,8 @@ export default function PlanillaProduccion() {
         {tab === 'barbotina' && <Barbotina />}
         {tab === 'prensado' && <Prensado />}
         {tab === 'esmalte' && <Esmalte />}
-        {tab === 'observaciones' && <div>Contenido Observaciones</div>}
+        {tab === 'serigrafia' && <Serigrafia />}
+        {tab === 'seleccion' && <Seleccion />}
       </div>
     </div>
   );

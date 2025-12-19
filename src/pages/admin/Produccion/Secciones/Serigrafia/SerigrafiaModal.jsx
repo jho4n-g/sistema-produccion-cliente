@@ -326,7 +326,10 @@ export default function SerigrafiaModal({
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
               <table className="w-full min-w-max text-sm">
-                <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
+                <thead
+                  className="bg-slate-50 text-slate-600 
+                uppercase text-xs tracking-wide"
+                >
                   <tr className="border border-slate-300">
                     <th
                       className="px-10 py-3 text-center border-r border-slate-300"

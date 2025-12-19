@@ -3,8 +3,10 @@ import {
   getObjs,
   UpdateIdObj,
   deleteObj,
+  getIdObj,
 } from '../../../../../service/Produccion/Secciones/Seleccion.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
+import SeleccionModal from './SeleccionModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -29,6 +31,10 @@ export default function Seleccion() {
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalUpdate, setOpenModalUpdate] = useState(false);
+  const [payload, setPayload] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -56,6 +62,42 @@ export default function Seleccion() {
     setOpenDelete(false);
     setIdRow(null);
   };
+
+  const hanldeEdit = (id) => {
+    setIdRow(id);
+    setOpenModal(true);
+  };
+
+  const handleOpenConfirmUpdate = (data) => {
+    setPayload(data);
+    setOpenModalUpdate(true);
+  };
+  const handleCloseConfirmUpdate = () => {
+    setIdRow(null);
+    setPayload(null);
+    setOpenModalUpdate(false);
+  };
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const res = await UpdateIdObj(idRow, payload);
+      if (res.ok) {
+        toast.success('Registro actualizado con éxito');
+        setOpenModalUpdate(false);
+        tableRef.current?.reload();
+        setOpenModal(false);
+      }
+      if (!res.ok) {
+        toast.error(res.message || 'Error al actualizar el registro12');
+      }
+    } catch (e) {
+      console.log('error', e);
+      toast.error(e.message || 'Error al actualizar el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <TablaRetutilizable
@@ -65,7 +107,7 @@ export default function Seleccion() {
         datosBusqueda={['fecha', 'turno', 'operador']}
         columnas={columnas}
         handleDetail={() => {}}
-        handleEdit={() => {}}
+        handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
       />
       <ConfirmModal
@@ -79,6 +121,24 @@ export default function Seleccion() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <SeleccionModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

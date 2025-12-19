@@ -371,12 +371,12 @@ export default function Prensado() {
             </button>
           </div>
 
-          <div className="md:col-span-2 lg:col-span-2 flex md:justify-end lg:items-start lg:pt-6">
+          <div className="md:col-span-2 lg:col-span-2 lg:pt-6">
             <button
-              className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
+              className="w-full rounded-xl bg-green-800 px-6 py-3 text-base font-semibold text-white hover:bg-green-900"
               onClick={handleValidation}
             >
-              Guardar cambios
+              Guardar datos
             </button>
           </div>
         </div>
