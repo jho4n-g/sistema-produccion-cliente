@@ -106,6 +106,7 @@ export default function Esmalte() {
         handleDetail={() => {}}
         handleEdit={(id) => hanldeEdit(id)}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
 
       <ConfirmModal

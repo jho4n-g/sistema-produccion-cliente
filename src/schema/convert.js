@@ -28,19 +28,19 @@ export const optTimeAllowEmpty = (label) =>
 export const optNum = (label) =>
   z.preprocess(
     (val) => {
-      // Si el valor es cadena vacía, lo tratamos como undefined
-      if (val === '') return 0;
-      // Si viene como string numérico, intenta convertir
-      if (typeof val === 'string') return Number(val);
+      if (val === '' || val == null) return undefined;
+      if (typeof val === 'string') {
+        const n = Number(val);
+        return isNaN(n) ? undefined : n;
+      }
       return val;
     },
     z
       .number({
         invalid_type_error: `El campo ${label} debe ser numérico`,
-        required_error: `Se requiere ${label}`,
       })
       .min(0, `${label} debe ser mayor o igual a 0`)
-      .nullish() // ← permite undefined si estaba vacío
+      .optional()
   );
 
 export const optStr = (label) => {

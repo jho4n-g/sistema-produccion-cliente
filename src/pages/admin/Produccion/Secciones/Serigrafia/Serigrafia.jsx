@@ -106,6 +106,7 @@ export default function Serigrafia() {
         handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
       <ConfirmModal
         open={openModalDelete}

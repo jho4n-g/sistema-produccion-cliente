@@ -109,6 +109,7 @@ export default function Prensado() {
         handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
       <ConfirmModal
         open={openModalDelete}

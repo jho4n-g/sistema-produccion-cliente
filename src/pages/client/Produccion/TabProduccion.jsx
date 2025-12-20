@@ -9,8 +9,8 @@ import Seleccion from './Secciones/Seleccion';
 
 const tabs = [
   { key: 'general', label: 'General' },
-  { key: 'atomizado', label: 'Atomizado' },
   { key: 'barbotina', label: 'Barbotina' },
+  { key: 'atomizado', label: 'Atomizado' },
   { key: 'prensado', label: 'Prensado' },
   { key: 'esmalte', label: 'Esmalte' },
   { key: 'serigrafia', label: 'Serigrafia' },
@@ -26,8 +26,8 @@ export default function PlanillaProduccion() {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         {tab === 'general' && <div>Contenido General</div>}
-        {tab === 'atomizado' && <Atomizado />}
         {tab === 'barbotina' && <Barbotina />}
+        {tab === 'atomizado' && <Atomizado />}
         {tab === 'prensado' && <Prensado />}
         {tab === 'esmalte' && <Esmalte />}
         {tab === 'serigrafia' && <Serigrafia />}

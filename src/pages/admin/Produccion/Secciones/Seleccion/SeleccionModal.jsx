@@ -69,7 +69,6 @@ export default function SelecccionModal({
     (async () => {
       try {
         const data = await fetchById(id); // ← ahora sí esperamos aquí
-        console.log('selecicon', data);
         if (!active) return;
         // console.log('atimizado', data);
         if (data?.ok) setForm(data.datos ?? {});
@@ -365,15 +364,16 @@ export default function SelecccionModal({
               </button>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-              <table className="w-full min-w-max text-sm">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 mx-5 ">
+              <table className=" text-sm">
                 <thead
                   className="bg-slate-50 text-slate-600 
-                uppercase text-xs tracking-wide"
+                                uppercase text-xs tracking-wide"
                 >
                   <tr className="border border-slate-300">
                     <th
-                      className="px-10 py-3 text-center border-r border-slate-300"
+                      className="sticky left-0 z-20 px-10 py-3 
+                            text-center border border-slate-300 bg-white"
                       rowSpan={2}
                     >
                       HORA
@@ -458,7 +458,7 @@ export default function SelecccionModal({
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       CAJAS
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3 py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN1"
@@ -467,7 +467,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN1}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3 py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN2"
@@ -476,7 +476,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN2}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3   py-3 text-center border-r border-slate-300 ">
                       <InputField
                         type="number"
                         name="segunda_defectoN3"
@@ -485,7 +485,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN3}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN4"
@@ -494,7 +494,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN4}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN5"
@@ -503,7 +503,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN5}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN6"
@@ -512,7 +512,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN6}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN7"
@@ -521,7 +521,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN7}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN8"
@@ -530,7 +530,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN8}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN9"
@@ -539,7 +539,7 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN9}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="segunda_defectoN10"
@@ -548,10 +548,10 @@ export default function SelecccionModal({
                         error={error.segunda_defectoN10}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       CAJAS
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN1"
@@ -560,7 +560,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN1}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN2"
@@ -569,7 +569,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN2}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN3"
@@ -578,7 +578,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN3}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN4"
@@ -587,7 +587,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN4}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN5"
@@ -596,7 +596,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN5}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN6"
@@ -605,7 +605,7 @@ export default function SelecccionModal({
                         error={error.tercera_defectoN6}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="tercera_defectoN7"
@@ -617,7 +617,7 @@ export default function SelecccionModal({
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       CAJAS
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="casco_defectoN1"
@@ -626,7 +626,7 @@ export default function SelecccionModal({
                         error={error.casco_defectoN1}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="casco_defectoN2"
@@ -635,7 +635,7 @@ export default function SelecccionModal({
                         error={error.casco_defectoN2}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="casco_defectoN3"
@@ -644,7 +644,7 @@ export default function SelecccionModal({
                         error={error.casco_defectoN3}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border-r border-slate-300">
+                    <th className="px-3  py-3 text-center border-r border-slate-300">
                       <InputField
                         type="number"
                         name="casco_defectoN4"
@@ -661,7 +661,7 @@ export default function SelecccionModal({
                 <tbody>
                   {form?.tabla_seleccion_embalaje?.map((row, idx) => (
                     <tr key={idx} className="border border-slate-300 p-3">
-                      <td className="p-2 border-r border-slate-300">
+                      <td className="sticky left-0 z-20 p-2 border-r border-slate-300 bg-white">
                         <InputField
                           errorMode="border"
                           type="time"

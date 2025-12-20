@@ -84,67 +84,67 @@ export const adminNav = [
     items: [
       {
         label: 'Calidad',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias1234',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo agua',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias12af',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo bases',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencia2s',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo ee',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias3',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo engobe',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias4',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo esmalte',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias5',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo gn',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias6',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo linea',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias7',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice polvo atomizado',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias8',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Monitoreo gases combustion',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias9',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Produccion',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias10',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Producto no conforme',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias11',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Reclamo producto no terminado',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias12',
         icon: Cog6ToothIcon,
       },
     ],
@@ -156,7 +156,7 @@ export const adminNav = [
     items: [
       {
         label: 'Disponibilidad por linea',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias13',
         icon: Cog6ToothIcon,
       },
     ],
@@ -169,74 +169,74 @@ export const adminNav = [
     items: [
       {
         label: 'Horas extra',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias22',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Utilidad',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias21',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Generacion de residuos',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias23',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de frecuencia',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias25',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de severidad',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias26',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Consultorio dental',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias29',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Atencion consultorio',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias30',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de acciones correctivas',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias31',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Donaciones',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias32',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Evolucion contado',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias33',
         icon: Cog6ToothIcon,
       },
     ],
   },
   {
     id: 'comercializacion',
-    title: 'Comercializacion',
+    title: 'Comercializacion14',
     icon: Cog6ToothIcon,
     items: [
       {
         label: 'Ingreso por venta total',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencia15s',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Venta total',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias16',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Precio unitario',
-        to: '/admin/config/preferencias',
+        to: '/admin/config/preferencias17',
         icon: Cog6ToothIcon,
       },
     ],

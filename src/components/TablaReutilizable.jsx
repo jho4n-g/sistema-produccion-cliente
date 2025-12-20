@@ -140,61 +140,62 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
             )}
           </div>
         </div>
-        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="w-full table-fixed border-separate border-spacing-0 text-sm">
-            <thead className="bg-slate-50">
-              <tr className="divide-x divide-slate-200">
-                {columnas.map((c) => (
-                  <th
-                    key={c.key}
-                    className="border-b px-4 py-3 text-left font-semibold"
-                  >
-                    {c.label}
+        <div className="mt-4  rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-max w-full table-auto border-separate border-spacing-0 text-sm">
+              <thead className="bg-slate-50 sticky top-0 z-10">
+                <tr className="divide-x divide-slate-200">
+                  {columnas.map((c) => (
+                    <th
+                      key={c.key}
+                      className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap"
+                    >
+                      {c.label}
+                    </th>
+                  ))}
+                  <th className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap">
+                    Acciones
                   </th>
-                ))}
-                <th className="border-b px-4 py-3 text-left font-semibold">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
+                </tr>
+              </thead>
 
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={columnas.length + 1}
-                    className="px-4 py-8 text-center text-sm text-slate-600"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
-                      Cargando datos...
-                    </div>
-                  </td>
-                </tr>
-              ) : paginated.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columnas.length + 1}
-                    className="px-4 py-8 text-center text-sm text-slate-500"
-                  >
-                    No hay registros
-                  </td>
-                </tr>
-              ) : (
-                paginated.map((data, index) => (
-                  <tr
-                    key={data.id ?? `${data.fecha}-${index}`}
-                    className="border border-slate-300  divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
-                  >
-                    {columnas.map((c) => (
-                      <td key={c.key} className="px-4 py-3">
-                        {c.render ? c.render(data) : data[c.key]}
-                      </td>
-                    ))}
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-2">
-                        <button
-                          className="
+              <tbody className="divide-y divide-slate-100">
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan={columnas.length + 1}
+                      className="px-4 py-8 text-center text-sm text-slate-600"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
+                        Cargando datos...
+                      </div>
+                    </td>
+                  </tr>
+                ) : paginated.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={columnas.length + 1}
+                      className="px-4 py-8 text-center text-sm text-slate-500"
+                    >
+                      No hay registros
+                    </td>
+                  </tr>
+                ) : (
+                  paginated.map((data, index) => (
+                    <tr
+                      key={data.id ?? `${data.fecha}-${index}`}
+                      className="border border-slate-300  divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
+                    >
+                      {columnas.map((c) => (
+                        <td key={c.key} className="px-4 py-3">
+                          {c.render ? c.render(data) : data[c.key]}
+                        </td>
+                      ))}
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col gap-2">
+                          <button
+                            className="
                               rounded-xl
                               bg-white
                               px-3 py-2
@@ -202,31 +203,33 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                               ring-1 ring-green-900
                               hover:bg-emerald-100
                             "
-                          onClick={() => handleDetail?.(data.id)}
-                        >
-                          Detalles
-                        </button>
-                        <button
-                          type="button"
-                          className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-                          onClick={() => handleEdit?.(data.id)}
-                        >
-                          Editar
-                        </button>
+                            onClick={() => handleDetail?.(data.id)}
+                          >
+                            Detalles
+                          </button>
+                          <button
+                            type="button"
+                            className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
+                            onClick={() => handleEdit?.(data.id)}
+                          >
+                            Editar
+                          </button>
 
-                        <button
-                          className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
-                          onClick={() => hanldeDelete?.(data.id)}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                          <button
+                            className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
+                            onClick={() => hanldeDelete?.(data.id)}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
           <div className="flex flex-col gap-3 border-t border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Filas por página */}
             <div className="flex items-center gap-2 text-sm text-slate-600">

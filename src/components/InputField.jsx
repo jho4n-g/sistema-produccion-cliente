@@ -1,13 +1,14 @@
 export default function InputField({
   label,
   error,
+  value,
   errorMode = 'message', // 'border' | 'message'
   className = '',
   ...props
 }) {
   const base =
     'w-full rounded-xl border px-3 py-2 text-sm shadow-sm ' +
-    'focus:outline-none focus:ring-2';
+    'focus:outline-none focus:ring-2 min-w-[100px]';
 
   const normal =
     'border-slate-300 text-slate-700 focus:border-emerald-600 focus:ring-emerald-600';
@@ -28,6 +29,7 @@ export default function InputField({
 
       <input
         {...props}
+        value={value ?? ''}
         aria-invalid={showError}
         className={`${base} ${showError ? danger : normal}`}
       />

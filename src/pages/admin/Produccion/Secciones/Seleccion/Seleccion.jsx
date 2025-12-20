@@ -109,6 +109,7 @@ export default function Seleccion() {
         handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
       <ConfirmModal
         open={openModalDelete}

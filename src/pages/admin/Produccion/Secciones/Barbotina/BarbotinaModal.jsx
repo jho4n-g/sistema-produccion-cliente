@@ -516,10 +516,10 @@ export default function BarbotinaModal({
                       TN
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      LITROS
+                      TN
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
-                      KG
+                      LITROS
                     </th>
                     <th className="px-10 py-3 text-center border-r border-slate-300">
                       KG

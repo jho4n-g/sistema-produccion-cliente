@@ -111,6 +111,7 @@ export default function Barbotina() {
         handleDetail={{}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
       <ConfirmModal
         open={openModalDelete}

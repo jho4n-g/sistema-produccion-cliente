@@ -106,6 +106,7 @@ export default function Atomizado() {
         handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
+        enableHorizontalScroll={false}
       />
       <ConfirmModal
         open={openModalDelete}
