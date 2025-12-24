@@ -33,7 +33,7 @@ const DatosObservacionesBarbotina = z.object({
 export const datosBarbotina = z
   .object({
     fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
-    turno: reqStr('Turno'),
+
     operador: reqStr('Operador'),
     supervisor_turno: reqStr('Superviso Turno'),
     equipo: reqStr('Equipo'),

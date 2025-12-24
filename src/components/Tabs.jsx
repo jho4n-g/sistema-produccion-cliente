@@ -14,26 +14,28 @@ export default function Tabs({ tabs, onChange }) {
 
   return (
     <div className="w-full">
-      {/* Tabs header */}
-      <div className="inline-flex rounded-2xl bg-slate-100 p-1 ring-1 ring-slate-200">
+      {/* Tabs header tipo página */}
+      <div className="flex w-full gap-1 border-b border-slate-200 bg-white px-1">
         {tabs.map((tab) => {
           const isActive = active === tab.key;
+
           return (
             <button
               key={tab.key}
               onClick={() => handleChange(tab.key)}
               className={cx(
-                'relative rounded-xl px-4 py-2 text-sm font-semibold transition-all',
+                'relative px-5 py-3 text-sm font-semibold transition-colors',
+                'focus:outline-none',
                 isActive
-                  ? 'bg-white text-emerald-700 shadow ring-1 ring-green-700'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'text-slate-900'
+                  : 'text-slate-500 hover:text-slate-800'
               )}
             >
               {tab.label}
 
-              {/* Active indicator */}
+              {/* Indicador inferior */}
               {isActive && (
-                <span className="pointer-events-none absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-emerald-500" />
+                <span className="absolute inset-x-2 bottom-0 h-0.75 rounded-full bg-emerald-600" />
               )}
             </button>
           );

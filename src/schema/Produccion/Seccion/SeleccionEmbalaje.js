@@ -61,7 +61,6 @@ export const DatosEmbalaje = z.object({
   producto: reqStr('Producto'),
   horno: optNum('horno'),
   formato: optStr('Formato'),
-  turno: reqStr('Turno'),
   supervisor_turno: reqStr('Supervisor de turno'),
   operador: reqStr('Operador'),
   grupo: reqStr('Grupo'),

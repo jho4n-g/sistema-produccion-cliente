@@ -6,6 +6,9 @@ import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { registerObj } from '../../../../service/Produccion/Secciones/Esmalte.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
+//
+import { getObjs } from '../../../../service/Produccion/Turno.services';
+import Select from '../../../../components/Select';
 
 const NuevaFilaTabla = () => ({
   hora: '',
@@ -58,6 +61,9 @@ export default function Esmalte() {
   const [obsInput, setObsInput] = useState('');
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [dataSave, setDataSave] = useState(null);
+
+  const [turnoError, setTurnoError] = useState(null);
+  const [turnoId, setTurnoId] = useState(null);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -130,6 +136,11 @@ export default function Esmalte() {
   };
 
   const handleValidation = async () => {
+    if (!turnoId) {
+      setTurnoError('Selecciona un turno');
+    } else {
+      setTurnoError('');
+    }
     const result = DatosEsmalte.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
@@ -138,13 +149,13 @@ export default function Esmalte() {
         result.error,
         'TablaBarbotinaDatos'
       );
-
+      console.log(fieldErrors);
       setTablaError(tablaErrors);
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = result.data;
+      const data = { turno_id: turnoId, ...result.data };
       setDataSave(data);
       setOpenModalConfirm(true);
     }
@@ -185,13 +196,16 @@ export default function Esmalte() {
           </div>
 
           <div className="md:col-span-1 lg:col-span-3">
-            <InputField
+            <Select
               label="Turno"
-              type="text"
-              name="turno"
-              value={form?.turno || ''}
-              onChange={updateBase}
-              error={error.turno}
+              value={turnoId}
+              onChange={(v) => {
+                setTurnoId(v);
+                setTurnoError('');
+              }}
+              placeholder="Selecciona un turno"
+              getDatos={getObjs}
+              error={turnoError}
             />
           </div>
 

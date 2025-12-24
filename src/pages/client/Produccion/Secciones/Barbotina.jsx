@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
+import { datosBarbotina } from '../../../../schema/Produccion/Seccion/Barbotina.schema';
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
 import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { registerObj } from '../../../../service/Produccion/Secciones/Barbotina.services';
-import { datosBarbotina } from '../../../../schema/Produccion/Seccion/Barbotina.schema';
+//
+import { getObjs } from '../../../../service/Produccion/Turno.services';
+import Select from '../../../../components/Select';
 
 const rows = 15;
 
@@ -56,6 +59,9 @@ export default function Barbotina() {
   const [obsInput, setObsInput] = useState('');
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [dataSave, setDataSave] = useState(null);
+
+  const [turnoError, setTurnoError] = useState(null);
+  const [turnoId, setTurnoId] = useState(null);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -124,6 +130,11 @@ export default function Barbotina() {
     });
   };
   const handleValidation = async () => {
+    if (!turnoId) {
+      setTurnoError('Selecciona un turno');
+    } else {
+      setTurnoError('');
+    }
     const result = datosBarbotina.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
@@ -138,7 +149,8 @@ export default function Barbotina() {
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = result.data;
+      const data = { turno_id: turnoId, ...result.data };
+
       setDataSave(data);
       setOpenModalConfirm(true);
     }
@@ -152,6 +164,9 @@ export default function Barbotina() {
         setOpenModalConfirm(false);
         setForm(initialForm());
       }
+      if (!res.ok) {
+        toast.error(res.message || 'Se guardo exitosamente');
+      }
     } catch (e) {
       toast.error(e.message || 'Error al guardar');
     } finally {
@@ -164,7 +179,7 @@ export default function Barbotina() {
         <h3 className="text-lg font-semibold text-slate-900">
           Barbotina Modal
         </h3>
-      </div>{' '}
+      </div>
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Fila 1 */}
@@ -180,13 +195,16 @@ export default function Barbotina() {
           </div>
 
           <div className="md:col-span-1 lg:col-span-3">
-            <InputField
+            <Select
               label="Turno"
-              type="text"
-              name="turno"
-              value={form?.turno || ''}
-              onChange={updateBase}
-              error={error.turno}
+              value={turnoId}
+              onChange={(v) => {
+                setTurnoId(v);
+                setTurnoError('');
+              }}
+              placeholder="Selecciona un turno"
+              getDatos={getObjs}
+              error={turnoError}
             />
           </div>
 

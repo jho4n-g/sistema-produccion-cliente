@@ -6,6 +6,10 @@ import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { registerObj } from '../../../../service/Produccion/Secciones/Prensado.services';
 import { datosPrensadoSecado } from '../../../../schema/Produccion/Seccion/Prensado.schema';
+//
+
+import { getObjs } from '../../../../service/Produccion/Turno.services';
+import Select from '../../../../components/Select';
 
 const NuevaFilaTabla = () => ({
   hora: '',
@@ -76,6 +80,9 @@ export default function Prensado() {
   const [obsInput, setObsInput] = useState('');
   const [dataSave, setDataSave] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+
+  const [turnoError, setTurnoError] = useState(null);
+  const [turnoId, setTurnoId] = useState(null);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -198,6 +205,11 @@ export default function Prensado() {
     setError((prev) => ({ ...prev, [name]: undefined }));
   };
   const handleValidation = async () => {
+    if (!turnoId) {
+      setTurnoError('Selecciona un turno');
+    } else {
+      setTurnoError('');
+    }
     const result = datosPrensadoSecado.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
@@ -216,7 +228,7 @@ export default function Prensado() {
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = result.data;
+      const data = { turno_id: turnoId, ...result.data };
       setDataSave(data);
       setOpenConfirm(true);
     }
@@ -231,6 +243,7 @@ export default function Prensado() {
       }
       if (!res.ok) {
         toast.error(res.message || 'Error al guardar');
+        setOpenConfirm(false);
       }
     } catch (e) {
       toast.error(e.message || 'Error al guardar los datos');
@@ -259,13 +272,16 @@ export default function Prensado() {
           </div>
 
           <div className="md:col-span-1 lg:col-span-3">
-            <InputField
+            <Select
               label="Turno"
-              type="text"
-              name="turno"
-              value={form?.turno || ''}
-              onChange={updateBase}
-              error={error.turno}
+              value={turnoId}
+              onChange={(v) => {
+                setTurnoId(v);
+                setTurnoError('');
+              }}
+              placeholder="Selecciona un turno"
+              getDatos={getObjs}
+              error={turnoError}
             />
           </div>
 

@@ -84,7 +84,7 @@ export const adminNav = [
     items: [
       {
         label: 'Calidad',
-        to: '/admin/config/preferencias1234',
+        to: '/admin/produccion/administracion/calidad',
         icon: Cog6ToothIcon,
       },
       {
@@ -156,7 +156,7 @@ export const adminNav = [
     items: [
       {
         label: 'Disponibilidad por linea',
-        to: '/admin/config/preferencias13',
+        to: '/admin/mantenimiento/disponibilidad-linea',
         icon: Cog6ToothIcon,
       },
     ],
@@ -169,74 +169,74 @@ export const adminNav = [
     items: [
       {
         label: 'Horas extra',
-        to: '/admin/config/preferencias22',
+        to: '/admin/administracion/horas-extra',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Utilidad',
-        to: '/admin/config/preferencias21',
+        to: '/admin/administracion/utilidad',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Generacion de residuos',
-        to: '/admin/config/preferencias23',
+        to: '/admin/administracion/generacion-residuos',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de frecuencia',
-        to: '/admin/config/preferencias25',
+        to: '/admin/administracion/indice-frecuencia',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de severidad',
-        to: '/admin/config/preferencias26',
+        to: '/admin/administracion/indice-severidad',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Consultorio dental',
-        to: '/admin/config/preferencias29',
+        to: '/admin/administracion/consultorio-dental',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Atencion consultorio',
-        to: '/admin/config/preferencias30',
+        to: '/admin/administracion/atencion-consultorio',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice de acciones correctivas',
-        to: '/admin/config/preferencias31',
+        to: '/admin/administracion/indice-acciones-correctivas',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Donaciones',
-        to: '/admin/config/preferencias32',
+        to: '/admin/administracion/donaciones',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Evolucion contado',
-        to: '/admin/config/preferencias33',
+        to: '/admin/administracion/evolucion-contado-credito',
         icon: Cog6ToothIcon,
       },
     ],
   },
   {
     id: 'comercializacion',
-    title: 'Comercializacion14',
+    title: 'Comercializacion',
     icon: Cog6ToothIcon,
     items: [
       {
         label: 'Ingreso por venta total',
-        to: '/admin/config/preferencia15s',
+        to: '/admin/comercializacion/ingreso-venta-total',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Venta total',
-        to: '/admin/config/preferencias16',
+        to: '/admin/comercializacion/venta-total',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Precio unitario',
-        to: '/admin/config/preferencias17',
+        to: '/admin/comercializacion/precio-unitario',
         icon: Cog6ToothIcon,
       },
     ],

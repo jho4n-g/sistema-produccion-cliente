@@ -43,6 +43,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
       const obj = await getObj();
       if (obj.ok) {
         setRow(Array.isArray(obj?.datos) ? obj.datos : []);
+        console.log(obj);
       }
       if (!obj.ok) {
         toast.error(obj.message || 'Error al cargar lo datos');
@@ -145,15 +146,19 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
             <table className="min-w-max w-full table-auto border-separate border-spacing-0 text-sm">
               <thead className="bg-slate-50 sticky top-0 z-10">
                 <tr className="divide-x divide-slate-200">
-                  {columnas.map((c) => (
+                  {columnas.map((c, i) => (
                     <th
                       key={c.key}
-                      className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap"
+                      className={[
+                        'border-b px-4 py-3 text-left font-semibold whitespace-nowrap',
+                        i === 0 && 'sticky left-0 z-20 bg-slate-50',
+                      ].join(' ')}
                     >
                       {c.label}
                     </th>
                   ))}
-                  <th className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap">
+
+                  <th className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap sticky right-0 z-20 bg-slate-50">
                     Acciones
                   </th>
                 </tr>
@@ -182,17 +187,24 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                     </td>
                   </tr>
                 ) : (
-                  paginated.map((data, index) => (
+                  paginated.map((data) => (
                     <tr
-                      key={data.id ?? `${data.fecha}-${index}`}
+                      key={data.id}
                       className="border border-slate-300  divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
                     >
-                      {columnas.map((c) => (
-                        <td key={c.key} className="px-4 py-3">
+                      {columnas.map((c, i) => (
+                        <td
+                          key={c.key}
+                          className={[
+                            'px-4 py-3 whitespace-nowrap',
+                            i === 0 && 'sticky left-0 z-10 bg-white',
+                          ].join(' ')}
+                        >
                           {c.render ? c.render(data) : data[c.key]}
                         </td>
                       ))}
-                      <td className="px-4 py-3">
+
+                      <td className="px-4 py-3 sticky right-0 z-10 bg-white">
                         <div className="flex flex-col gap-2">
                           <button
                             className="

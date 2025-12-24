@@ -7,6 +7,10 @@ import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { registerObj } from '../../../../service/Produccion/Secciones/Atomizado.services';
 import { DatosAtomizado } from '../../../../schema/Produccion/Seccion/Atomizado.schema';
+//
+import { getObjs } from '../../../../service/Produccion/Turno.services';
+import Select from '../../../../components/Select';
+
 const filasControlGranulomtria = [
   { key: 'hora', label: 'HORA', type: 'time' },
   { key: 'silo_n', label: 'SILO N°', type: 'number' },
@@ -64,7 +68,6 @@ const initialForm = () => ({
   fecha: '',
   hora_inicio: '',
   hora_final: '',
-  turno: '',
   operador: '',
   supervisor_turno: '',
   observacionesAtomizadoDatos: [],
@@ -90,6 +93,10 @@ export default function Atomizado() {
   const [errorGranulometria, setErrorGranulometria] = useState({});
   const [errorTablaFosa, setErrorTablaFosa] = useState({});
   const [obsInput, setObsInput] = useState('');
+
+  const [turnoError, setTurnoError] = useState(null);
+  const [turnoId, setTurnoId] = useState(null);
+
   const addObs = () => {
     const v = obsInput.trim();
     if (!v) return;
@@ -184,6 +191,12 @@ export default function Atomizado() {
     setError((prev) => ({ ...prev, [name]: undefined }));
   };
   const handleValidation = async () => {
+    if (!turnoId) {
+      setTurnoError('Selecciona un turno');
+    } else {
+      setTurnoError('');
+    }
+
     const result = DatosAtomizado.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
@@ -207,7 +220,7 @@ export default function Atomizado() {
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = result.data;
+      const data = { turno_id: turnoId, ...result.data };
       setDataSave(data);
       setOpenModalConfirm(true);
     }
@@ -220,6 +233,10 @@ export default function Atomizado() {
         toast.success(res.message || 'Se guardo exitosamente');
         setOpenModalConfirm(false);
         setForm(initialForm());
+      }
+      if (!res.ok) {
+        toast.error(res.message || 'No se puedo guardar los datos');
+        setOpenModalConfirm(false);
       }
     } catch (e) {
       toast.error(e.message || 'Error al guardar');
@@ -288,13 +305,16 @@ export default function Atomizado() {
           </div>
 
           <div className="md:col-span-1 lg:col-span-3">
-            <InputField
+            <Select
               label="Turno"
-              type="text"
-              name="turno"
-              value={form.turno || ''}
-              onChange={updateBase}
-              error={error.turno}
+              value={turnoId}
+              onChange={(v) => {
+                setTurnoId(v);
+                setTurnoError('');
+              }}
+              placeholder="Selecciona un turno"
+              getDatos={getObjs}
+              error={turnoError}
             />
           </div>
 

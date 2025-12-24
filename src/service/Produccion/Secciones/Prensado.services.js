@@ -5,6 +5,7 @@ export const registerObj = async (payload) => {
     const res = await api.post('/produccion/prensado-secado', payload);
     return res.data;
   } catch (e) {
+    console.log(e);
     return e.response.data;
   }
 };

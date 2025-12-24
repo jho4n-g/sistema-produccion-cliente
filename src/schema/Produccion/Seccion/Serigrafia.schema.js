@@ -46,7 +46,6 @@ export const DatosSerigrafia = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   producto: reqStr('Producto'),
   linea: reqStr('Linea'),
-  turno: reqStr('Turno'),
   supervisor_turno: reqStr('Supervisor de turno'),
   operador: reqStr('Operador'),
   pasta1: optStr('Pasta 1'),

@@ -1,14 +1,6 @@
 import { z } from 'zod';
 
-import {
-  reqNum,
-  reqPct,
-  reqStr,
-  reqFloat,
-  optNum,
-  reqTime,
-  optStr,
-} from '../../convert.js';
+import { reqStr, optNum, reqTime, optStr } from '../../convert.js';
 
 const DatosObservacionesEsmalte = z.object({
   observacion: reqStr('Obervaciones Esmalte'),
@@ -46,9 +38,9 @@ const TablaDatosEsmalte = z.object({
 
 export const DatosEsmalte = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
+
   producto: reqStr('Producto'),
   linea: reqStr('Linea'),
-  turno: reqStr('turno'),
   operador: reqStr('Operador'),
   supervisor_turno: reqStr('Supervisor turno'),
   agua_aplicacion: optStr('Agual aplicacion'),

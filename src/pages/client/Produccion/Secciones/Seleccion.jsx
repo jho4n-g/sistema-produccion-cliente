@@ -6,6 +6,9 @@ import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { registerObj } from '../../../../service/Produccion/Secciones/Seleccion.services';
 import { DatosEmbalaje } from '../../../../schema/Produccion/Seccion/SeleccionEmbalaje';
+//
+import { getObjs } from '../../../../service/Produccion/Turno.services';
+import Select from '../../../../components/Select';
 
 const rows = 8;
 
@@ -79,6 +82,9 @@ export default function Prensado() {
   const [obsInput, setObsInput] = useState('');
   const [dataSave, setDataSave] = useState(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+
+  const [turnoError, setTurnoError] = useState(null);
+  const [turnoId, setTurnoId] = useState(null);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -170,7 +176,7 @@ export default function Prensado() {
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = result.data;
+      const data = { turno_id: turnoId, ...result.data };
       setDataSave(data);
       setOpenConfirm(true);
     }
@@ -214,13 +220,16 @@ export default function Prensado() {
           </div>
 
           <div className="md:col-span-1 lg:col-span-3">
-            <InputField
+            <Select
               label="Turno"
-              type="text"
-              name="turno"
-              value={form?.turno || ''}
-              onChange={updateBase}
-              error={error.turno}
+              value={turnoId}
+              onChange={(v) => {
+                setTurnoId(v);
+                setTurnoError('');
+              }}
+              placeholder="Selecciona un turno"
+              getDatos={getObjs}
+              error={turnoError}
             />
           </div>
 

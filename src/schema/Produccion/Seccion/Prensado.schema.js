@@ -47,7 +47,6 @@ const tableSilos = z.object({
 export const datosPrensadoSecado = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   n_prensa: reqNum('n prensa'),
-  turno: reqStr('turno'),
   formato: reqStr('formato'),
   supervisor_turno: reqStr('supervisor de turno'),
   operador: reqStr('Operador'),

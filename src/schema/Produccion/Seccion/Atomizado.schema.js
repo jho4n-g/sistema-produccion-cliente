@@ -56,7 +56,6 @@ export const DatosAtomizado = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   hora_inicio: reqTime('Hora inicio'),
   hora_final: reqTime('Hora Final'),
-  turno: reqStr('Turno'),
   operador: reqStr('Operador'),
   supervisor_turno: reqStr('Supervisor de turno'),
   tabla_atomizado: z.array(TablaAtomizadoDatos).min(0).max(8).default([]),
