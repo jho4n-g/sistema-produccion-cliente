@@ -8,7 +8,7 @@ export default function InputField({
 }) {
   const base =
     'w-full rounded-xl border px-3 py-2 text-sm shadow-sm ' +
-    'focus:outline-none focus:ring-2 min-w-[100px]';
+    'focus:outline-none focus:ring-2 min-w-[130px]';
 
   const normal =
     'border-slate-300 text-slate-700 focus:border-emerald-600 focus:ring-emerald-600';

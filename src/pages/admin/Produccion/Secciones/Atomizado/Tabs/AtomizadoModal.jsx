@@ -430,11 +430,11 @@ export default function AtomizadoModal({
               </button>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-              <table className="min-w-750 text-sm">
+              <table className="text-sm">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                   <tr className="border border-slate-300">
                     <th
-                      className="text-center border-r border-slate-300"
+                      className="px-10 py-3 text-center border-r border-slate-300"
                       rowSpan={2}
                     >
                       HORA
@@ -850,7 +850,7 @@ export default function AtomizadoModal({
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-end p-5">
+            <div className="sticky bottom-0 z-20 bg-white border-t border-slate-200 flex justify-end p-5">
               <button
                 className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
                 onClick={handleValidation}

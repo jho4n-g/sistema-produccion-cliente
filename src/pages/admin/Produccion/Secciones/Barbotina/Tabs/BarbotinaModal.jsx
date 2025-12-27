@@ -352,7 +352,7 @@ export default function BarbotinaModal({
                 </button>
               </div>
               <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-                <table className="min-w-750 text-sm">
+                <table className="text-sm">
                   <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                     <tr className="border border-slate-300">
                       <th
@@ -387,7 +387,7 @@ export default function BarbotinaModal({
                       >
                         HORA FIN
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Lugar uno"
                           type="text"
@@ -397,7 +397,7 @@ export default function BarbotinaModal({
                           error={error.nombre_lugar_uno_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Lugar dos"
                           type="text"
@@ -407,7 +407,7 @@ export default function BarbotinaModal({
                           error={error.nombre_lugar_dos_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Lugar tres"
                           type="text"
@@ -417,7 +417,7 @@ export default function BarbotinaModal({
                           error={error.nombre_lugar_tres_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Lugar cuatro"
                           type="text"
@@ -476,7 +476,7 @@ export default function BarbotinaModal({
                       </th>
                     </tr>
                     <tr className="border border-slate-300">
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Humedad uno"
                           type="number"
@@ -486,7 +486,7 @@ export default function BarbotinaModal({
                           error={error.humedad_lugar_uno_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Humedad dos"
                           type="number"
@@ -496,7 +496,7 @@ export default function BarbotinaModal({
                           error={error.humedad_lugar_dos_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Humedad tres"
                           type="number"
@@ -508,7 +508,7 @@ export default function BarbotinaModal({
                           error={error.humedad_lugar_tres_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Humedad cuatro"
                           type="number"
@@ -520,7 +520,7 @@ export default function BarbotinaModal({
                           error={error.humedad_lugar_cuarto_cargando_molinos}
                         />
                       </th>
-                      <th className="px-10 py-3 text-center border-r border-slate-300">
+                      <th className="px-2 py-3 text-center border-r border-slate-300">
                         <InputField
                           label="Proveedor"
                           type="text"

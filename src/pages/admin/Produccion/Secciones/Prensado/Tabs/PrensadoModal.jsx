@@ -462,7 +462,7 @@ export default function BarbotinaModal({
               </button>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-              <table className="min-w-750 text-sm">
+              <table className="text-sm">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                   <tr className="border border-slate-300">
                     <th
@@ -1088,13 +1088,13 @@ export default function BarbotinaModal({
             </div>
             {/*++*************************************/}
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5 ">
-              <table className="min-w-500 text-sm">
+              <table className="text-sm">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                   <tr className="border-b border-slate-300">
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-5 py-3 text-center border border-slate-300">
                       HUM. SALIDA DEL SECADERO
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         type="number"
                         name="hum_salida_secadora"
@@ -1106,7 +1106,7 @@ export default function BarbotinaModal({
                     <th className="px-10 py-3 text-center border border-slate-300">
                       TEMP. SECADERO
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T1"
                         type="number"
@@ -1116,7 +1116,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t1}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T2"
                         type="number"
@@ -1126,7 +1126,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t2}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T3"
                         type="number"
@@ -1136,7 +1136,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t3}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T4"
                         type="number"
@@ -1146,7 +1146,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t4}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T5"
                         type="number"
@@ -1156,7 +1156,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t5}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="T6"
                         type="number"
@@ -1166,7 +1166,7 @@ export default function BarbotinaModal({
                         error={error.temp_secadero_t6}
                       />
                     </th>
-                    <th className="px-10 py-3 text-center border border-slate-300">
+                    <th className="px-2 py-3 text-center border border-slate-300">
                       <InputField
                         label="Ciclo secadero"
                         type="number"

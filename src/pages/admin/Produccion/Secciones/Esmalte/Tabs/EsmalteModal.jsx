@@ -339,7 +339,7 @@ export default function BarbotinaModal({
               </button>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-              <table className="w-full min-w-750 text-sm">
+              <table className="text-sm">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                   <tr className="border border-slate-300">
                     <th
