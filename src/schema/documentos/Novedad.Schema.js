@@ -1,13 +1,6 @@
 import { z } from 'zod';
 
-import {
-  reqNum,
-  reqPeriodo,
-  optNum,
-  optPct,
-  optStr,
-  reqStr,
-} from '../lib/convert.js';
+import { reqStr } from '../convert.js';
 
 export const DatosNovedad = z.object({
   titulo: reqStr('titulo'),

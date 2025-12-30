@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { reqNum, reqPeriodo, optNum, optPct, optStr, reqStr } from '../convert';
+import { reqStr } from '../convert';
 
 export const DatosProcedimiento = z.object({
   titulo: reqStr('titulo'),

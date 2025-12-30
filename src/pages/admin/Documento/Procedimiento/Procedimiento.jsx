@@ -24,17 +24,50 @@ const columnas = [
 ];
 
 export default function Calidad() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
+
+  const [idRow, setIdRow] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [openDelete, setDelete] = useState(false);
+  //Editar
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
+  const [payloadUpdate, setPayloadUpdate] = useState(null);
+  //create
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openConfirmCreate, setOpenConfirmCreate] = useState(false);
+  const [payloadCreate, setPayloadCreate] = useState(false);
+
+  //create
+  const handleCreate = (payload) => {
+    setPayloadCreate(payload);
+    setOpenConfirmCreate(true);
+  };
+  const handleConfirmCreate = async () => {
+    try {
+      setLoading(true);
+      const res = await createDocuments(payloadCreate);
+      if (res.ok) {
+        toast.success(res.message || 'Registro guardado con éxito');
+        setOpenConfirmCreate(false);
+        setOpenCreate(false);
+        tableRef.current?.reload();
+      }
+      if (!res.ok) {
+        toast.error(res.message || 'Error al actualizar el registro12');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al actualizar el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+  //update
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setDelete(true);
   };
   const hanldeDelete = async () => {
     setLoading(true);
@@ -47,6 +80,7 @@ export default function Calidad() {
       }
       if (!res.ok) {
         toast.error(res.message || 'Error al eliminar el registro');
+        openDelete(false);
       }
     } catch (e) {
       toast.error(e.message || 'Problemos en el servidor');
@@ -55,36 +89,37 @@ export default function Calidad() {
     }
   };
   const closeDelete = () => {
-    setOpenDelete(false);
+    setDelete(false);
     setIdRow(null);
   };
 
   const hanldeEdit = (id) => {
     setIdRow(id);
-    setOpenModal(true);
+    setOpenUpdate(true);
   };
 
   const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
+    setPayloadUpdate(data);
     setOpenModalUpdate(true);
   };
   const handleCloseConfirmUpdate = () => {
     setIdRow(null);
-    setPayload(null);
+    setPayloadUpdate(null);
     setOpenModalUpdate(false);
   };
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     try {
       setLoading(true);
-      const res = await updatedDocument(idRow, payload);
+      const res = await updatedDocument(idRow, payloadUpdate);
       if (res.ok) {
         toast.success('Registro actualizado con éxito');
         setOpenModalUpdate(false);
         tableRef.current?.reload();
-        setOpenModal(false);
+        setOpenUpdate(false);
       }
       if (!res.ok) {
         toast.error(res.message || 'Error al actualizar el registro12');
+        setOpenConfirmCreate(false);
       }
     } catch (e) {
       toast.error(e.message || 'Error al actualizar el registro');
@@ -105,10 +140,11 @@ export default function Calidad() {
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
         botonCrear={true}
-        tituloBoton="Crear nuevo registro"
+        tituloBoton="Nuevo documento"
+        handleCrear={() => setOpenCreate(true)}
       />
       <ConfirmModal
-        open={openModalDelete}
+        open={openDelete}
         title="Eliminar registro"
         message="Esta acción no se puede deshacer. ¿Deseas continuar?"
         confirmText="Sí, eliminar"
@@ -120,8 +156,8 @@ export default function Calidad() {
       />
 
       <ProcedimientoModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
+        open={openUpdate}
+        onClose={() => setOpenUpdate(false)}
         onSave={handleOpenConfirmUpdate}
         fetchById={getIdObj}
         id={idRow}
@@ -136,7 +172,25 @@ export default function Calidad() {
         loading={loading}
         danger={false}
         onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
+        onConfirm={handleUpdate}
+      />
+      <ProcedimientoModal
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSave={handleCreate}
+      />
+      <ConfirmModal
+        open={openConfirmCreate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={() => {
+          setOpenConfirmCreate(false);
+        }}
+        onConfirm={handleConfirmCreate}
       />
     </>
   );

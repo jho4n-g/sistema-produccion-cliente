@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { getDocumentsViewProcedimiento } from '../../../service/Documentos/Procedimientos';
 
-export default function PdfPreviewTW({ novedadId }) {
+export default function PdfPreviewTW({ documentoId, getDocument }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const previousUrlRef = useRef(null);
 
   useEffect(() => {
-    if (!novedadId) return;
+    if (!documentoId) return;
 
     let active = true;
 
@@ -15,7 +14,7 @@ export default function PdfPreviewTW({ novedadId }) {
       setLoading(true);
 
       try {
-        const res = await getDocumentsViewProcedimiento(novedadId); // ✅ await
+        const res = await getDocument(documentoId); // ✅ await
 
         if (!active) return;
 
@@ -56,9 +55,9 @@ export default function PdfPreviewTW({ novedadId }) {
       }
       setPreviewUrl(null);
     };
-  }, [novedadId]);
+  }, [getDocument, documentoId]);
 
-  if (!novedadId) return null;
+  if (!documentoId) return null;
 
   return (
     <div className="mt-4 min-h-65 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -79,7 +78,7 @@ export default function PdfPreviewTW({ novedadId }) {
         {previewUrl ? (
           <iframe
             src={previewUrl}
-            title={`procedimiento-${novedadId}`}
+            title={`procedimiento-${documentoId}`}
             className="h-full w-full border-0"
             key={previewUrl}
           />

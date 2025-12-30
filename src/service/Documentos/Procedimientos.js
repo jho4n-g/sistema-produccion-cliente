@@ -23,7 +23,13 @@ export const getDocumentsProcedimiento = async () => {
     const data = await api.get('/documento/procedimiento');
     return data.data;
   } catch (e) {
-    return e.response.message;
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -32,7 +38,13 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/documento/procedimiento/${id}`);
     return data.data;
   } catch (e) {
-    return e.response.message;
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -75,9 +87,14 @@ export const createDocuments = async (payload) => {
 
     const res = await api.post(`/documento/procedimiento`, fd);
     return res.data;
-  } catch (err) {
-    console.log('Error:', err);
-    return err.response?.data || err.message;
+  } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -97,9 +114,14 @@ export const updatedDocument = async (id, payload) => {
 
     const res = await api.put(`/documento/procedimiento/${id}`, fd);
     return res.data;
-  } catch (err) {
-    console.log('Error:', err);
-    return err.response?.data || err.message;
+  } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -108,6 +130,12 @@ export const delelteDocument = async (id) => {
     const res = await api.delete(`/documento/procedimiento/${id}`);
     return res.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };

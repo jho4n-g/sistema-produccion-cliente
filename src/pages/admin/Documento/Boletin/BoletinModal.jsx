@@ -7,11 +7,8 @@ import PdfPreviewTW from '../PdfPreviewTW'; // tu preview con tailwind
 import InputField from '../../../../components/InputField';
 
 // services + schema (igual que tu MUI)
-import {
-  createDocuments,
-  updatedDocument,
-} from '../../../../service/Documentos/Procedimientos.js';
-import { DatosProcedimiento } from '../../../../schema/documentos/Procedimiento.Schema.js';
+import { getDocumentsViewNovedad } from '../../../../service/Documentos/Novedades.js';
+import { DatosNovedad } from '../../../../schema/documentos/Novedad.Schema.js';
 
 const initialForm = () => ({
   titulo: '',
@@ -26,15 +23,15 @@ export default function PoliticaModal({
   open,
   onClose,
   fetchById,
-  isEditing,
-  onRefres,
+  isEditing = false,
+  onSave,
   id,
 }) {
   const [form, setForm] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState({});
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   const title = isEditing ? 'Edición del documento' : 'Nuevo documento';
@@ -58,7 +55,7 @@ export default function PoliticaModal({
         if (!active) return;
 
         if (data?.ok) {
-          setForm(data.datos ?? {});
+          setForm(data.dato ?? {});
         } else {
           toast.error(data?.message || 'No se pudo cargar el registro');
         }
@@ -104,10 +101,20 @@ export default function PoliticaModal({
   };
 
   const validate = () => {
-    const result = DatosProcedimiento.safeParse(form);
+    const result = DatosNovedad.safeParse(form);
     if (!result.success) {
       setError(result.error.flatten().fieldErrors);
       toast.error('Datos incorrectos');
+      return null;
+    }
+    if (!isEditing && !file) {
+      toast.error('Debe subir un documento PDF');
+      return null;
+    }
+
+    // 3️⃣ Validar tipo de archivo (extra recomendado)
+    if (file && file.type !== 'application/pdf') {
+      toast.error('El archivo debe ser un PDF');
       return null;
     }
     return result.data;
@@ -116,47 +123,13 @@ export default function PoliticaModal({
   const handleCreate = async () => {
     const parsed = validate();
     if (!parsed) return;
-
-    try {
-      setLoading(true);
-      const payload = { ...form, file };
-      const res = await createDocuments(payload);
-
-      if (res?.ok) {
-        toast.success('Guardado correctamente');
-        closeModal();
-        onRefres?.();
-      } else {
-        toast.error(res?.message || 'Error al guardar');
-      }
-    } catch (e) {
-      toast.error(e?.message || 'Error al guardar');
-    } finally {
-      setLoading(false);
-    }
+    onSave({ ...parsed, file });
   };
 
   const handleUpdate = async () => {
     const parsed = validate();
     if (!parsed) return;
-
-    try {
-      setLoading(true);
-      const res = await updatedDocument(id, { ...form, datos: parsed });
-
-      if (res?.ok) {
-        toast.success('Actualizado correctamente');
-        setConfirmOpen(false);
-        closeModal();
-        onRefres?.();
-      } else {
-        toast.error(res?.message || 'Error al actualizar');
-      }
-    } catch (e) {
-      toast.error(e?.message || 'Error al actualizar');
-    } finally {
-      setLoading(false);
-    }
+    onSave({ ...parsed, file });
   };
 
   if (!open) return null;
@@ -270,7 +243,10 @@ export default function PoliticaModal({
                   </div>
                 ) : (
                   // si editas y no seleccionaste nuevo, muestra el PDF del server
-                  <PdfPreviewTW novedadId={id} />
+                  <PdfPreviewTW
+                    documentoId={id}
+                    getDocument={getDocumentsViewNovedad}
+                  />
                 )
               ) : previewUrl ? (
                 <div className="h-100 overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -306,7 +282,7 @@ export default function PoliticaModal({
               {isEditing ? (
                 <button
                   type="button"
-                  onClick={() => setConfirmOpen(true)}
+                  onClick={handleUpdate}
                   disabled={loading}
                   className="rounded-xl bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
                 >
@@ -338,16 +314,6 @@ export default function PoliticaModal({
           )}
         </div>
       </div>
-
-      <ConfirmModal
-        open={confirmOpen}
-        title="¿Está seguro que desea editar?"
-        message="Esta acción no se puede deshacer."
-        loading={loading}
-        danger={false}
-        onConfirm={handleUpdate}
-        onCancel={() => setConfirmOpen(false)}
-      />
     </>
   );
 }

@@ -1,19 +1,12 @@
 import { z } from 'zod';
 
-import {
-  reqNum,
-  reqPeriodo,
-  optNum,
-  optPct,
-  optStr,
-  reqStr,
-} from '../lib/convert.js';
+import { reqStr } from '../convert.js';
 
 export const DatosPolitica = z.object({
-  titulo: optStr('title'),
+  titulo: reqStr('title'),
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   fecha_aprobado: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
-  codigo: optStr('codigo'),
-  descripcion: optStr('Descripcion'),
-  revision: optStr('revsion'),
+  codigo: reqStr('codigo'),
+  descripcion: reqStr('Descripcion'),
+  revision: reqStr('revsion'),
 });

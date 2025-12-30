@@ -4,6 +4,7 @@ import {
   delelteDocument,
   getDocumentsPolitica,
   updatedDocument,
+  getIdDocumentPolitica,
 } from '../../../../service/Documentos/Politica';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import PoliticaModal from './PoliticaModal';
@@ -22,17 +23,24 @@ const columnas = [
 ];
 
 export default function Politica() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
+
+  const [idRow, setIdRow] = useState(null);
+  const [loading, setLoading] = useState(false);
+  //delete
+  const [openDelete, setDelete] = useState(false);
+  //udate
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openConfirmUpdate, setConfirmUpdate] = useState(false);
+  const [payloadUpdate, setPayloadUpdate] = useState(null);
+  //create
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openConfirmCreate, setOpenConfirmCreate] = useState(false);
+  const [payloadCreate, setPayloadCreate] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setDelete(true);
   };
   const hanldeDelete = async () => {
     setLoading(true);
@@ -44,7 +52,9 @@ export default function Politica() {
         tableRef.current?.reload();
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
+        const err = new Error(res.message || 'Erro al acualizar');
+        closeDelete();
+        throw err;
       }
     } catch (e) {
       toast.error(e.message || 'Problemos en el servidor');
@@ -53,36 +63,38 @@ export default function Politica() {
     }
   };
   const closeDelete = () => {
-    setOpenDelete(false);
+    setDelete(false);
     setIdRow(null);
   };
 
   const hanldeEdit = (id) => {
     setIdRow(id);
-    setOpenModal(true);
+    setOpenUpdate(true);
   };
 
   const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+    setPayloadUpdate(data);
+    setConfirmUpdate(true);
   };
   const handleCloseConfirmUpdate = () => {
     setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
+    setPayloadUpdate(null);
+    setOpenUpdate(false);
   };
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     try {
       setLoading(true);
-      const res = await updatedDocument(idRow, payload);
+      const res = await updatedDocument(idRow, payloadUpdate);
       if (res.ok) {
         toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
+        setConfirmUpdate(false);
+        setOpenUpdate(false);
         tableRef.current?.reload();
-        setOpenModal(false);
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
+        const err = new Error(res.message || 'Error al actualizar');
+        setConfirmUpdate(false);
+        throw err;
       }
     } catch (e) {
       toast.error(e.message || 'Error al actualizar el registro');
@@ -90,12 +102,40 @@ export default function Politica() {
       setLoading(false);
     }
   };
+
+  const handleOpenModalConfirmCreate = (payload) => {
+    setOpenConfirmCreate(true);
+    setPayloadCreate(payload);
+  };
+  const hanldeCreate = async () => {
+    try {
+      setLoading(true);
+      const res = await createDocuments(payloadCreate);
+      if (res.ok) {
+        toast.success('Registro actualizado con éxito');
+        setOpenConfirmCreate(false);
+        setOpenModalCreate(false);
+        setPayloadCreate(null);
+        tableRef.current?.reload();
+      }
+      if (!res.ok) {
+        const err = new Error(res.message || 'Error al actualizar');
+        setOpenConfirmCreate(false);
+        throw err;
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al actualizar el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
         getObj={getDocumentsPolitica}
-        titulo="Control documentos/ Procedimientos"
+        titulo="Control documentos/ Politica"
         datosBusqueda={['titulo']}
         columnas={columnas}
         handleDetail={() => {}}
@@ -103,10 +143,11 @@ export default function Politica() {
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
         botonCrear={true}
-        tituloBoton="Crear nuevo registro"
+        tituloBoton="Nuevo documento"
+        handleCrear={() => setOpenModalCreate(true)}
       />
       <ConfirmModal
-        open={openModalDelete}
+        open={openDelete}
         title="Eliminar registro"
         message="Esta acción no se puede deshacer. ¿Deseas continuar?"
         confirmText="Sí, eliminar"
@@ -118,23 +159,40 @@ export default function Politica() {
       />
 
       <PoliticaModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
+        open={openUpdate}
+        onClose={() => setOpenUpdate(false)}
         onSave={handleOpenConfirmUpdate}
-        fetchById={{}}
+        fetchById={getIdDocumentPolitica}
         id={idRow}
-        isEditing={false}
+        isEditing={true}
       />
       <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
+        open={openConfirmUpdate}
+        title="Editar registro"
         message="¿Deseas continuar?"
         confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
         danger={false}
         onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
+        onConfirm={handleUpdate}
+      />
+      <PoliticaModal
+        open={openModalCreate}
+        onClose={() => setOpenModalCreate(false)}
+        onSave={handleOpenModalConfirmCreate}
+        isEditing={false}
+      />
+      <ConfirmModal
+        open={openConfirmCreate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={() => setOpenConfirmCreate(false)}
+        onConfirm={hanldeCreate}
       />
     </>
   );
