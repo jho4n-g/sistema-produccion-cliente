@@ -32,7 +32,7 @@ import AtencionConsultorio from './pages/admin/Administracion/AtencionConsultori
 import ConsultorioDental from './pages/admin/Administracion/ConsultaDental/ConsultorioDental.jsx';
 import HorasExtra from './pages/admin/Administracion/HorasExtra/HorasExtra.jsx';
 import Utilidad from './pages/admin/Administracion/Utilidad/Utilidad.jsx';
-import GeneracionResiduos from './pages/admin/Administracion/GeneracionResiduos/GeneracionResiduio.jsx';
+import GeneracionResiduos from './pages/admin/Administracion/GeneracionResiduos/GeneracionResiduos.jsx';
 import IndiceFrecuencia from './pages/admin/Administracion/IndiceFrecuencia/IndiceFrecuencia.jsx';
 import IndiceSeveridad from './pages/admin/Administracion/IndiceSeveridad/IndiceSeveridad.jsx';
 import IndiceAccionesCorrectivas from './pages/admin/Administracion/IndiceAccionesCorrectivas/IndiceAccionesCorrectivas.jsx';

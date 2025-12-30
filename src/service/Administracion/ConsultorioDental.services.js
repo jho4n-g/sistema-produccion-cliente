@@ -5,7 +5,26 @@ export const getAllObj = async () => {
     const data = await api.get('/administracion/consultorio-dental');
     return data.data;
   } catch (e) {
-    console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
+  }
+};
+export const getIdObj = async (id) => {
+  try {
+    const data = await api.get(`/administracion/consultorio-dental/${id}`);
+    return data.data;
+  } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -18,7 +37,12 @@ export const updateObj = async (id, payload) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -28,7 +52,12 @@ export const registerObj = async (payload) => {
     const data = await api.post('/administracion/consultorio-dental', payload);
     return data.data;
   } catch (e) {
-    console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -38,6 +67,12 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/administracion/consultorio-dental/${id}`);
     return data.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };

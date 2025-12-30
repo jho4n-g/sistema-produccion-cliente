@@ -38,7 +38,6 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/produccion/barbotina/${id}`);
     return data.data;
   } catch (e) {
-    console.log(e);
     if (e.code == 'ERR_NETWORK') {
       return {
         ok: false,

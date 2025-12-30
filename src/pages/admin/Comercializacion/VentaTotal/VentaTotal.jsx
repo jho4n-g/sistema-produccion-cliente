@@ -3,10 +3,12 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Comercializacion/VentaTotal.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import VentaTotalModal from './VentaTotalModal';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -116,6 +118,24 @@ export default function VentaTotal() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <VentaTotalModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

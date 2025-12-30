@@ -3,8 +3,10 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Comercializacion/IngresoPorVentaTotal.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import IngresoVentaTotalModal from './IngresoVentaTotalModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -124,6 +126,24 @@ export default function IngresoVentaTotal() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <IngresoVentaTotalModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

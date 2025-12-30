@@ -3,21 +3,23 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Administracion/Utilidad.serveces';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import UtilidadModal from './UtilidadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
-  { label: 'utilidad_mensual', key: 'utilidad_mensual' },
-  { label: 'meta_mensual', key: 'meta_mensual' },
+  { label: 'Utilidad mensual', key: 'utilidad_mensual' },
+  { label: 'Meta mensual', key: 'meta_mensual' },
   {
-    label: 'meta',
+    label: 'Meta',
     key: 'meta',
   },
   {
-    label: 'cumplimiento_mensual',
+    label: 'Cumplimiento mensual',
     key: 'cumplimiento_mensual',
   },
 ];
@@ -114,6 +116,24 @@ export default function Utilidad() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <UtilidadModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

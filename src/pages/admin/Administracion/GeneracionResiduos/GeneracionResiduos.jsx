@@ -3,58 +3,60 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Administracion/GeneracionResiduos.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import GeneracionResiduosModal from './GeneracionResiduosModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
-  { label: 'n_trabajadores', key: 'n_trabajadores' },
-  { label: 'kg_carton', key: 'kg_carton' },
+  { label: 'N trabajadores', key: 'n_trabajadores' },
+  { label: 'Kg carton', key: 'kg_carton' },
   {
-    label: 'pe',
+    label: 'Pe',
     key: 'pe',
   },
   {
-    label: 'kg_strechfilm',
+    label: 'Kg strechfilm',
     key: 'kg_strechfilm',
   },
   {
-    label: 'kg_bolsas_bigbag',
+    label: 'Kg bolsas bigbag',
     key: 'kg_bolsas_bigbag',
   },
   {
-    label: 'kg_turriles_plasticos',
+    label: 'Kg turriles plasticos',
     key: 'kg_turriles_plasticos',
   },
   {
-    label: 'kg_envase_mil_litros',
+    label: 'Kg envase mil litros',
     key: 'kg_envase_mil_litros',
   },
 
   {
-    label: 'sunchu_kg',
+    label: 'Sunchu kg',
     key: 'sunchu_kg',
   },
   {
-    label: 'kg_madera',
+    label: 'Kg madera',
     key: 'kg_madera',
   },
   {
-    label: 'kg_bidon_azul',
+    label: 'Kg bidon azul',
     key: 'kg_bidon_azul',
   },
   {
-    label: 'kg_aceite_sucio',
-    key: 'kg_aceite_sucio',
+    label: 'Kg aceite sucio',
+    key: 'kg_aceite_ sucio',
   },
   {
-    label: 'kg_bolsas_plasticas_transparentes',
+    label: 'Kg bolsas plasticas transparentes',
     key: 'kg_bolsas_plasticas_transparentes',
   },
   {
-    label: 'kg_bolsas_yute',
+    label: 'Kg bolsas yute',
     key: 'kg_bolsas_yute',
   },
 ];
@@ -151,6 +153,24 @@ export default function GeneracionResiduos() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <GeneracionResiduosModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

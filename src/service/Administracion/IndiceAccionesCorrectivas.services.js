@@ -10,6 +10,18 @@ export const getAllObj = async () => {
   }
 };
 
+export const getIdObj = async (id) => {
+  try {
+    const data = await api.get(
+      `/administracion/indice-acciones-correctivas/${id}`
+    );
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+
 export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(

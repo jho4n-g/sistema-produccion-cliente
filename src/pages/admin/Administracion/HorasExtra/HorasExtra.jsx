@@ -3,8 +3,10 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Administracion/HorasExtra.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import HoraExtraModal from './HoraExtraModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -159,6 +161,24 @@ export default function HorasExtra() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <HoraExtraModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

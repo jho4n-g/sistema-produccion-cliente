@@ -3,27 +3,29 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Mantenimiento/DisponibilidadPorLinea';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import DisponibilidadPorLineaModal from './DisponibilidadPorLineaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
   {
-    label: 'n_horas_productivas_planificadas',
+    label: 'N° horas productivas planificadas',
     key: 'n_horas_productivas_planificadas',
   },
   {
-    label: 'n_horas_lineas_paradas_linea_b',
+    label: 'N° horas lineas paradas linea b',
     key: 'n_horas_lineas_paradas_linea_b',
   },
   {
-    label: 'n_horas_lineas_paradas_line_c',
+    label: 'N° horas lineas paradas linea c',
     key: 'n_horas_lineas_paradas_line_c',
   },
   {
-    label: 'n_horas_lineas_paradas_line_d',
+    label: 'N horas lineas paradas linea d',
     key: 'n_horas_lineas_paradas_line_d',
   },
   {
@@ -124,6 +126,24 @@ export default function DisponibilidadPorLinea() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <DisponibilidadPorLineaModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

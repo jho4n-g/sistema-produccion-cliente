@@ -108,9 +108,14 @@ export const updatedDocument = async (id, payload) => {
 
     const res = await api.put(`/documento/novedad/${id}`, fd);
     return res.data;
-  } catch (err) {
-    console.log('Error:', err);
-    return err.response?.data || err.message;
+  } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 

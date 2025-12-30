@@ -3,8 +3,10 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../service/Administracion/Donaciones.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
+import DonacionesModal from './DonacionesModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -113,6 +115,24 @@ export default function Donaciones() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+      <DonacionesModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

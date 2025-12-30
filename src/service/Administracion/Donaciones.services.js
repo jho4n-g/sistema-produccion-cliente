@@ -9,6 +9,15 @@ export const getAllObj = async () => {
     return e.response.data;
   }
 };
+export const getIdObj = async (id) => {
+  try {
+    const data = await api.get(`/administracion/donaciones/${id}`);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
 
 export const updateObj = async (id, payload) => {
   try {
