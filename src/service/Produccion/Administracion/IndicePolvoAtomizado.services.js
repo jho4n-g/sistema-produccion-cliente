@@ -2,7 +2,7 @@ import { api } from '../../api';
 
 export const getAllObj = async () => {
   try {
-    const data = await api.get('/produccion/indice-consumo-linea/');
+    const data = await api.get('/produccion/indice-polvo-atomizado/');
     return data.data;
   } catch (e) {
     console.log(e);
@@ -10,10 +10,26 @@ export const getAllObj = async () => {
   }
 };
 
+export const getIdObj = async (id) => {
+  try {
+    const data = await api.get(`/produccion/indice-polvo-atomizado/${id}`);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
+  }
+};
+
 export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(
-      `/produccion/indice-consumo-linea/${id}`,
+      `/produccion/indice-polvo-atomizado/${id}`,
       payload
     );
     return data.data;
@@ -25,7 +41,7 @@ export const updateObj = async (id, payload) => {
 
 export const registerObj = async (payload) => {
   try {
-    const data = await api.post('/produccion/indice-consumo-linea/', payload);
+    const data = await api.post('/indice-polvo-atomizado/', payload);
     return data.data;
   } catch (e) {
     console.log(e);
@@ -35,7 +51,7 @@ export const registerObj = async (payload) => {
 
 export const deleteObj = async (id) => {
   try {
-    const data = await api.delete(`/produccion/indice-consumo-linea/${id}`);
+    const data = await api.delete(`/produccion/indice-polvo-atomizado/${id}`);
     return data.data;
   } catch (e) {
     return e.response.data;

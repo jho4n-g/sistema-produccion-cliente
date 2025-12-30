@@ -6,6 +6,12 @@ export const registerObj = async (payload) => {
     return res.data;
   } catch (e) {
     console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -17,7 +23,13 @@ export const getObjs = async () => {
 
     return data.data;
   } catch (e) {
-    return e.message;
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -27,6 +39,12 @@ export const getIdObj = async (id) => {
 
     return res.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -39,6 +57,12 @@ export const UpdateIdObj = async (id, updateddata) => {
     );
     return data.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -48,6 +72,12 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/produccion/prensado-secado/${id}`);
     return data.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };

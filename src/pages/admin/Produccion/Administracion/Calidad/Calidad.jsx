@@ -3,75 +3,77 @@ import {
   deleteObj,
   getAllObj,
   updateObj,
+  getIdObj,
 } from '../../../../../service/Produccion/Administracion/Calidad.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
+import CalidadModal from './CalidadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
   {
-    label: 'produccion_mensual',
+    label: 'Produccion mensual',
     key: 'produccion_mensual',
   },
   {
-    label: 'presupuesto',
+    label: 'Presupuesto',
     key: 'presupuesto',
   },
   {
-    label: 'produccion_primera_mensual',
+    label: 'Produccion primera mensual',
     key: 'produccion_primera_mensual',
   },
   {
-    label: 'produccion_segunda_mensual',
+    label: 'Produccion segunda mensual',
     key: 'produccion_segunda_mensual',
   },
   {
-    label: 'produccion_tercera_mensual',
+    label: 'Produccion tercera mensual',
     key: 'produccion_tercera_mensual',
   },
   //*********** */
   {
-    label: 'primera_calidad_porcentaje',
+    label: 'Primera calidad porcentaje',
     key: 'primera_calidad_porcentaje',
   },
   {
-    label: 'segunda_calidad_porcentaje',
+    label: 'Segunda calidad porcentaje',
     key: 'segunda_calidad_porcentaje',
   },
   {
-    label: 'tercera_calidad_porcentaje',
+    label: 'Tercera calidad porcentaje',
     key: 'tercera_calidad_porcentaje',
   },
   {
-    label: 'cascote_porcentaje',
+    label: 'Cascote porcentaje',
     key: 'cascote_porcentaje',
   },
 
   //********** */
   {
-    label: 'primera_acumulada',
+    label: 'Primera acumulada',
     key: 'primera_acumulada',
   },
   {
-    label: 'cascote_acumulada',
+    label: 'Cascote acumulada',
     key: 'cascote_acumulada',
   },
   {
-    label: 'primera_acumulado_procentaje',
+    label: 'Primera acumulado procentaje',
     key: 'primera_acumulado_procentaje',
   },
   {
-    label: 'cascote_acumulado_procentaje',
+    label: 'Cascote acumulado procentaje',
     key: 'cascote_acumulado_procentaje',
   },
   //******++ */
   {
-    label: 'meta_primera_calidad',
+    label: 'Meta primera calidad',
     key: 'meta_primera_calidad',
   },
   {
-    label: 'meta_cascote_calidad',
+    label: 'Meta cascote calidad',
     key: 'meta_cascote_calidad',
   },
 ];
@@ -168,6 +170,25 @@ export default function Calidad() {
         danger
         onClose={closeDelete}
         onConfirm={hanldeDelete}
+      />
+
+      <CalidadModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleOpenConfirmUpdate}
+        fetchById={getIdObj}
+        id={idRow}
+      />
+      <ConfirmModal
+        open={openModalUpdate}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={handleCloseConfirmUpdate}
+        onConfirm={handleSave}
       />
     </>
   );

@@ -51,7 +51,8 @@ export default function Barbotina() {
         setIdRow(null);
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
+        const err = new Error(res.message || 'Error al eliminar el registro');
+        throw err;
       }
     } catch (e) {
       toast.error(e.message || 'Problemos en el servidor');

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 //
 import { getObjs } from '../../../../../../service/Produccion/Turno.services';
+import { getObjsPrensa } from '../../../../../../service/Produccion/Secciones/Prensa.services.js';
 import Select from '../../../../../../components/Select';
 
 const NuevaFilaTabla = () => ({
@@ -60,6 +61,11 @@ export default function BarbotinaModal({
 
   const [turnoError, setTurnoError] = useState(null);
   const [turnoId, setTurnoId] = useState(null);
+
+  const [prensaError, setPrensaError] = useState();
+  const [prensaId, setPrensaId] = useState([]);
+
+  const [detallesPrensas, setDetallesPrensas] = useState([]);
 
   useEffect(() => {
     if (!open || !id) return; // evita correr si no aplica

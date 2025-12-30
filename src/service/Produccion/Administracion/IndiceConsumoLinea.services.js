@@ -10,6 +10,22 @@ export const getAllObj = async () => {
   }
 };
 
+export const getIdObj = async (id) => {
+  try {
+    const data = await api.get(`/produccion/indice-consumo-linea/${id}`);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
+  }
+};
+
 export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(

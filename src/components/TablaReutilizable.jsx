@@ -25,6 +25,9 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     hanldeDelete,
     handleEdit,
     handleDetail,
+    tituloBoton = 'Crear',
+    botonCrear = false,
+    handleCrear,
   },
   ref
 ) {
@@ -41,15 +44,18 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     setLoading(true);
     try {
       const obj = await getObj();
-      if (obj.ok) {
+      if (obj?.ok) {
         setRow(Array.isArray(obj?.datos) ? obj.datos : []);
-        console.log(obj);
+        console.log(obj.datos);
       }
-      if (!obj.ok) {
-        toast.error(obj.message || 'Error al cargar lo datos');
+      if (!obj?.ok) {
+        const err = new Error(obj.message || 'Error al cargar lo datos');
+        throw err;
       }
     } catch (e) {
-      toast.error(e.message || 'Error al cargar lo datos');
+      toast.error(e?.message || 'Error al cargar los datos', {
+        toastId: 'tabla-reload-error',
+      });
     } finally {
       setLoading(false);
     }
@@ -58,10 +64,6 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
   useImperativeHandle(ref, () => ({
     reload,
   }));
-
-  useEffect(() => {
-    reload();
-  }, [reload]);
 
   const filtered = useMemo(() => {
     const q = normalize(query);
@@ -108,12 +110,25 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     setRowsPerPage(parseInt(evt.target.value, 10));
     setPage(0);
   };
+  useEffect(() => {
+    reload();
+  }, [reload]);
 
   return (
     <>
       <div>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-semibold text">{titulo}</h2>
+          {botonCrear ? (
+            <button
+              className="rounded-xl bg-emerald-800 px-10 py-2 text-white hover:bg-emerald-900"
+              onClick={handleCrear}
+            >
+              {tituloBoton}
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
         <div className="rounded-lg border-2  border-slate-200 bg-white p-6 shadow-sm">
           <div className="relative w-full max-w-sm">
@@ -196,7 +211,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                         <td
                           key={c.key}
                           className={[
-                            'px-4 py-3 whitespace-nowrap',
+                            'px-4 py-3  whitespace-nowrap',
                             i === 0 && 'sticky left-0 z-10 bg-white',
                           ].join(' ')}
                         >

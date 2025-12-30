@@ -5,6 +5,12 @@ export const registerObj = async (payload) => {
     const res = await api.post('/produccion/esmalte', payload);
     return res.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -15,6 +21,12 @@ export const getObjs = async () => {
     const data = await api.get('/produccion/esmalte');
     return data.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -25,6 +37,12 @@ export const getIdObj = async (id) => {
 
     return res.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -34,6 +52,12 @@ export const UpdateIdObj = async (id, updateddata) => {
     const data = await api.put(`/produccion/esmalte/${id}`, updateddata);
     return data.data;
   } catch (e) {
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };
@@ -44,6 +68,12 @@ export const deleteObj = async (id) => {
     return data.data;
   } catch (e) {
     console.log(e);
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
     return e.response.data;
   }
 };

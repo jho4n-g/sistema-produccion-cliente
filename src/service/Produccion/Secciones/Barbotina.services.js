@@ -6,7 +6,13 @@ export const registerObj = async (payload) => {
     return res.data;
   } catch (e) {
     console.log(e);
-    return e.response.data || 'Error del servidor';
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -17,7 +23,13 @@ export const getObjs = async () => {
     return data.data;
   } catch (e) {
     console.log(e);
-    return e.response.data || 'Error del servidor';
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -27,7 +39,13 @@ export const getIdObj = async (id) => {
     return data.data;
   } catch (e) {
     console.log(e);
-    return e.response.data || 'Error del servidor';
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -37,7 +55,13 @@ export const UpdateIdObj = async (id, updateddata) => {
     return data.data;
   } catch (e) {
     console.log(e);
-    return e.response.data || 'Error del servidor';
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };
 
@@ -47,6 +71,12 @@ export const deleteObj = async (id) => {
     return data.data;
   } catch (e) {
     console.log(e);
-    return e.response.data || 'Error del servidor';
+    if (e.code == 'ERR_NETWORK') {
+      return {
+        ok: false,
+        message: 'Error en el servidor',
+      };
+    }
+    return e.response.data;
   }
 };

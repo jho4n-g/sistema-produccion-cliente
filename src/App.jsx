@@ -5,13 +5,28 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import ClienteLayout from './layouts/ClienteLayout.jsx';
 
 //admin
-//produccio administracion
+//documentos
+import ProcedimientoAmin from './pages/admin/Documento/Procedimiento/Procedimiento.jsx';
+import PoliticaAdmin from './pages/admin/Documento/Politica/Politica.jsx';
+import BoletinAdmin from './pages/admin/Documento/Boletin/Boletin.jsx';
+//produccio
 import TabBarbotinaAdmin from './pages/admin/Produccion/Secciones/Barbotina/TabBarbotinaAdmin.jsx';
 import TabAtomizadoAdmin from './pages/admin/Produccion/Secciones/Atomizado/TabAtomizadoAdmin.jsx';
 import TabPrensadoAdmin from './pages/admin/Produccion/Secciones/Prensado/TabPrensadoAdmin.jsx';
 import TabEsmalteAdmin from './pages/admin/Produccion/Secciones/Esmalte/TabEsmalteAdmin.jsx';
 import TabSerigrafiadoAdmin from './pages/admin/Produccion/Secciones/Serigrafia/TabSerigrafiado.jsx';
 import TabSeleccion from './pages/admin/Produccion/Secciones/Seleccion/TabSeleccion.jsx';
+//produccio administracion
+import IndiceConsumoAgua from './pages/admin/Produccion/Administracion/IndiceConsumoAgua/IndiceConsumoAgua.jsx';
+import IndiceConsumoBases from './pages/admin/Produccion/Administracion/IndiceConsumoBases/IndiceConsumoBases.jsx';
+import IndiceConsumoEe from './pages/admin/Produccion/Administracion/IndiceConsumoEE/IndiceConsumoEe.jsx';
+import IndiceConsumoEngobe from './pages/admin/Produccion/Administracion/IndiceConsumoEngobe/IndiceConsumoEngobe.jsx';
+import IndiceConsumoEsmalte from './pages/admin/Produccion/Administracion/IndiceConsumoEsmalte/IndiceConsumoEsmalte.jsx';
+import IndiceConsumoGn from './pages/admin/Produccion/Administracion/IndiceConsumoGn/IndiceConsumoGn.jsx';
+import IndiceConsumoLinea from './pages/admin/Produccion/Administracion/IndiceConsumoLinea/IndiceConsumoLinea.jsx';
+import IndicePolvoAtomizado from './pages/admin/Produccion/Administracion/IndicePolvoAtomizado/IndicePolvoAtomizado.jsx';
+import MonitoreoGasesCombustion from './pages/admin/Produccion/Administracion/MonitoreoGasesCombustion/MonitoreoGasesCombustion.jsx';
+import Produccion from './pages/admin/Produccion/Administracion/Produccion/Produccion.jsx';
 //administracion
 import AtencionConsultorio from './pages/admin/Administracion/AtencionConsultorio/AtencionConsultorio.jsx';
 import ConsultorioDental from './pages/admin/Administracion/ConsultaDental/ConsultorioDental.jsx';
@@ -36,6 +51,8 @@ import Inicio from './pages/client/Inicio.jsx';
 import TabProduccion from './pages/client/Produccion/TabProduccion.jsx';
 //Prueba
 import Prueba from './components/Prueba.jsx';
+//Documentos
+import DocumetosLayout from './pages/document/DocumetosLayout.jsx';
 
 function App() {
   return (
@@ -45,6 +62,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/prueba" element={<Prueba />} />
         <Route path="/admin" element={<AdminLayout />}>
+          {/* Produccion */}
           <Route path="produccion/barbotina" element={<TabBarbotinaAdmin />} />
           <Route path="produccion/atomizado" element={<TabAtomizadoAdmin />} />
           <Route path="produccion/prensado" element={<TabPrensadoAdmin />} />
@@ -54,6 +72,51 @@ function App() {
             element={<TabSerigrafiadoAdmin />}
           />
           <Route path="produccion/seleccion" element={<TabSeleccion />} />
+          {/* Produccion Admistracion */}
+          <Route
+            path="produccion/administracion/calidad"
+            element={<Calidad />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-agua"
+            element={<IndiceConsumoAgua />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-bases"
+            element={<IndiceConsumoBases />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-ee"
+            element={<IndiceConsumoEe />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-engobe"
+            element={<IndiceConsumoEngobe />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-esmalte"
+            element={<IndiceConsumoEsmalte />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-gn"
+            element={<IndiceConsumoGn />}
+          />
+          <Route
+            path="produccion/administracion/indice-consumo-linea"
+            element={<IndiceConsumoLinea />}
+          />
+          <Route
+            path="produccion/administracion/indice-polvo-atomizado"
+            element={<IndicePolvoAtomizado />}
+          />
+          <Route
+            path="produccion/administracion/monitoreo-gases-combustion"
+            element={<MonitoreoGasesCombustion />}
+          />
+          <Route
+            path="produccion/administracion/produccion"
+            element={<Produccion />}
+          />
           {/** administracion */}
           <Route
             path="administracion/atencion-consultorio"
@@ -101,17 +164,20 @@ function App() {
             path="mantenimiento/disponibilidad-linea"
             element={<DisponibilidadPorLinea />}
           />
-          {/** administracion */}
+          {/** Documento */}
           <Route
-            path="produccion/administracion/calidad"
-            element={<Calidad />}
+            path="documento/procedimiento"
+            element={<ProcedimientoAmin />}
           />
+          <Route path="documento/politica" element={<PoliticaAdmin />} />
+          <Route path="documento/boletin" element={<BoletinAdmin />} />
         </Route>
         <Route path="/cliente" element={<ClienteLayout />}>
           <Route index element={<Inicio />} />
           <Route path="inicio" element={<Inicio />} />
           <Route path="produccion/secciones" element={<TabProduccion />} />
         </Route>
+        <Route path="/" element={<DocumetosLayout />} />
       </Routes>
     </BrowserRouter>
   );

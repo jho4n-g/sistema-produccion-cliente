@@ -29,15 +29,19 @@ export const adminNav = [
     items: [
       {
         label: 'Politicas',
-        to: '/admin/citas/reservas',
+        to: '/admin/documento/politica',
         icon: ClipboardDocumentListIcon,
       },
       {
         label: 'Procedimientos',
-        to: '/admin/citas/slots',
+        to: '/admin/documento/procedimiento',
         icon: CalendarDaysIcon,
       },
-      { label: 'Novedades', to: '/admin/citas/feriados', icon: Cog6ToothIcon },
+      {
+        label: 'Novedades',
+        to: '/admin/documento/boletin',
+        icon: Cog6ToothIcon,
+      },
     ],
   },
   {
@@ -89,52 +93,52 @@ export const adminNav = [
       },
       {
         label: 'Indice consumo agua',
-        to: '/admin/config/preferencias12af',
+        to: '/admin/produccion/administracion/indice-consumo-agua',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo bases',
-        to: '/admin/config/preferencia2s',
+        to: '/admin/produccion/administracion/indice-consumo-bases',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo ee',
-        to: '/admin/config/preferencias3',
+        to: '/admin/produccion/administracion/indice-consumo-ee',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo engobe',
-        to: '/admin/config/preferencias4',
+        to: '/admin/produccion/administracion/indice-consumo-engobe',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo esmalte',
-        to: '/admin/config/preferencias5',
+        to: '/admin/produccion/administracion/indice-consumo-esmalte',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo gn',
-        to: '/admin/config/preferencias6',
+        to: '/admin/produccion/administracion/indice-consumo-gn',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice consumo linea',
-        to: '/admin/config/preferencias7',
+        to: '/admin/produccion/administracion/indice-consumo-linea',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Indice polvo atomizado',
-        to: '/admin/config/preferencias8',
+        to: '/admin/produccion/administracion/indice-polvo-atomizado',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Monitoreo gases combustion',
-        to: '/admin/config/preferencias9',
+        to: '/admin/produccion/administracion/monitoreo-gases-combustion',
         icon: Cog6ToothIcon,
       },
       {
         label: 'Produccion',
-        to: '/admin/config/preferencias10',
+        to: '/admin/produccion/administracion/produccion',
         icon: Cog6ToothIcon,
       },
       {
