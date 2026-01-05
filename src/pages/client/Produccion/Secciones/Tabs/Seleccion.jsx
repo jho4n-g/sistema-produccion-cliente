@@ -163,6 +163,11 @@ export default function Prensado() {
   };
 
   const handleValidation = async () => {
+    if (!turnoId) {
+      setTurnoError('Selecciona un turno');
+    } else {
+      setTurnoError('');
+    }
     const result = DatosEmbalaje.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
