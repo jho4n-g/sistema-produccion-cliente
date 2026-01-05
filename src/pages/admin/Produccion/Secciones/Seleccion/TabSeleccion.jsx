@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Tabs from '../../../../../components/Tabs';
 import SeleccionAdmin from './Tabs/Seleccion';
-import SeleccionCliente from '../../../../client/Produccion/Secciones/Seleccion';
+import SeleccionCliente from '../../../../client/Produccion/Secciones/Tabs/Seleccion';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

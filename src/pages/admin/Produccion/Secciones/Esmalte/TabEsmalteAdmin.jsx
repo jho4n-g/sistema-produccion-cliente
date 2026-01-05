@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Tabs from '../../../../../components/Tabs';
 import EsmalteAdmin from './Tabs/Esmalte';
-import EsmalteCliente from '../../../../client/Produccion/Secciones/Esmalte';
+import EsmalteCliente from '../../../../client/Produccion/Secciones/Tabs/Esmalte';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

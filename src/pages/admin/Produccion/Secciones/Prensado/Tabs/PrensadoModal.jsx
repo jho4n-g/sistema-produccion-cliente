@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { datosPrensadoSecado } from '../../../../../../schema/Produccion/Seccion/Prensado.schema';
-import { extractArrayFieldErrors } from '../../../../../../helpers/normalze.helpers';
-import InputField from '../../../../../../components/InputField';
+import { datosPrensadoSecado } from '@schema/Produccion/Seccion/Prensado.schema';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 //
-import { getObjs } from '../../../../../../service/Produccion/Turno.services';
-import { getObjsPrensa } from '../../../../../../service/Produccion/Secciones/Prensa.services.js';
-import Select from '../../../../../../components/Select';
+import { getObjs } from '@service/Produccion/Turno.services';
+import { getObjsPrensa } from '@service/Produccion/Secciones/Prensa.services.js';
+import Select from '@components/Select';
 
 const NuevaFilaTabla = () => ({
   hora: '',

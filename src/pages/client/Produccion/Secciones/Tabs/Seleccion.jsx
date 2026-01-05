@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import InputField from '../../../../components/InputField';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
-import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
-import ConfirmModal from '../../../../components/ConfirmModal';
-import { registerObj } from '../../../../service/Produccion/Secciones/Seleccion.services';
-import { DatosEmbalaje } from '../../../../schema/Produccion/Seccion/SeleccionEmbalaje';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import ConfirmModal from '@components/ConfirmModal';
+import { registerObj } from '@service/Produccion/Secciones/Seleccion.services';
+import { DatosEmbalaje } from '@schema/Produccion/Seccion/SeleccionEmbalaje';
 //
-import { getObjs } from '../../../../service/Produccion/Turno.services';
-import Select from '../../../../components/Select';
+import { getObjs } from '@service/Produccion/Turno.services';
+import Select from '@components/Select';
 
 const rows = 8;
 

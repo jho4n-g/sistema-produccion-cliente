@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Tabs from '../../../../../components/Tabs';
 import BarbotinaAdmin from './Tabs/Barbotina';
-import BarbotinaCliente from '../../../../client/Produccion/Secciones/Barbotina';
+import BarbotinaCliente from '../../../../client/Produccion/Secciones/Tabs/Barbotina';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

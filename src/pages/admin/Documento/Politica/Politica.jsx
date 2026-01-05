@@ -1,12 +1,12 @@
-import TablaRetutilizable from '../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   createDocuments,
   delelteDocument,
   getDocumentsPolitica,
   updatedDocument,
   getIdDocumentPolitica,
-} from '../../../../service/Documentos/Politica';
-import ConfirmModal from '../../../../components/ConfirmModal';
+} from '@service/Documentos/Politica';
+import ConfirmModal from '@components/ConfirmModal';
 import PoliticaModal from './PoliticaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';

@@ -1,11 +1,11 @@
-import TablaRetutilizable from '../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   deleteObj,
   getAllObj,
   updateObj,
   getIdObj,
-} from '../../../../service/Comercializacion/IngresoPorVentaTotal.services';
-import ConfirmModal from '../../../../components/ConfirmModal';
+} from '@service/Comercializacion/IngresoPorVentaTotal.services';
+import ConfirmModal from '@components/ConfirmModal';
 import IngresoVentaTotalModal from './IngresoVentaTotalModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';

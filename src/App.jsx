@@ -48,7 +48,11 @@ import DisponibilidadPorLinea from './pages/admin/Mantenimiento/DisponibilidadLi
 import Calidad from './pages/admin/Produccion/Administracion/Calidad/Calidad.jsx';
 //cliente
 import Inicio from './pages/client/Inicio.jsx';
-import TabProduccion from './pages/client/Produccion/TabProduccion.jsx';
+import TabProduccion from './pages/client/Produccion/Secciones/TabProduccion.jsx';
+import TabProduccionAdministracion from './pages/client/Produccion/Administracion/TabProduccionAdministracion.jsx';
+import TabProduccionMantenimiento from './pages/client/Mantenimiento/TabMantenimiento.jsx';
+import TabAdministracion from './pages/client/Administracion/TabAdministracion.jsx';
+import TabComercializacion from './pages/client/Comercializacion/TabComercializacion.jsx';
 //Prueba
 import Prueba from './components/Prueba.jsx';
 //Documentos
@@ -176,6 +180,16 @@ function App() {
           <Route index element={<Inicio />} />
           <Route path="inicio" element={<Inicio />} />
           <Route path="produccion/secciones" element={<TabProduccion />} />
+          <Route
+            path="produccion/administracion"
+            element={<TabProduccionAdministracion />}
+          />
+          <Route
+            path="produccion/mantenimiento"
+            element={<TabProduccionMantenimiento />}
+          />
+          <Route path="adminitracion" element={<TabAdministracion />} />
+          <Route path="comercializacion" element={<TabComercializacion />} />
         </Route>
         <Route path="/" element={<DocumetosLayout />} />
       </Routes>

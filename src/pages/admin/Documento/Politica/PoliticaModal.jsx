@@ -3,11 +3,11 @@ import { toast } from 'react-toastify';
 import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import PdfPreviewTW from '../PdfPreviewTW'; // tu preview con tailwind
-import InputField from '../../../../components/InputField';
+import InputField from '@components/InputField';
 
 // services + schema (igual que tu MUI)
-import { getDocumentsViewPolitica } from '../../../../service/Documentos/Politica.js';
-import { DatosPolitica } from '../../../../schema/documentos/Politica.Schema.js';
+import { getDocumentsViewPolitica } from '@service/Documentos/Politica.js';
+import { DatosPolitica } from '@schema/documentos/Politica.Schema.js';
 
 const initialForm = () => ({
   titulo: '',

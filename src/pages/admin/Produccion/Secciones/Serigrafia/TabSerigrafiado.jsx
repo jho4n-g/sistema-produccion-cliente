@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Tabs from '../../../../../components/Tabs';
 import SerigrafiadoAdmin from './Tabs/Serigrafia';
-import SerigrafiadoCliente from '../../../../client/Produccion/Secciones/Serigrafia';
+import SerigrafiadoCliente from '../../../../client/Produccion/Secciones/Tabs/Serigrafia';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

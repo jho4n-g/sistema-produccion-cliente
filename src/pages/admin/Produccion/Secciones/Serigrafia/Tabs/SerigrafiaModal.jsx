@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { DatosSerigrafia } from '../../../../../../schema/Produccion/Seccion/Serigrafia.schema';
-import { extractArrayFieldErrors } from '../../../../../../helpers/normalze.helpers';
-import InputField from '../../../../../../components/InputField';
+import { DatosSerigrafia } from '@schema/Produccion/Seccion/Serigrafia.schema';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import { getObjs } from '../../../../../../service/Produccion/Turno.services';
-import Select from '../../../../../../components/Select';
+import { getObjs } from '@service/Produccion/Turno.services';
+import Select from '@components/Select';
 
 const rows = 8;
 

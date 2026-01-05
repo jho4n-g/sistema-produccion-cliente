@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import InputField from '../../../../components/InputField';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
-import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
-import ConfirmModal from '../../../../components/ConfirmModal';
-import { registerObj } from '../../../../service/Produccion/Secciones/Prensado.services';
-import { datosPrensadoSecado } from '../../../../schema/Produccion/Seccion/Prensado.schema';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import ConfirmModal from '@components/ConfirmModal';
+import { registerObj } from '@service/Produccion/Secciones/Prensado.services';
+import { datosPrensadoSecado } from '@schema/Produccion/Seccion/Prensado.schema';
 //
-
-import { getObjs } from '../../../../service/Produccion/Turno.services';
-import Select from '../../../../components/Select';
+import { getObjs } from '@service/Produccion/Turno.services';
+import Select from '@components/Select';
 
 const NuevaFilaTabla = () => ({
   hora: '',

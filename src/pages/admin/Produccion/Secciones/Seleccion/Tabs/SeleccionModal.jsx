@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { DatosEmbalaje } from '../../../../../../schema/Produccion/Seccion/SeleccionEmbalaje';
-import { extractArrayFieldErrors } from '../../../../../../helpers/normalze.helpers';
-import InputField from '../../../../../../components/InputField';
+import { DatosEmbalaje } from '@schema/Produccion/Seccion/SeleccionEmbalaje';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import { getObjs } from '../../../../../../service/Produccion/Turno.services';
-import Select from '../../../../../../components/Select';
+import { getObjs } from '@service/Produccion/Turno.services';
+import Select from '@components/Select';
 
 const NuevaFilaTabla = () => ({
   hora: '',

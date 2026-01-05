@@ -1,11 +1,11 @@
-import TablaRetutilizable from '../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   deleteObj,
   getAllObj,
   updateObj,
   getIdObj,
-} from '../../../../service/Mantenimiento/DisponibilidadPorLinea';
-import ConfirmModal from '../../../../components/ConfirmModal';
+} from '@service/Mantenimiento/DisponibilidadPorLinea';
+import ConfirmModal from '@components/ConfirmModal';
 import DisponibilidadPorLineaModal from './DisponibilidadPorLineaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';

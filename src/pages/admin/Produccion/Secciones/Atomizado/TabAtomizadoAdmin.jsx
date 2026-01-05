@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Tabs from '../../../../../components/Tabs';
+import Tabs from '@components/Tabs';
 import AtomizadoAdmin from './Tabs/Atomizado';
-import AtomizadoCliente from '../../../../client/Produccion/Secciones/Atomizado';
+import AtomizadoCliente from '../../../../client/Produccion/Secciones/Tabs/Atomizado';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

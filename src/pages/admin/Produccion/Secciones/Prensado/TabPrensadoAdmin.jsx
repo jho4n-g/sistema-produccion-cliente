@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Tabs from '../../../../../components/Tabs';
 import PrensadoAdmin from './Tabs/Prensado';
-import PrensadoCliente from '../../../../client/Produccion/Secciones/Prensado';
+import PrensadoCliente from '../../../../client/Produccion/Secciones/Tabs/Prensado';
 
 const tabs = [
   { key: 'tabla', label: 'Tabla' },

@@ -1,11 +1,11 @@
-import TablaRetutilizable from '../../../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   getObjs,
   UpdateIdObj,
   deleteObj,
   getIdObj,
-} from '../../../../../../service/Produccion/Secciones/Prensado.services';
-import ConfirmModal from '../../../../../../components/ConfirmModal';
+} from '@service/Produccion/Secciones/Prensado.services';
+import ConfirmModal from '@components/ConfirmModal';
 import PrensadoGif from '../../../../../../animation/Prensado.gif';
 import PrensadoModal from './PrensadoModal';
 import { useState, useRef } from 'react';

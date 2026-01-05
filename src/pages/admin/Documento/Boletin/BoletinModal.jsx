@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import ConfirmModal from '../../../../components/ConfirmModal.jsx';
 import PdfPreviewTW from '../PdfPreviewTW'; // tu preview con tailwind
-import InputField from '../../../../components/InputField';
+import InputField from '@components/InputField';
 
 // services + schema (igual que tu MUI)
-import { getDocumentsViewNovedad } from '../../../../service/Documentos/Novedades.js';
-import { DatosNovedad } from '../../../../schema/documentos/Novedad.Schema.js';
+import { getDocumentsViewNovedad } from '@service/Documentos/Novedades.js';
+import { DatosNovedad } from '@schema/documentos/Novedad.Schema.js';
 
 const initialForm = () => ({
   titulo: '',

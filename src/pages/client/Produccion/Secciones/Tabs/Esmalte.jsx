@@ -1,57 +1,59 @@
 import { useState } from 'react';
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-
-import { datosBarbotina } from '../../../../schema/Produccion/Seccion/Barbotina.schema';
-import InputField from '../../../../components/InputField';
+import { DatosEsmalte } from '@schema/Produccion/Seccion/Esmalte.schema';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
-import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
-import ConfirmModal from '../../../../components/ConfirmModal';
-import { registerObj } from '../../../../service/Produccion/Secciones/Barbotina.services';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { registerObj } from '@service/Produccion/Secciones/Esmalte.services';
+import ConfirmModal from '@components/ConfirmModal';
 //
-import { getObjs } from '../../../../service/Produccion/Turno.services';
-import Select from '../../../../components/Select';
-
-const rows = 15;
+import { getObjs } from '@service/Produccion/Turno.services';
+import Select from '@components/Select';
 
 const NuevaFilaTabla = () => ({
-  deflo_cargando_molinos: '',
-  dens_descargando_molinos: '',
-  h2o_cargando_molinos: '',
-  hora_final: '',
-  hora_inicio: '',
-  n_fosa_descargando_molinos: '',
-  n_molino_cargando_molinos: '',
-  producto_descargando_molinos: '',
-  reoma_cargando_molinos: '',
-  res_descargando_molinos: '',
-  tn_lugar_cuantro_cargando_molinos: '',
-  tn_lugar_dos_cargando_molinos: '',
-  tn_lugar_tres_cargando_molinos: '',
-  tn_lugar_uno_cargando_molinos: '',
-  visc_descargando_molinos: '',
+  hora: '',
+  operador_aplicacion_agua: '',
+  sup_prod_aplicacion_agua: '',
+  operador_aplicacion_engobe: '',
+  sup_prod_aplicacion_engobe: '',
+  operador_vizcosidad_normal: '',
+  sup_prod_vizcosidad_normal: '',
+  operador_densidad_recuperado: '',
+  sup_prod_densidad_recuperado: '',
+  operador_residuo_implemeable: '',
+  sup_prod_residuo_implemeable: '',
+  operador_aplicacion_esmalte: '',
+  sup_prod_aplicacion_esmalte: '',
+  operador_vizcosidad_brillante_recuperado: '',
+  sup_prod_vizcosidad_brillante_recuperado: '',
+  operador_densidad_transparente_satinado: '',
+  sup_prod_densidad_transparente_satinado: '',
+  operador_residuo_digital_blanco: '',
+  sup_prod_residuo_digital_blanco: '',
 });
+const rows = 8;
+
 const initialForm = () => ({
-  deflo_proveerdo_cargando_molinos: '',
-  equipo: '',
+  agua_aplicacion: '',
+  blanco_residuo: '',
+  brillante_viscosidad: '',
+  digital_residuo: '',
   fecha: '',
-  horometro_final: '',
-  horometro_inicio: '',
-  humedad_lugar_cuarto_cargando_molinos: '',
-  humedad_lugar_dos_cargando_molinos: '',
-  humedad_lugar_tres_cargando_molinos: '',
-  humedad_lugar_uno_cargando_molinos: '',
-  nombre_lugar_cuarto_cargando_molinos: '',
-  nombre_lugar_dos_cargando_molinos: '',
-  nombre_lugar_tres_cargando_molinos: '',
-  nombre_lugar_uno_cargando_molinos: '',
+  implemeable_residuo: '',
+  linea: '',
+  normal_viscosidad: '',
   operador: '',
+  producto: '',
+  recuperado_densidad: '',
+  recuperado_viscosidad: '',
+  satinado_densidad: '',
   supervisor_turno: '',
+  tranparente_densidad: '',
   turno: '',
-  ObservacionesBarbotinaDatos: [],
-  TablaBarbotinaDatos: [],
+  datos_tabla_esmalte: [],
 });
 
-export default function Barbotina() {
+export default function Esmalte() {
   const [form, setForm] = useState(initialForm());
   const [error, setError] = useState({});
   const [tablaError, setTablaError] = useState({});
@@ -68,8 +70,8 @@ export default function Barbotina() {
     if (!v) return;
     setForm((f) => ({
       ...f,
-      ObservacionesBarbotinaDatos: [
-        ...(f.ObservacionesBarbotinaDatos ?? []),
+      observaciones_esmalte: [
+        ...(f.observaciones_esmalte ?? []),
         { observacion: v },
       ],
     }));
@@ -79,20 +81,19 @@ export default function Barbotina() {
   const removeObs = (index) => {
     setForm((f) => ({
       ...f,
-      ObservacionesBarbotinaDatos: f.ObservacionesBarbotinaDatos.filter(
+      observaciones_esmalte: f.observaciones_esmalte.filter(
         (_, i) => i !== index
       ),
     }));
   };
-
   const setCargaTabla = (idx, field, value) => {
     setForm((f) => {
-      const rows = Array.isArray(f?.TablaBarbotinaDatos)
-        ? [...f.TablaBarbotinaDatos]
+      const rows = Array.isArray(f?.datos_tabla_esmalte)
+        ? [...f.datos_tabla_esmalte]
         : [];
       if (idx < 0 || idx >= rows.length) return f; // evita índices fuera de rango
       rows[idx] = { ...(rows[idx] ?? {}), [field]: value };
-      return { ...f, TablaBarbotinaDatos: rows };
+      return { ...f, datos_tabla_esmalte: rows };
     });
 
     // Usa el setter real de errores (p.ej., setTablaError)
@@ -108,34 +109,39 @@ export default function Barbotina() {
       return arr;
     });
   };
-  const updateBase = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-    setError((prev) => ({ ...prev, [name]: undefined }));
-  };
   const addRows = () => {
     setForm((f) => {
-      if (f.TablaBarbotinaDatos.length >= rows) return f;
+      if (f.datos_tabla_esmalte?.length >= rows) return f;
       return {
         ...f,
-        TablaBarbotinaDatos: [...f.TablaBarbotinaDatos, NuevaFilaTabla()],
+        datos_tabla_esmalte: [...f.datos_tabla_esmalte, NuevaFilaTabla()],
       };
     });
   };
 
   const removeRows = () => {
     setForm((f) => {
-      if (f.TablaBarbotinaDatos.length <= 0) return f;
-      return { ...f, TablaBarbotinaDatos: f.TablaBarbotinaDatos.slice(0, -1) };
+      if (f.datos_tabla_esmalte.length <= 0) return f;
+      return {
+        ...f,
+        datos_tabla_esmalte: f.datos_tabla_esmalte.slice(0, -1),
+      };
     });
   };
+
+  const updateBase = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: undefined }));
+  };
+
   const handleValidation = async () => {
     if (!turnoId) {
       setTurnoError('Selecciona un turno');
     } else {
       setTurnoError('');
     }
-    const result = datosBarbotina.safeParse(form);
+    const result = DatosEsmalte.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
 
@@ -143,14 +149,13 @@ export default function Barbotina() {
         result.error,
         'TablaBarbotinaDatos'
       );
-
+      console.log(fieldErrors);
       setTablaError(tablaErrors);
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = { turno_id: turnoId, ...result.data };
-
       setDataSave(data);
       setOpenModalConfirm(true);
     }
@@ -164,21 +169,17 @@ export default function Barbotina() {
         setOpenModalConfirm(false);
         setForm(initialForm());
       }
-      if (!res.ok) {
-        toast.error(res.message || 'Se guardo exitosamente');
-      }
     } catch (e) {
       toast.error(e.message || 'Error al guardar');
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-        <h3 className="text-lg font-semibold text-slate-900">
-          Barbotina Modal
-        </h3>
+        <h3 className="text-lg font-semibold text-slate-900">Esmalte Modal</h3>
       </div>
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
@@ -232,37 +233,27 @@ export default function Barbotina() {
           </div>
           <div className="md:col-span-1 lg:col-span-6">
             <InputField
-              label="Equipo"
+              label="Linea"
               type="text"
-              name="equipo"
-              value={form?.equipo || ''}
+              name="linea"
+              value={form?.linea || ''}
               onChange={updateBase}
-              error={error.equipo}
+              error={error.linea}
             />
           </div>
           <div className="md:col-span-1 lg:col-span-6">
             <InputField
-              label="Horometro inicio"
-              type="number"
-              name="horometro_inicio"
-              value={form?.horometro_inicio || ''}
+              label="Producto"
+              type="text"
+              name="producto"
+              value={form?.producto || ''}
               onChange={updateBase}
-              error={error.horometro_inicio}
-            />
-          </div>
-          <div className="md:col-span-1 lg:col-span-6">
-            <InputField
-              label="Horometro fin"
-              type="number"
-              name="horometro_final"
-              value={form?.horometro_final || ''}
-              onChange={updateBase}
-              error={error.horometro_final}
+              error={error.producto}
             />
           </div>
 
           {/* Observaciones + botón */}
-          <div className="md:col-span-2 lg:col-span-6">
+          <div className="md:col-span-2 lg:col-span-7">
             <InputField
               label="Observaciones"
               type="text"
@@ -278,7 +269,7 @@ export default function Barbotina() {
             />
 
             <div className="flex flex-wrap gap-2 mt-2">
-              {(form?.ObservacionesBarbotinaDatos ?? []).map((item, idx) => (
+              {(form?.observaciones_esmalte ?? []).map((item, idx) => (
                 <span
                   key={idx}
                   className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700 ring-1 ring-slate-200"
@@ -309,9 +300,9 @@ export default function Barbotina() {
               <PlusIcon className="h-5 w-5" />
             </button>
           </div>
-          <div className="md:col-span-2 lg:col-span-3 mt-6">
+          <div className="md:col-span-2 lg:col-span-2 mt-6">
             <button
-              className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
+              className="rounded-xl bg-green-800 px-1 py-2 text-white hover:bg-green-900"
               onClick={handleValidation}
             >
               Registrar datos
@@ -334,448 +325,564 @@ export default function Barbotina() {
         </button>
       </div>
       <div className="overflow-x-auto rounded-xl border border-slate-200 shadow my-5 px-5">
-        <table className="min-w-750 text-sm">
+        <table className="w-full min-w-750 text-sm">
           <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
             <tr className="border border-slate-300">
               <th
                 className="px-10 py-3 text-center border-r border-slate-300"
-                colSpan={8}
-              >
-                CARGANDO MOLINOS
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                colSpan={7}
-              >
-                DESCARGANDO MOLINOS
-              </th>
-            </tr>
-            <tr className="border border-slate-300">
-              <th className="text-center border-r border-slate-300" rowSpan={2}>
-                MOLINO
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
                 rowSpan={3}
               >
-                HORA INICIO
+                HORA
               </th>
               <th
                 className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={3}
+                colSpan={2}
               >
-                HORA FIN
-              </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
                 <InputField
-                  label="Lugar uno"
+                  label="Agua"
                   type="text"
-                  name="nombre_lugar_uno_cargando_molinos"
-                  value={form?.nombre_lugar_uno_cargando_molinos || ''}
+                  name="agua_aplicacion"
+                  value={form?.agua_aplicacion || ''}
                   onChange={updateBase}
-                  error={error.nombre_lugar_uno_cargando_molinos}
+                  error={error.agua_aplicacion}
                 />
               </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                ENGOBE
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
                 <InputField
-                  label="Lugar dos"
+                  label="Normal"
                   type="text"
-                  name="nombre_lugar_dos_cargando_molinos"
-                  value={form?.nombre_lugar_dos_cargando_molinos || ''}
+                  name="normal_viscosidad"
+                  value={form?.normal_viscosidad || ''}
                   onChange={updateBase}
-                  error={error.nombre_lugar_dos_cargando_molinos}
+                  error={error.normal_viscosidad}
                 />
               </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
+              <th
+                className="px-2 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
                 <InputField
-                  label="Lugar tres"
+                  label="Recuperado"
                   type="text"
-                  name="nombre_lugar_tres_cargando_molinos"
-                  value={form?.nombre_lugar_tres_cargando_molinos || ''}
+                  name="recuperado_densidad"
+                  value={form?.recuperado_densidad || ''}
                   onChange={updateBase}
-                  error={error.nombre_lugar_tres_cargando_molinos}
+                  error={error.recuperado_densidad}
                 />
               </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
+              <th
+                className="px-2 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
                 <InputField
-                  label="Lugar cuatro"
+                  label="Implemeable"
                   type="text"
-                  name="nombre_lugar_cuarto_cargando_molinos"
-                  value={form?.nombre_lugar_cuarto_cargando_molinos || ''}
+                  name="implemeable_residuo"
+                  value={form?.implemeable_residuo || ''}
                   onChange={updateBase}
-                  error={error.nombre_lugar_cuarto_cargando_molinos}
+                  error={error.implemeable_residuo}
                 />
               </th>
               <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
+                className="px-2 py-3 text-center border-r border-slate-300"
+                colSpan={2}
               >
-                H2O
+                ESMALTE
               </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
-                DEFLO
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
-              >
-                REOMA
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
-              >
-                DENS
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
-              >
-                VISC
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
-              >
-                RES
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={2}
-              >
-                FOSA
-              </th>
-              <th
-                className="px-10 py-3 text-center border-r border-slate-300"
-                rowSpan={3}
-              >
-                PRODUCTO
-              </th>
-            </tr>
-            <tr className="border border-slate-300">
-              <th className="px-10 py-3 text-center border-r border-slate-300">
+              <th className="px-2 py-3 text-center border-r border-slate-300">
                 <InputField
-                  label="Humedad uno"
-                  type="number"
-                  name="humedad_lugar_uno_cargando_molinos"
-                  value={form?.humedad_lugar_uno_cargando_molinos || ''}
-                  onChange={updateBase}
-                  error={error.humedad_lugar_uno_cargando_molinos}
-                />
-              </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
-                <InputField
-                  label="Humedad dos"
-                  type="number"
-                  name="humedad_lugar_dos_cargando_molinos"
-                  value={form?.humedad_lugar_dos_cargando_molinos || ''}
-                  onChange={updateBase}
-                  error={error.humedad_lugar_dos_cargando_molinos}
-                />
-              </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
-                <InputField
-                  label="Humedad tres"
-                  type="number"
-                  name="humedad_lugar_tres_cargando_molinos"
-                  value={form?.humedad_lugar_tres_cargando_molinos || ''}
-                  onChange={updateBase}
-                  error={error.humedad_lugar_tres_cargando_molinos}
-                />
-              </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
-                <InputField
-                  label="Humedad cuatro"
-                  type="number"
-                  name="humedad_lugar_cuarto_cargando_molinos"
-                  value={form?.humedad_lugar_cuarto_cargando_molinos || ''}
-                  onChange={updateBase}
-                  error={error.humedad_lugar_cuarto_cargando_molinos}
-                />
-              </th>
-              <th className="px-10 py-3 text-center border-r border-slate-300">
-                <InputField
-                  label="Proveedor"
+                  label="Brillante"
                   type="text"
-                  name="deflo_proveerdo_cargando_molinos"
-                  value={form?.deflo_proveerdo_cargando_molinos || ''}
+                  name="brillante_viscosidad"
+                  value={form?.brillante_viscosidad || ''}
                   onChange={updateBase}
-                  error={error.deflo_proveerdo_cargando_molinos}
+                  error={error.brillante_viscosidad}
+                />
+              </th>
+              <th className="px-2 py-3 text-center border-r border-slate-300">
+                <InputField
+                  label="Recuperado"
+                  type="text"
+                  name="recuperado_viscosidad"
+                  value={form?.recuperado_viscosidad || ''}
+                  onChange={updateBase}
+                  error={error.recuperado_viscosidad}
+                />
+              </th>
+              <th className="px-2 py-3 text-center border-r border-slate-300">
+                <InputField
+                  label="Transparente"
+                  type="text"
+                  name="tranparente_densidad"
+                  value={form?.tranparente_densidad || ''}
+                  onChange={updateBase}
+                  error={error.tranparente_densidad}
+                />
+              </th>
+              <th className="px-2 py-3 text-center border-r border-slate-300">
+                <InputField
+                  label="Satinado"
+                  type="text"
+                  name="satinado_densidad"
+                  value={form?.satinado_densidad || ''}
+                  onChange={updateBase}
+                  error={error.satinado_densidad}
+                />
+              </th>
+              <th className="px-2 py-3 text-center border-r border-slate-300">
+                <InputField
+                  label="Digital"
+                  type="text"
+                  name="digital_residuo"
+                  value={form?.digital_residuo || ''}
+                  onChange={updateBase}
+                  error={error.digital_residuo}
+                />
+              </th>
+              <th className="px-2 py-3  border-r border-slate-300">
+                <InputField
+                  label="* "
+                  type="text"
+                  name="blanco_residuo"
+                  value={form?.blanco_residuo || ''}
+                  onChange={updateBase}
+                  error={error.blanco_residuo}
                 />
               </th>
             </tr>
             <tr className="border border-slate-300">
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                APLICACION [G]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                APLICACION [G]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                VIZCOCIDAD [S]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                DENSIDAD [G/CM²]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                RESIDUIO [%]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                APLICACION [G]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                VIZCOCIDAD [S]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                DENSIDAD [G/CM²]
+              </th>
+              <th
+                className="px-10 py-3 text-center border-r border-slate-300"
+                colSpan={2}
+              >
+                RESIDUIO [%]
+              </th>
+            </tr>
+            <tr className="border border-slate-300">
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                TN
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                TN
+                SUP. PROD.
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                TN
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                TN
+                SUP. PROD.
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                TN
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                LITROS
+                SUP. PROD.
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                KG
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                KG
+                SUP. PROD.
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                G/ML
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                S
+                SUP. PROD.
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                %
+                OPERADOR
               </th>
               <th className="px-10 py-3 text-center border-r border-slate-300">
-                N
+                SUP. PROD.
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                OPERADOR
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                SUP. PROD.
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                OPERADOR
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                SUP. PROD.
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                OPERADOR
+              </th>
+              <th className="px-10 py-3 text-center border-r border-slate-300">
+                SUP. PROD.
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {form?.TablaBarbotinaDatos?.map((row, idx) => (
+            {form?.datos_tabla_esmalte?.map((row, idx) => (
               <tr key={idx} className="border border-slate-300 p-3">
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
-                    type="number"
-                    name="n_molino_cargando_molinos"
-                    value={row.n_molino_cargando_molinos}
-                    onChange={(e) => {
-                      setCargaTabla(
-                        idx,
-                        'n_molino_cargando_molinos',
-                        e.target.value
-                      );
-                    }}
-                    error={!!tablaError[idx]?.n_molino_cargando_molinos}
-                  />
-                </td>
-                <td className="p-2 border-r border-slate-300">
-                  <InputField
-                    errorMode="border"
                     type="time"
-                    name="hora_inicio"
-                    value={row.hora_inicio}
+                    name="hora"
+                    value={row.hora}
                     onChange={(e) => {
-                      setCargaTabla(idx, 'hora_inicio', e.target.value);
+                      setCargaTabla(idx, 'hora', e.target.value);
                     }}
-                    error={!!tablaError[idx]?.hora_inicio}
-                  />
-                </td>
-                <td className="p-2 border-r border-slate-300">
-                  <InputField
-                    errorMode="border"
-                    type="time"
-                    name="hora_final"
-                    value={row.hora_final}
-                    onChange={(e) => {
-                      setCargaTabla(idx, 'hora_final', e.target.value);
-                    }}
-                    error={!!tablaError[idx]?.hora_final}
+                    error={!!tablaError[idx]?.hora}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="tn_lugar_uno_cargando_molinos"
-                    value={row.tn_lugar_uno_cargando_molinos}
+                    name="operador_aplicacion_agua"
+                    value={row.operador_aplicacion_agua}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'tn_lugar_uno_cargando_molinos',
+                        'operador_aplicacion_agua',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.tn_lugar_uno_cargando_molinos}
+                    error={!!tablaError[idx]?.operador_aplicacion_agua}
+                  />
+                </td>
+                <td className=" border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="sup_prod_aplicacion_agua"
+                    value={row.sup_prod_aplicacion_agua}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'sup_prod_aplicacion_agua',
+                        e.target.value
+                      );
+                    }}
+                    error={!!tablaError[idx]?.sup_prod_aplicacion_agua}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="tn_lugar_dos_cargando_molinos"
-                    value={row.tn_lugar_dos_cargando_molinos}
+                    name="operador_aplicacion_engobe"
+                    value={row.operador_aplicacion_engobe}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'tn_lugar_dos_cargando_molinos',
+                        'operador_aplicacion_engobe',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.tn_lugar_dos_cargando_molinos}
+                    error={!!tablaError[idx]?.operador_aplicacion_engobe}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="tn_lugar_tres_cargando_molinos"
-                    value={row.tn_lugar_tres_cargando_molinos}
+                    name="sup_prod_aplicacion_engobe"
+                    value={row.sup_prod_aplicacion_engobe}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'tn_lugar_tres_cargando_molinos',
+                        'sup_prod_aplicacion_engobe',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.tn_lugar_tres_cargando_molinos}
+                    error={!!tablaError[idx]?.sup_prod_aplicacion_engobe}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="tn_lugar_cuantro_cargando_molinos"
-                    value={row.tn_lugar_cuantro_cargando_molinos}
+                    name="operador_vizcosidad_normal"
+                    value={row.operador_vizcosidad_normal}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'tn_lugar_cuantro_cargando_molinos',
+                        'operador_vizcosidad_normal',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.tn_lugar_cuantro_cargando_molinos}
+                    error={!!tablaError[idx]?.operador_vizcosidad_normal}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="h2o_cargando_molinos"
-                    value={row.h2o_cargando_molinos}
+                    name="sup_prod_vizcosidad_normal"
+                    value={row.sup_prod_vizcosidad_normal}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'h2o_cargando_molinos',
+                        'sup_prod_vizcosidad_normal',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.h2o_cargando_molinos}
+                    error={!!tablaError[idx]?.sup_prod_vizcosidad_normal}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="deflo_cargando_molinos"
-                    value={row.deflo_cargando_molinos}
+                    name="operador_densidad_recuperado"
+                    value={row.operador_densidad_recuperado}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'deflo_cargando_molinos',
+                        'operador_densidad_recuperado',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.deflo_cargando_molinos}
+                    error={!!tablaError[idx]?.operador_densidad_recuperado}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="reoma_cargando_molinos"
-                    value={row.reoma_cargando_molinos}
+                    name="sup_prod_densidad_recuperado"
+                    value={row.sup_prod_densidad_recuperado}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'reoma_cargando_molinos',
+                        'sup_prod_densidad_recuperado',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.reoma_cargando_molinos}
+                    error={!!tablaError[idx]?.sup_prod_densidad_recuperado}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="dens_descargando_molinos"
-                    value={row.dens_descargando_molinos}
+                    name="operador_residuo_implemeable"
+                    value={row.operador_residuo_implemeable}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'dens_descargando_molinos',
+                        'operador_residuo_implemeable',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.dens_descargando_molinos}
+                    error={!!tablaError[idx]?.operador_residuo_implemeable}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="visc_descargando_molinos"
-                    value={row.visc_descargando_molinos}
+                    name="sup_prod_residuo_implemeable"
+                    value={row.sup_prod_residuo_implemeable}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'visc_descargando_molinos',
+                        'sup_prod_residuo_implemeable',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.visc_descargando_molinos}
+                    error={!!tablaError[idx]?.sup_prod_residuo_implemeable}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
                     type="number"
-                    name="res_descargando_molinos"
-                    value={row.res_descargando_molinos}
+                    name="operador_aplicacion_esmalte"
+                    value={row.operador_aplicacion_esmalte}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'res_descargando_molinos',
+                        'operador_aplicacion_esmalte',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.res_descargando_molinos}
+                    error={!!tablaError[idx]?.operador_aplicacion_esmalte}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
-                    type="text"
-                    name="n_fosa_descargando_molinos"
-                    value={row.n_fosa_descargando_molinos}
+                    type="number"
+                    name="sup_prod_aplicacion_esmalte"
+                    value={row.sup_prod_aplicacion_esmalte}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'n_fosa_descargando_molinos',
+                        'sup_prod_aplicacion_esmalte',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.n_fosa_descargando_molinos}
+                    error={!!tablaError[idx]?.sup_prod_aplicacion_esmalte}
                   />
                 </td>
                 <td className="p-2 border-r border-slate-300">
                   <InputField
                     errorMode="border"
-                    type="text"
-                    name="producto_descargando_molinos"
-                    value={row.producto_descargando_molinos}
+                    type="number"
+                    name="operador_vizcosidad_brillante_recuperado"
+                    value={row.operador_vizcosidad_brillante_recuperado}
                     onChange={(e) => {
                       setCargaTabla(
                         idx,
-                        'producto_descargando_molinos',
+                        'operador_vizcosidad_brillante_recuperado',
                         e.target.value
                       );
                     }}
-                    error={!!tablaError[idx]?.producto_descargando_molinos}
+                    error={
+                      !!tablaError[idx]
+                        ?.operador_vizcosidad_brillante_recuperado
+                    }
+                  />
+                </td>
+                <td className="p-2 border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="sup_prod_vizcosidad_brillante_recuperado"
+                    value={row.sup_prod_vizcosidad_brillante_recuperado}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'sup_prod_vizcosidad_brillante_recuperado',
+                        e.target.value
+                      );
+                    }}
+                    error={
+                      !!tablaError[idx]
+                        ?.sup_prod_vizcosidad_brillante_recuperado
+                    }
+                  />
+                </td>
+                <td className="p-2 border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="operador_densidad_transparente_satinado"
+                    value={row.operador_densidad_transparente_satinado}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'operador_densidad_transparente_satinado',
+                        e.target.value
+                      );
+                    }}
+                    error={
+                      !!tablaError[idx]?.operador_densidad_transparente_satinado
+                    }
+                  />
+                </td>
+                <td className="p-2 border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="sup_prod_densidad_transparente_satinado"
+                    value={row.sup_prod_densidad_transparente_satinado}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'sup_prod_densidad_transparente_satinado',
+                        e.target.value
+                      );
+                    }}
+                    error={
+                      !!tablaError[idx]?.sup_prod_densidad_transparente_satinado
+                    }
+                  />
+                </td>
+                <td className="p-2 border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="operador_residuo_digital_blanco"
+                    value={row.operador_residuo_digital_blanco}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'operador_residuo_digital_blanco',
+                        e.target.value
+                      );
+                    }}
+                    error={!!tablaError[idx]?.operador_residuo_digital_blanco}
+                  />
+                </td>
+                <td className="p-2 border-r border-slate-300">
+                  <InputField
+                    errorMode="border"
+                    type="number"
+                    name="operador_residuo_digital_blanco"
+                    value={row.sup_prod_residuo_digital_blanco}
+                    onChange={(e) => {
+                      setCargaTabla(
+                        idx,
+                        'sup_prod_residuo_digital_blanco',
+                        e.target.value
+                      );
+                    }}
+                    error={!!tablaError[idx]?.sup_prod_residuo_digital_blanco}
                   />
                 </td>
               </tr>

@@ -41,7 +41,7 @@ export const updateObj = async (id, payload) => {
 
 export const registerObj = async (payload) => {
   try {
-    const data = await api.post('/indice-polvo-atomizado/', payload);
+    const data = await api.post('/produccion/indice-polvo-atomizado/', payload);
     return data.data;
   } catch (e) {
     console.log(e);

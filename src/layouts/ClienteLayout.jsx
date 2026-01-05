@@ -10,6 +10,22 @@ const navItems = [
   { to: '/produccion/inicio', label: 'Inicio' },
   { to: '/cliente/produccion/secciones', label: 'Planilla Producción' },
   { to: '/produccion/historialBarbotina', label: 'Historial Producción' },
+  {
+    to: '/cliente/produccion/administracion',
+    label: 'Planilla Producción administracion',
+  },
+  {
+    to: '/cliente/produccion/mantenimiento',
+    label: 'Planilla mantenimiento',
+  },
+  {
+    to: '/cliente/adminitracion',
+    label: 'Planilla administracion',
+  },
+  {
+    to: '/cliente/comercializacion',
+    label: 'Planilla comercializacion',
+  },
 ];
 
 export default function ClienteLyaout() {

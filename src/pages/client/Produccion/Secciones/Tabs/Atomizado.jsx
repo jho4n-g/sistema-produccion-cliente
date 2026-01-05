@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
-import { extractArrayFieldErrors } from '../../../../helpers/normalze.helpers';
-import ConfirmModal from '../../../../components/ConfirmModal';
-import { registerObj } from '../../../../service/Produccion/Secciones/Atomizado.services';
-import { DatosAtomizado } from '../../../../schema/Produccion/Seccion/Atomizado.schema';
+import { extractArrayFieldErrors } from '@helpers/normalze.helpers';
 //
-import { getObjs } from '../../../../service/Produccion/Turno.services';
-import Select from '../../../../components/Select';
+import ConfirmModal from '@components/ConfirmModal';
+import InputField from '@components/InputField';
+import Select from '@components/Select';
+//
+import { DatosAtomizado } from '@schema/Produccion/Seccion/Atomizado.schema';
+//
+import { registerObj } from '@service/Produccion/Secciones/Atomizado.services';
+import { getObjs } from '@service/Produccion/Turno.services';
 
 const filasControlGranulomtria = [
   { key: 'hora', label: 'HORA', type: 'time' },

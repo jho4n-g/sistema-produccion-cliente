@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { DatosIngresoPorVentaTotal } from '../../../../schema/Comercializacion/IngresoPorVentaTotal.Schema';
-import InputField from '../../../../components/InputField';
+import { DatosIngresoPorVentaTotal } from '@schema/Comercializacion/IngresoPorVentaTotal.Schema';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 
 export default function IngresoVentaTotalModal({

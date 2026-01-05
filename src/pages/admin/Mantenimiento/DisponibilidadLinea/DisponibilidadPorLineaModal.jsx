@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { DatosDisponibilidaPorLinea } from '../../../../schema/mantenimiento/DisponibilidadPorLinea.schema';
-import InputField from '../../../../components/InputField';
+import { DatosDisponibilidaPorLinea } from '@schema/mantenimiento/DisponibilidadPorLinea.schema';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 
 export default function DisponibilidadPorLineaModal({
