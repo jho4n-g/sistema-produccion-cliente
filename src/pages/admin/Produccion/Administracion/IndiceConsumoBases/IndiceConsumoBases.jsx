@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndiceConsumoBasesModal from './IndiceConsumoBasesModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -21,8 +22,32 @@ const columnas = [
     key: 'consumo_mensual',
   },
   {
+    label: 'Ratio consumo',
+    key: 'ratio_consumo',
+  },
+  {
     label: 'Meta',
     key: 'meta',
+  },
+  {
+    label: 'Cumplimiento mensual',
+    key: 'cumplimiento_mensual',
+  },
+  {
+    label: 'Produccion acumulado',
+    key: 'produccion_acumulado',
+  },
+  {
+    label: 'Consumo mensual acumulado',
+    key: 'consumo_mensual_acumulado',
+  },
+  {
+    label: 'Ratio consumo acumulado',
+    key: 'ratio_consumo_acumulado',
+  },
+  {
+    label: 'Meta_acumalada',
+    key: 'meta_acumalada',
   },
 ];
 
@@ -34,6 +59,7 @@ export default function IndiceConsumoBases() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -95,6 +121,7 @@ export default function IndiceConsumoBases() {
       setLoading(false);
     }
   };
+  const series = [{ name: 'Ratio consumo', data: datosGrafico?.ratioConsumo }];
   return (
     <>
       <TablaRetutilizable
@@ -107,7 +134,17 @@ export default function IndiceConsumoBases() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Ratio de consumo de bases"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

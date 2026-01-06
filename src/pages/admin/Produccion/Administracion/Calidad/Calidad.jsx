@@ -6,6 +6,7 @@ import {
   getIdObj,
 } from '../../../../../service/Produccion/Administracion/Calidad.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
+import GraficoBarChart from '@components/GraficoBarChart';
 import CalidadModal from './CalidadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
@@ -86,6 +87,7 @@ export default function Calidad() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -147,6 +149,13 @@ export default function Calidad() {
       setLoading(false);
     }
   };
+
+  const series = [
+    { name: '%1ra calidad', data: datosGrafico?.primera },
+    { name: '%2ra calidad', data: datosGrafico?.segunda },
+    { name: '%3ra calidad', data: datosGrafico?.tercera },
+    { name: '%Cascote', data: datosGrafico?.cascote },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -159,7 +168,17 @@ export default function Calidad() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Porcentaje de calidad por periodo"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

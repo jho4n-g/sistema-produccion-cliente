@@ -7,6 +7,7 @@ import {
 } from '../../../../../service/Produccion/Administracion/IndiceConsumoAgua.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndiceConsumoAguaModal from './IndiceConsumoAguaModal';
+import GraficoBarChart from '@components/GraficoBarChart';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -59,6 +60,7 @@ export default function Calidad() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -120,6 +122,11 @@ export default function Calidad() {
       setLoading(false);
     }
   };
+  const series = [
+    { name: 'Medido # 4', data: datosGrafico?.medidor_cuatro },
+    { name: 'Medido # 5', data: datosGrafico?.medidor_cinco },
+    { name: 'Medido # 6', data: datosGrafico?.medidor_seis },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -132,7 +139,17 @@ export default function Calidad() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Consumo de agua por medido M3"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

@@ -28,6 +28,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     tituloBoton = 'Crear',
     botonCrear = false,
     handleCrear,
+    setDatosGrafico,
   },
   ref
 ) {
@@ -45,8 +46,9 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     try {
       const obj = await getObj();
       if (obj?.ok) {
-        setRow(Array.isArray(obj?.datos) ? obj.datos : []);
-        console.log(obj.datos);
+        setRow(Array.isArray(obj?.datos?.data) ? obj.datos.data : []);
+        setDatosGrafico(obj?.datos?.datoGrafico);
+        console.log('tabla ', obj.datos);
       }
       if (!obj?.ok) {
         const err = new Error(obj.message || 'Error al cargar lo datos');
@@ -59,7 +61,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     } finally {
       setLoading(false);
     }
-  }, [getObj]);
+  }, [getObj, setDatosGrafico]);
 
   useImperativeHandle(ref, () => ({
     reload,
@@ -241,13 +243,12 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                           >
                             Editar
                           </button>
-
                           <button
                             className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
                             onClick={() => hanldeDelete?.(data.id)}
                           >
                             Eliminar
-                          </button>
+                          </button>{' '}
                         </div>
                       </td>
                     </tr>

@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndiceConsumoEeModal from './IndiceConsumoEeModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -21,8 +22,28 @@ const columnas = [
     key: 'consumo_energia_electrica',
   },
   {
+    label: 'Produccion acumulada',
+    key: 'produccion_acumulada',
+  },
+  {
+    label: 'Consumo ee acumulado',
+    key: 'consumo_ee_acumulado',
+  },
+  {
+    label: 'Indice consumo',
+    key: 'indice_consumo',
+  },
+  {
+    label: 'Indice consumo acumulado',
+    key: 'indice_consumo_acumulado',
+  },
+  {
     label: 'Meta',
     key: 'meta',
+  },
+  {
+    label: 'Meta',
+    key: 'meta_acumulada',
   },
 ];
 
@@ -34,6 +55,7 @@ export default function IndiceConsumoEe() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -95,6 +117,9 @@ export default function IndiceConsumoEe() {
       setLoading(false);
     }
   };
+  const series = [
+    { name: 'Consumo energia electrica', data: datosGrafico?.ConsumoEe },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -107,7 +132,17 @@ export default function IndiceConsumoEe() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Ratio de consumo de bases"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"
