@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndicePolvoAtomizadoModal from './IndicePolvoAtomizadoModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -21,12 +22,40 @@ const columnas = [
     key: 'consumo_mensual',
   },
   {
+    label: 'Ratio consumo',
+    key: 'ratio_consumo',
+  },
+  {
     label: 'Meta',
     key: 'meta',
   },
+  {
+    label: 'Cumplimiento mensual',
+    key: 'cumplimiento_mensual',
+  },
+  {
+    label: 'Produccion acumulada',
+    key: 'produccion_acumulada',
+  },
+  {
+    label: 'Consumo acumulado',
+    key: 'consumo_acumulado',
+  },
+  {
+    label: 'Ratio consumo acumulado',
+    key: 'ratio_consumo_acumulado',
+  },
+  {
+    label: 'Cumplimiento acumulado',
+    key: 'cumplimiento_acumulado',
+  },
+  {
+    label: 'Meta acumulada',
+    key: 'meta_acumulada',
+  },
 ];
 
-export default function IndiceConsumoLinea() {
+export default function IndicePolvoAtomizado() {
   const [idRow, setIdRow] = useState(null);
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,6 +63,7 @@ export default function IndiceConsumoLinea() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -95,6 +125,9 @@ export default function IndiceConsumoLinea() {
       setLoading(false);
     }
   };
+  const series = [
+    { name: 'Ratio de cosumo', data: datosGrafico?.ratioConsumo },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -107,7 +140,18 @@ export default function IndiceConsumoLinea() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Ratio de consumo  polvo atomizado"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

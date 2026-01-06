@@ -139,6 +139,7 @@ export default function Calidad() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
         setDatosGrafico={setDatosGrafica}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">

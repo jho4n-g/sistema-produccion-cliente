@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../components/ConfirmModal';
 import HoraExtraModal from './HoraExtraModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -23,48 +24,48 @@ const columnas = [
     key: 'ampliacion',
   },
   {
-    label: 'cc',
+    label: 'Cc',
     key: 'cc',
   },
   {
-    label: 'seg_ind',
+    label: 'Seg ind',
     key: 'seg_ind',
   },
   {
-    label: 'r_centro',
+    label: 'Region centro',
     key: 'r_centro',
   },
 
   {
-    label: 'r_oeste',
+    label: 'Region oeste',
     key: 'r_oeste',
   },
   {
-    label: 'r_este',
+    label: 'Region este',
     key: 'r_este',
   },
   {
-    label: 'r_fabr',
+    label: 'Region fabr',
     key: 'r_fabr',
   },
   {
-    label: 'total_personas',
+    label: 'Total personas',
     key: 'total_personas',
   },
   {
-    label: 'indice_horas_extra',
+    label: 'Indice horas extra',
     key: 'indice_horas_extra',
   },
   {
-    label: 'indice_horas_extra_acumulado',
+    label: 'Indice horas extra acumulado',
     key: 'indice_horas_extra_acumulado',
   },
   {
-    label: 'cumplimineto_meta',
+    label: 'Cumplimineto meta',
     key: 'cumplimineto_meta',
   },
   {
-    label: 'meta',
+    label: 'Meta',
     key: 'meta',
   },
 ];
@@ -77,6 +78,7 @@ export default function HorasExtra() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -138,6 +140,48 @@ export default function HorasExtra() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Adm',
+      data: datosGrafico?.adm,
+    },
+    {
+      name: 'Prd',
+      data: datosGrafico?.prd,
+    },
+    {
+      name: 'Mantto',
+      data: datosGrafico?.mantto,
+    },
+    {
+      name: 'Ampliacion',
+      data: datosGrafico?.ampliacion,
+    },
+    {
+      name: 'Cc',
+      data: datosGrafico?.cc,
+    },
+    {
+      name: 'Seg ind',
+      data: datosGrafico?.seg_ind,
+    },
+    {
+      name: 'Region centro',
+      data: datosGrafico?.r_centro,
+    },
+    {
+      name: 'Region oeste',
+      data: datosGrafico?.r_oeste,
+    },
+    {
+      name: 'Region este',
+      data: datosGrafico?.r_este,
+    },
+    {
+      name: 'Region fabr',
+      data: datosGrafico?.r_fabr,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -150,7 +194,18 @@ export default function HorasExtra() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Hora extra por areas"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

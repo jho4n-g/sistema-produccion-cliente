@@ -9,29 +9,43 @@ import ConfirmModal from '../../../../components/ConfirmModal';
 import IndiceSeveridadModal from './IndiceSeveridadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
-  { label: 'n_trabajadores', key: 'n_trabajadores' },
+  { label: 'N trabajadores', key: 'n_trabajadores' },
   { label: 'porcentaje_ausentismo', key: 'porcentaje_ausentismo' },
+  { label: 'Horas expuesta riesgo', key: 'horas_expuesta_riesgo' },
   {
-    label: 'dias_baja_medica_administracion',
+    label: 'Dias baja medica administracion',
     key: 'dias_baja_medica_administracion',
   },
   {
-    label: 'dias_baja_medica_mantenimiento',
+    label: 'Dias baja medica mantenimiento',
     key: 'dias_baja_medica_mantenimiento',
   },
   {
-    label: 'dias_baja_medica_produccion',
+    label: 'Dias baja medica produccion',
     key: 'dias_baja_medica_produccion',
   },
   {
-    label: 'dias_baja_medica_comercializacion',
+    label: 'Dias baja medica comercializacion',
     key: 'dias_baja_medica_comercializacion',
   },
   {
-    label: 'meta',
+    label: 'Dias baja medica mes',
+    key: 'dias_baja_medica_mes',
+  },
+  {
+    label: 'Indice gravedad',
+    key: 'indice_gravedad',
+  },
+  {
+    label: 'Indice graveda acumulado',
+    key: 'indice_graveda_acumulado',
+  },
+  {
+    label: 'Meta',
     key: 'meta',
   },
 ];
@@ -44,6 +58,7 @@ export default function IndiceSeveridad() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -105,6 +120,12 @@ export default function IndiceSeveridad() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Indice gravedad',
+      data: datosGrafico?.indice_gravedad,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -117,7 +138,18 @@ export default function IndiceSeveridad() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Hora extra por areas"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

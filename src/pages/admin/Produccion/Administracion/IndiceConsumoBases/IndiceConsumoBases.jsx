@@ -127,13 +127,14 @@ export default function IndiceConsumoBases() {
       <TablaRetutilizable
         ref={tableRef}
         getObj={getAllObj}
-        titulo="Produccion/ Administracion/ Indice cosumo agua"
+        titulo="Produccion/ Administracion/ Indice cosumo bases"
         datosBusqueda={['periodo']}
         columnas={columnas}
         handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
         setDatosGrafico={setDatosGrafica}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">

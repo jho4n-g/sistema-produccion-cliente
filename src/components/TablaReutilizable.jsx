@@ -28,6 +28,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     tituloBoton = 'Crear',
     botonCrear = false,
     handleCrear,
+    isGrafica = false,
     setDatosGrafico,
   },
   ref
@@ -45,10 +46,12 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     setLoading(true);
     try {
       const obj = await getObj();
+      console.log(obj);
       if (obj?.ok) {
         setRow(Array.isArray(obj?.datos?.data) ? obj.datos.data : []);
-        setDatosGrafico(obj?.datos?.datoGrafico);
-        console.log('tabla ', obj.datos);
+        if (isGrafica) {
+          setDatosGrafico(obj?.datos?.datoGrafico);
+        }
       }
       if (!obj?.ok) {
         const err = new Error(obj.message || 'Error al cargar lo datos');
@@ -61,7 +64,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     } finally {
       setLoading(false);
     }
-  }, [getObj, setDatosGrafico]);
+  }, [getObj, setDatosGrafico, isGrafica]);
 
   useImperativeHandle(ref, () => ({
     reload,

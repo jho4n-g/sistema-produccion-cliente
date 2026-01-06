@@ -9,29 +9,44 @@ import IndiceFrecuenciaModal from './IndiceFrecuenciaModal';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
-  { label: 'n_trabajadores', key: 'n_trabajadores' },
-  { label: 'porcentaje_ausentismo', key: 'porcentaje_ausentismo' },
+  { label: 'N trabajadores', key: 'n_trabajadores' },
+  { label: 'Hora trabajadas mes', key: 'hora_trabajadas_mes' },
+  { label: 'Porcentaje ausentismo', key: 'porcentaje_ausentismo' },
+  { label: 'Horas expuesta riesgo', key: 'horas_expuesta_riesgo' },
   {
-    label: 'accidentes_administracion_personas',
+    label: 'Accidentes administracion personas',
     key: 'accidentes_administracion_personas',
   },
   {
-    label: 'accidentes_mantenieminto_personas',
+    label: 'Accidentes mantenieminto personas',
     key: 'accidentes_mantenieminto_personas',
   },
   {
-    label: 'accidentes_produccion_personas',
+    label: 'Accidentes produccion personas',
     key: 'accidentes_produccion_personas',
   },
   {
-    label: 'accidentes_comercializacion_personas',
+    label: 'Accidentes comercializacion personas',
     key: 'accidentes_comercializacion_personas',
   },
   {
-    label: 'meta',
+    label: 'Accidentes mes',
+    key: 'accidentes_mes',
+  },
+  {
+    label: 'Indice frecuencia mensual',
+    key: 'indice_frecuencia_mensual',
+  },
+  {
+    label: 'Indice frecuencia acumulado',
+    key: 'indice_frecuencia_acumulado',
+  },
+  {
+    label: 'Meta',
     key: 'meta',
   },
 ];
@@ -44,6 +59,7 @@ export default function IndiceFrecuencia() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -105,6 +121,12 @@ export default function IndiceFrecuencia() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Indice frecuencia',
+      data: datosGrafico?.indice_frecuencia_mensual,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -117,7 +139,18 @@ export default function IndiceFrecuencia() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Indice de frecuencia mensual"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

@@ -9,6 +9,7 @@ import ConfirmModal from '@components/ConfirmModal';
 import DisponibilidadPorLineaModal from './DisponibilidadPorLineaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -29,6 +30,18 @@ const columnas = [
     key: 'n_horas_lineas_paradas_line_d',
   },
   {
+    label: 'Disponibilidad linea b',
+    key: 'disponibilidad_linea_b',
+  },
+  {
+    label: 'Disponibilidad linea c',
+    key: 'disponibilidad_linea_c',
+  },
+  {
+    label: 'Disponibilidad linea d',
+    key: 'disponibilidad_linea_d',
+  },
+  {
     label: 'meta',
     key: 'meta',
   },
@@ -42,6 +55,7 @@ export default function DisponibilidadPorLinea() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -103,6 +117,32 @@ export default function DisponibilidadPorLinea() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'N horas lineas paradas b',
+      data: datosGrafico?.n_horas_lineas_paradas_linea_b,
+    },
+    {
+      name: 'N horas lineas paradas c',
+      data: datosGrafico?.n_horas_lineas_paradas_line_c,
+    },
+    {
+      name: 'N horas lineas paradas d',
+      data: datosGrafico?.n_horas_lineas_paradas_line_d,
+    },
+    {
+      name: 'Disponibilidad linea b',
+      data: datosGrafico?.disponibilidad_linea_b,
+    },
+    {
+      name: 'Disponibilidad linea c',
+      data: datosGrafico?.disponibilidad_linea_c,
+    },
+    {
+      name: 'Disponibilidad linea d',
+      data: datosGrafico?.disponibilidad_linea_d,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -115,7 +155,18 @@ export default function DisponibilidadPorLinea() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Produccion"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

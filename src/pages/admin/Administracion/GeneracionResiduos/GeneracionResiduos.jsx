@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../components/ConfirmModal';
 import GeneracionResiduosModal from './GeneracionResiduosModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -49,7 +50,7 @@ const columnas = [
   },
   {
     label: 'Kg aceite sucio',
-    key: 'kg_aceite_ sucio',
+    key: 'kg_aceite_sucio',
   },
   {
     label: 'Kg bolsas plasticas transparentes',
@@ -69,6 +70,7 @@ export default function GeneracionResiduos() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -130,6 +132,60 @@ export default function GeneracionResiduos() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'N trabajadoresdm',
+      data: datosGrafico?.n_trabajadores,
+    },
+    {
+      name: 'Kg carton',
+      data: datosGrafico?.kg_carton,
+    },
+    {
+      name: 'Pe',
+      data: datosGrafico?.pe,
+    },
+    {
+      name: 'Kg strechfilm',
+      data: datosGrafico?.kg_strechfilm,
+    },
+    {
+      name: 'Kg bolsas bigbag',
+      data: datosGrafico?.kg_bolsas_bigbag,
+    },
+    {
+      name: 'Kg turriles plasticos',
+      data: datosGrafico?.kg_turriles_plasticos,
+    },
+    {
+      name: 'Kg envase mil litros',
+      data: datosGrafico?.kg_envase_mil_litros,
+    },
+    {
+      name: 'Kg sunchu',
+      data: datosGrafico?.sunchu_kg,
+    },
+    {
+      name: 'Kg madera',
+      data: datosGrafico?.kg_madera,
+    },
+    {
+      name: 'Kg bidon azul',
+      data: datosGrafico?.kg_bidon_azul,
+    },
+    {
+      name: 'Kg aceite sucio',
+      data: datosGrafico?.kg_aceite_sucio,
+    },
+    {
+      name: 'Kg bolsas transparentes',
+      data: datosGrafico?.kg_bolsas_plasticas_transparentes,
+    },
+    {
+      name: 'Kg bolsas yute',
+      data: datosGrafico?.kg_bolsas_yute,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -142,7 +198,18 @@ export default function GeneracionResiduos() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Hora extra por areas"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

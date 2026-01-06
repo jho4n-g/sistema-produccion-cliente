@@ -9,6 +9,7 @@ import ConfirmModal from '../../../../../components/ConfirmModal';
 import ProduccionModal from './ProduccionModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   { label: 'Periodo', key: 'periodo' },
@@ -21,8 +22,28 @@ const columnas = [
     key: 'produccion_mensual',
   },
   {
+    label: 'Produccion acumulada',
+    key: 'produccion_acumulada',
+  },
+  {
+    label: 'Presupuesto acumulado',
+    key: 'presupuesto_acumulado',
+  },
+  {
+    label: 'Diferencia entre produccion y presupuesto acumualdo',
+    key: 'diferencia_produccion_presupuesto_acumulado',
+  },
+  {
     label: 'Meta',
     key: 'meta',
+  },
+  {
+    label: 'Cumplimiento mensual',
+    key: 'cumplimiento_mensual',
+  },
+  {
+    label: 'Cumplimiento mensual acumulado',
+    key: 'cumplimiento_mensual_acumulado',
   },
 ];
 
@@ -34,6 +55,7 @@ export default function Produccion() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -95,6 +117,12 @@ export default function Produccion() {
       setLoading(false);
     }
   };
+  const series = [
+    { name: 'Presupuesto', data: datosGrafico?.presupuesto },
+    { name: 'Produccion mensual', data: datosGrafico?.produccionMensual },
+    { name: 'Produccion acumulada', data: datosGrafico?.produccionAcumulada },
+    { name: 'Presupuesto acumulado', data: datosGrafico?.presupuestoAcumulado },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -107,7 +135,19 @@ export default function Produccion() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Produccion"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"
