@@ -30,6 +30,13 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     handleCrear,
     isGrafica = false,
     setDatosGrafico,
+    isDetalle = true,
+    isEdit = true,
+    isDelete = true,
+    isAcccion = true,
+    isGetIdObj = false,
+    isBuscador = true,
+    id,
   },
   ref
 ) {
@@ -45,17 +52,25 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
   const reload = useCallback(async () => {
     setLoading(true);
     try {
-      const obj = await getObj();
-      console.log(obj);
-      if (obj?.ok) {
-        setRow(Array.isArray(obj?.datos?.data) ? obj.datos.data : []);
-        if (isGrafica) {
-          setDatosGrafico(obj?.datos?.datoGrafico);
-        }
+      // si es por id, valida id
+      if (isGetIdObj && (id == null || id === '')) {
+        throw new Error('Falta el id para cargar el registro');
       }
+
+      const obj = isGetIdObj ? await getObj(id) : await getObj();
+      console.log('reload ->', obj);
+
       if (!obj?.ok) {
-        const err = new Error(obj.message || 'Error al cargar lo datos');
-        throw err;
+        throw new Error(obj?.message || 'Error al cargar los datos');
+      }
+
+      // ✅ lista
+      const data = obj?.datos?.data;
+      setRow(Array.isArray(data) ? data : []);
+
+      // ✅ gráfico
+      if (isGrafica) {
+        setDatosGrafico(obj?.datos?.datoGrafico ?? null);
       }
     } catch (e) {
       toast.error(e?.message || 'Error al cargar los datos', {
@@ -64,7 +79,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     } finally {
       setLoading(false);
     }
-  }, [getObj, setDatosGrafico, isGrafica]);
+  }, [getObj, isGrafica, isGetIdObj, id, setDatosGrafico]);
 
   useImperativeHandle(ref, () => ({
     reload,
@@ -135,32 +150,35 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
             <></>
           )}
         </div>
-        <div className="rounded-lg border-2  border-slate-200 bg-white p-6 shadow-sm">
-          <div className="relative w-full max-w-sm">
-            {/* Icono izquierda */}
-            <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+        {isBuscador && (
+          <div className="rounded-lg border-2  border-slate-200 bg-white p-6 shadow-sm">
+            <div className="relative w-full max-w-sm">
+              {/* Icono izquierda */}
+              <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
-            <input
-              type="text"
-              placeholder="Buscar por Nombre..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
+              <input
+                type="text"
+                placeholder="Buscar por Nombre..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
                     focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-            />
+              />
 
-            {/* Botón limpiar */}
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-              >
-                <XMarkIcon className="h-4 w-4" />
-              </button>
-            )}
+              {/* Botón limpiar */}
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
+
         <div className="mt-4  rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="w-full overflow-x-auto">
             <table className="min-w-max w-full table-auto border-separate border-spacing-0 text-sm">
@@ -177,10 +195,11 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                       {c.label}
                     </th>
                   ))}
-
-                  <th className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap sticky right-0 z-20 bg-slate-50">
-                    Acciones
-                  </th>
+                  {isAcccion && (
+                    <th className="border-b px-4 py-3 text-left font-semibold whitespace-nowrap sticky right-0 z-20 bg-slate-50">
+                      Acciones
+                    </th>
+                  )}
                 </tr>
               </thead>
 
@@ -223,11 +242,12 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                           {c.render ? c.render(data) : data[c.key]}
                         </td>
                       ))}
-
-                      <td className="px-4 py-3 sticky right-0 z-10 bg-white">
-                        <div className="flex flex-col gap-2">
-                          <button
-                            className="
+                      {isAcccion && (
+                        <td className="px-4 py-3 sticky right-0 z-10 bg-white">
+                          <div className="flex flex-col gap-2">
+                            {isDetalle ? (
+                              <button
+                                className="
                               rounded-xl
                               bg-white
                               px-3 py-2
@@ -235,25 +255,37 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                               ring-1 ring-green-900
                               hover:bg-emerald-100
                             "
-                            onClick={() => handleDetail?.(data.id)}
-                          >
-                            Detalles
-                          </button>
-                          <button
-                            type="button"
-                            className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-                            onClick={() => handleEdit?.(data.id)}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
-                            onClick={() => hanldeDelete?.(data.id)}
-                          >
-                            Eliminar
-                          </button>{' '}
-                        </div>
-                      </td>
+                                onClick={() => handleDetail?.(data.id)}
+                              >
+                                Detalles
+                              </button>
+                            ) : (
+                              <div></div>
+                            )}
+                            {isEdit ? (
+                              <button
+                                type="button"
+                                className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
+                                onClick={() => handleEdit?.(data.id)}
+                              >
+                                Editar
+                              </button>
+                            ) : (
+                              <div></div>
+                            )}
+                            {isDelete ? (
+                              <button
+                                className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
+                                onClick={() => hanldeDelete?.(data.id)}
+                              >
+                                Eliminar
+                              </button>
+                            ) : (
+                              <div />
+                            )}
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}

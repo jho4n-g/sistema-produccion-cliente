@@ -9,9 +9,14 @@ import ConfirmModal from '../../../../../components/ConfirmModal';
 import ProduccionModal from './ProduccionModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { periodoATexto } from '../../../../../helpers/normalze.helpers';
 
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
+  {
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
   {
     label: 'Presupuesto',
     key: 'presupuesto',

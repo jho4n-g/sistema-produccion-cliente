@@ -9,28 +9,62 @@ import ConfirmModal from '@components/ConfirmModal';
 import IngresoVentaTotalModal from './IngresoVentaTotalModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-
+import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
   {
-    label: 'presupuesto_mensual',
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
+  {
+    label: 'Presupuesto mensual',
     key: 'presupuesto_mensual',
   },
   {
-    label: 'venta_mensual_con_otro_ingresos',
+    label: 'Venta mensual con otro ingresos',
     key: 'venta_mensual_con_otro_ingresos',
   },
   {
-    label: 'venta_mensual_ceramica',
+    label: 'Venta mensual ceramica',
     key: 'venta_mensual_ceramica',
   },
   {
-    label: 'otros_ingresos',
+    label: 'Otros ingresos',
     key: 'otros_ingresos',
   },
   {
-    label: 'meta',
+    label: 'Venta acumulada otros',
+    key: 'venta_acumulada_otros',
+  },
+  {
+    label: 'Venta acumulada ceramica',
+    key: 'venta_acumulada_ceramica',
+  },
+  {
+    label: 'Venta acumulada presupuesto',
+    key: 'venta_acumulada_presupuesto',
+  },
+  {
+    label: 'Diferecincia entre ventas otros ingresos vs presupuesto',
+    key: 'dif_ventas_otros_presupuesto',
+  },
+  {
+    label: 'Diferecincia entre ventas ceramica vs presupuesto',
+    key: 'dif_ceramica_presupuesto',
+  },
+
+  {
+    label: 'Meta',
     key: 'meta',
+  },
+  {
+    label: 'Cumplimiento mensual ceramica',
+    key: 'cump_mensual_ceramica',
+  },
+  {
+    label: 'Cumplimiento otors ingreso acumulado vs acumulado ceramica',
+    key: 'cump_ingresos_otros_presupuesto',
   },
 ];
 
@@ -42,6 +76,7 @@ export default function IngresoVentaTotal() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -103,6 +138,24 @@ export default function IngresoVentaTotal() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Presupuesto mensual',
+      data: datosGrafico?.presupuesto_mensual,
+    },
+    {
+      name: 'V. m. otros ingreso',
+      data: datosGrafico?.venta_mensual_con_otro_ingresos,
+    },
+    {
+      name: 'V. m. ceramica',
+      data: datosGrafico?.venta_mensual_ceramica,
+    },
+    {
+      name: 'Otros ingresos',
+      data: datosGrafico?.otros_ingresos,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -115,7 +168,18 @@ export default function IngresoVentaTotal() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Produccion"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

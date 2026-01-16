@@ -10,9 +10,14 @@ import IndiceConsumoAguaModal from './IndiceConsumoAguaModal';
 import GraficoBarChart from '@components/GraficoBarChart';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { periodoATexto } from '../../../../../helpers/normalze.helpers';
 
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
+  {
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
   {
     label: 'Produccion ',
     key: 'produccion',

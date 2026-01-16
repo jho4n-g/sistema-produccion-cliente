@@ -9,18 +9,29 @@ import ConfirmModal from '../../../../components/ConfirmModal';
 import DonacionesModal from './DonacionesModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
   {
-    label: 'produccion_menual',
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
+  {
+    label: 'Produccion menual',
     key: 'produccion_menual',
   },
-  { label: 'cascote_mensual', key: 'cascote_mensual' },
+  { label: 'Cascote mensual', key: 'cascote_mensual' },
+  { label: 'Cascote acumulado', key: 'acumulado_cascote' },
   {
-    label: 'donacion',
+    label: 'Donacion',
     key: 'donacion',
   },
+  { label: 'Donacion acumulado', key: 'acumulado_donacion' },
+  { label: ' Donacion / Produccion', key: 'donacion_produccion' },
+  { label: ' Cascote / Produccion', key: 'cascote_produccion' },
+  { label: ' Costo promedio donacion', key: 'costo_promedio_donacion' },
 ];
 
 export default function Donaciones() {
@@ -31,6 +42,7 @@ export default function Donaciones() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -92,6 +104,17 @@ export default function Donaciones() {
       setLoading(false);
     }
   };
+
+  const series = [
+    {
+      name: 'Produccion mensual',
+      data: datosGrafico?.produccion_menual,
+    },
+    {
+      name: 'Cascote mensual',
+      data: datosGrafico?.cascote_mensual,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -104,7 +127,18 @@ export default function Donaciones() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Donaciones"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

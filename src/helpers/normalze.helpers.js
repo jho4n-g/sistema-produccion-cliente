@@ -21,3 +21,27 @@ export function extractArrayFieldErrors(zodError, arrayFieldName) {
   }
   return rows;
 }
+
+export function periodoATexto(periodo) {
+  const meses = [
+    'enero',
+    'febrero',
+    'marzo',
+    'abril',
+    'mayo',
+    'junio',
+    'julio',
+    'agosto',
+    'septiembre',
+    'octubre',
+    'noviembre',
+    'diciembre',
+  ];
+
+  const [y, m] = periodo.split('-').map(Number);
+
+  const mes = meses[m - 1];
+  const mesCap = mes.charAt(0).toUpperCase() + mes.slice(1);
+
+  return `${mesCap} ${y}`;
+}

@@ -8,6 +8,7 @@ import { registerObj } from '@service/Produccion/Secciones/Seleccion.services';
 import { DatosEmbalaje } from '@schema/Produccion/Seccion/SeleccionEmbalaje';
 //
 import { getObjs } from '@service/Produccion/Turno.services';
+import { getObjs as getformato } from '@service/Produccion/Secciones/Formato.services';
 import Select from '@components/Select';
 
 const rows = 8;
@@ -46,7 +47,6 @@ const initialForm = () => ({
   casco_defectoN3: '',
   casco_defectoN4: '',
   fecha: '',
-  formato: '',
   grupo: '',
   horno: '',
   operador: '',
@@ -85,6 +85,9 @@ export default function Prensado() {
 
   const [turnoError, setTurnoError] = useState(null);
   const [turnoId, setTurnoId] = useState(null);
+
+  const [formatoError, setFormatoError] = useState(null);
+  const [formatoId, setFormatoId] = useState(null);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -163,6 +166,11 @@ export default function Prensado() {
   };
 
   const handleValidation = async () => {
+    if (!formatoId) {
+      setFormatoError('Selecciona un formato');
+    } else {
+      setFormatoError('');
+    }
     if (!turnoId) {
       setTurnoError('Selecciona un turno');
     } else {
@@ -181,7 +189,7 @@ export default function Prensado() {
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = { turno_id: turnoId, ...result.data };
+      const data = { turno_id: turnoId, formato_id: formatoId, ...result.data };
       setDataSave(data);
       setOpenConfirm(true);
     }
@@ -280,16 +288,21 @@ export default function Prensado() {
               error={error.horno}
             />
           </div>
-          <div className="md:col-span-1 lg:col-span-6">
-            <InputField
-              label="Formato"
-              type="text"
-              name="formato"
-              value={form?.formato || ''}
-              onChange={updateBase}
-              error={error.formato}
+
+          <div className="md:col-span-1 lg:col-span-3">
+            <Select
+              label="Turno"
+              value={formatoId}
+              onChange={(v) => {
+                setFormatoId(v);
+                setFormatoError('');
+              }}
+              placeholder="Selecciona un formato"
+              getDatos={getformato}
+              error={formatoError}
             />
           </div>
+
           <div className="md:col-span-1 lg:col-span-6">
             <InputField
               label="Grupo"

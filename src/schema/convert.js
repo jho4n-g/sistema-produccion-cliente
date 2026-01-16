@@ -140,18 +140,26 @@ export const reqPeriodo = (label = 'Período') => {
 export const reqEntero = (label = 'Valor') =>
   z.preprocess(
     (val) => {
-      // Si el valor es cadena vacía, lo tratamos como undefined
-      if (val === '') return 0;
-      // Si viene como string numérico, intenta convertir
+      if (val === '') return undefined;
       if (typeof val === 'string') return Number(val);
       return val;
     },
     z
       .number({
         invalid_type_error: `El campo ${label} debe ser numérico`,
-        required_error: `Se requiere ${label}`,
       })
-      .min(0, `${label} debe ser mayor o igual a 0`)
       .int(`${label} debe ser un número entero`)
-      .nullish() // ← permite undefined si estaba vacío
+      .min(0, `${label} debe ser mayor o igual a 0`)
+      .optional()
   );
+
+export const reqEnteroMayorCero = (label) => {
+  return z.coerce
+    .number({
+      required_error: `Se requiere ${label}`,
+      invalid_type_error: `El campo ${label} debe ser numérico`,
+    })
+    .finite(`${label} debe ser numérico válido`)
+    .min(1, `Debe se mas de un caracter ${label} `)
+    .int(`${label} debe ser un número entero`);
+};

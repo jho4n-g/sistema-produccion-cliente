@@ -10,9 +10,14 @@ import IndiceSeveridadModal from './IndiceSeveridadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
+  {
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
   { label: 'N trabajadores', key: 'n_trabajadores' },
   { label: 'porcentaje_ausentismo', key: 'porcentaje_ausentismo' },
   { label: 'Horas expuesta riesgo', key: 'horas_expuesta_riesgo' },

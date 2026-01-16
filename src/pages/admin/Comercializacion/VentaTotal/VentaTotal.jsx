@@ -9,20 +9,49 @@ import ConfirmModal from '@components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import VentaTotalModal from './VentaTotalModal';
-
+import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
   {
-    label: 'presupuesto_mensual',
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
+  {
+    label: 'Presupuesto mensual',
     key: 'presupuesto_mensual',
   },
   {
-    label: 'venta_mensual',
+    label: 'Venta mensual',
     key: 'venta_mensual',
+  },
+  {
+    label: 'Diferencia venta mensual vs presupuesto',
+    key: 'dif_venta_mensual_presupuesto',
+  },
+  {
+    label: 'Venta mensual acumulado',
+    key: 'venta_mensual_acumulado',
+  },
+  {
+    label: 'Presupuesto mensual acumualdo',
+    key: 'presupuesto_mensual_acumulado',
+  },
+  {
+    label: 'Diferencia venta mensual vs presupuesto acumualdo',
+    key: 'dif_venta_mensual_presupuesto_acumulado',
   },
   {
     label: 'meta',
     key: 'meta',
+  },
+  {
+    label: 'Cumplimiento mensual',
+    key: 'cump_mensual',
+  },
+  {
+    label: 'Cumplimiento acumulado',
+    key: 'cump_acumulado',
   },
 ];
 
@@ -34,6 +63,7 @@ export default function VentaTotal() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -95,6 +125,16 @@ export default function VentaTotal() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Presupuesto mensual',
+      data: datosGrafico?.presupuesto_mensual,
+    },
+    {
+      name: 'Venta mensual',
+      data: datosGrafico?.venta_mensual,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -107,7 +147,18 @@ export default function VentaTotal() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Produccion"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

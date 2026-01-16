@@ -99,7 +99,7 @@ export default function Select({
         <p className="mt-2 text-xs font-medium text-red-600">{error}</p>
       ) : (
         <p className="mt-2 text-xs text-slate-500">
-          Selecciona el turno para registrar la planilla.
+          Selecciona para registrar la planilla.
         </p>
       )}
     </div>

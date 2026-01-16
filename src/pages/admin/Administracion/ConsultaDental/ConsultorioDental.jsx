@@ -7,32 +7,44 @@ import {
 import ConfirmModal from '../../../../components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-
+import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
-  { label: 'n_trabajadores', key: 'n_trabajadores' },
-  { label: 'produccion', key: 'produccion' },
   {
-    label: 'consultas_preventivas_trabajadores',
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
+  { label: 'N° trabajadores', key: 'n_trabajadores' },
+  { label: 'Produccion', key: 'produccion' },
+  { label: 'N° consultas trabajadores', key: 'numero_consultas_trabajadores' },
+  {
+    label: 'Consultas preventivas trabajadores',
     key: 'consultas_preventivas_trabajadores',
   },
   {
-    label: 'consultas_curativas_trabajadores',
+    label: 'Consultas curativas trabajadores',
     key: 'consultas_curativas_trabajadores',
   },
   {
-    label: 'consultas_preventivas_familiares',
+    label: 'Consultas preventivas familiares',
     key: 'consultas_preventivas_familiares',
   },
   {
-    label: 'consultas_curativas_familiares',
+    label: 'Consultas curativas familiares',
     key: 'consultas_curativas_familiares',
   },
   {
-    label: 'Observaciones',
-    key: 'observacion_embalaje',
-    render: (row) =>
-      row.observacionesConsultorioDental?.map((o) => o.observacion).join(' | '),
+    label: 'Total consultas',
+    key: 'total_consultas',
+  },
+  {
+    label: 'Ratio',
+    key: 'ratio',
+  },
+  {
+    label: 'Ratio produccion',
+    key: 'ratio_produccion',
   },
 ];
 
@@ -44,6 +56,7 @@ export default function ConsultorioDental() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -97,7 +110,7 @@ export default function ConsultorioDental() {
         setOpenModal(false);
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
+        toast.error(res.message || 'Error al actualizar el registro');
       }
     } catch (e) {
       toast.error(e.message || 'Error al actualizar el registro');
@@ -105,6 +118,36 @@ export default function ConsultorioDental() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'N trabajadores',
+      data: datosGrafico?.n_trabajadores,
+    },
+    {
+      name: 'Consultas preventivas trabajadores',
+      data: datosGrafico?.consultas_preventivas_trabajadores,
+    },
+    {
+      name: 'Consultas curativas trabajadores',
+      data: datosGrafico?.consultas_curativas_trabajadores,
+    },
+    {
+      name: 'Consultas preventivas familiares',
+      data: datosGrafico?.consultas_preventivas_familiares,
+    },
+    {
+      name: 'Consultas curativas familiares',
+      data: datosGrafico?.consultas_curativas_familiares,
+    },
+    {
+      name: 'Total consultas trabajadores',
+      data: datosGrafico?.numero_consultas_trabajadores,
+    },
+    {
+      name: 'Total consultas',
+      data: datosGrafico?.total_consultas,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -117,7 +160,18 @@ export default function ConsultorioDental() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Hora extra por areas"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

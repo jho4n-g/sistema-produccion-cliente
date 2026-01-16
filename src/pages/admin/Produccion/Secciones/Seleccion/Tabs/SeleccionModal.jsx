@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import { getObjs } from '@service/Produccion/Turno.services';
+import { getObjs as getformato } from '@service/Produccion/Secciones/Formato.services';
 import Select from '@components/Select';
 
 const NuevaFilaTabla = () => ({
@@ -64,8 +65,9 @@ export default function SelecccionModal({
   const [loading, setLoading] = useState(false);
   const [obsInput, setObsInput] = useState('');
 
-  const [turnoError, setTurnoError] = useState(null);
   const [turnoId, setTurnoId] = useState(null);
+
+  const [formatoId, setFormatoId] = useState(null);
 
   useEffect(() => {
     if (!open || !id) return; // evita correr si no aplica
@@ -80,7 +82,8 @@ export default function SelecccionModal({
         // console.log('atimizado', data);
         if (data?.ok) {
           setForm(data.datos ?? {});
-          setTurnoId(data?.dato?.turno_id ?? '');
+          setTurnoId(data?.datos?.turno_id ?? '');
+          setFormatoId(data?.datos?.formato_id ?? '');
         } else toast.error(data?.message || 'No se pudo cargar el registro');
       } catch (e) {
         if (active) toast.error(e?.message || 'Error del servidor');
@@ -185,7 +188,7 @@ export default function SelecccionModal({
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = { turno_id: turnoId, ...result.data };
+      const data = { turno_id: turnoId, formato_id: formatoId, ...result.data };
       handleSave(data);
     }
   };
@@ -240,11 +243,9 @@ export default function SelecccionModal({
                     value={turnoId}
                     onChange={(v) => {
                       setTurnoId(v);
-                      setTurnoError('');
                     }}
                     placeholder="Selecciona un turno"
                     getDatos={getObjs}
-                    error={turnoError}
                   />
                 </div>
 
@@ -290,14 +291,15 @@ export default function SelecccionModal({
                     error={error.horno}
                   />
                 </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
+                <div className="md:col-span-1 lg:col-span-3">
+                  <Select
                     label="Formato"
-                    type="text"
-                    name="formato"
-                    value={form?.formato || ''}
-                    onChange={updateBase}
-                    error={error.formato}
+                    value={formatoId}
+                    onChange={(v) => {
+                      setFormatoId(v);
+                    }}
+                    placeholder="Selecciona un formato"
+                    getDatos={getformato}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">

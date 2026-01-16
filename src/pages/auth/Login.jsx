@@ -1,10 +1,72 @@
 import LogoCeramicaCoboce from '../../img/logo-ceramica-coboce.png';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-
+import InputField from '@components/InputField';
+import PasswordField from '@components/PasswordField';
+import { DatosLogin } from '@schema/auth/Login.schema';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { LoginUser } from '../../service/auth/Login.services';
+
+import useAuth from '../../hooks/auth.hook.jsx';
+
+const initialForm = {
+  username: '',
+  password: '',
+};
 
 export default function Login() {
-  const [show, setShow] = useState(false);
+  const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+
+  const updateBase = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handleValidation = async () => {
+    const result = DatosLogin.safeParse(form);
+    if (!result.success) {
+      const { fieldErrors } = result.error.flatten();
+
+      setError(fieldErrors);
+      toast.error('Datos incorrectos');
+      return;
+    } else {
+      const data = result.data;
+      SaveData(data);
+    }
+  };
+
+  const SaveData = async (data) => {
+    try {
+      setLoading(true);
+      const res = await LoginUser(data);
+      if (res.ok) {
+        toast.success('Inicio de sesión exitoso');
+        localStorage.setItem('token', res.token);
+        setAuth(res.user);
+        console.log(res.user);
+        setForm(initialForm);
+        if (res.user.roles[0].nombre == 'admin') {
+          navigate('/admin/');
+        } else {
+          navigate('/cliente');
+        }
+      } else {
+        throw new Error(res.message || 'Error al iniciar sesión');
+      }
+    } catch (error) {
+      setError({ username: ' ', password: ' ' });
+      toast.error(error.message || 'Error del servidor');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -24,41 +86,33 @@ export default function Login() {
             Inicia sesión para acceder a tu cuenta.
           </p>
           {/* Correo */}
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Usuario
-          </label>
-
-          <input
-            type="email"
-            className="w-full mb-4 rounded-lg border border-slate-300 px-3 py-2  text-sm h-11 focus:outline-none focus:ring-2 focus:ring-emerald-700"
-            placeholder="Usuario"
-          />
-          {/* Contraseña */}
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Contraseña
-          </label>
-          <div className="relative w-full">
-            <input
-              type={show ? 'text' : 'password'}
-              className="w-full mb-5 rounded-lg border border-slate-300 px-3 py-2 pr-10 text-sm h-11 leading-none focus:outline-none focus:ring-2 focus:ring-emerald-700"
-              placeholder="Introduce tu contraseña"
+          <div>
+            <InputField
+              label="Nombre de usuario"
+              type="text"
+              placeholder="Introduce tu correo"
+              name="username"
+              value={form?.username ?? ''}
+              onChange={updateBase}
+              error={error.username}
             />
-
-            <button
-              type="button"
-              onClick={() => setShow(!show)}
-              className="absolute top-5 -translate-y-1/2 right-3 text-slate-500 hover:text-slate-700"
-            >
-              {show ? (
-                <EyeSlashIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
-            </button>
           </div>
+          {/* Contraseña */}
+          <PasswordField
+            label="Contraseña"
+            name="password"
+            className="mt-2"
+            placeholder="Introduce tu contraseña"
+            value={form?.password ?? ''}
+            onChange={updateBase}
+            error={error.password}
+          />
           {/* Botón */}
-          <button className="w-full rounded-lg bg-emerald-800 py-2.5 text-sm font-medium text-white hover:bg-emerald-900">
-            Iniciar sesión
+          <button
+            className="w-full mt-3 rounded-lg bg-emerald-800 py-2.5 text-sm font-medium text-white hover:bg-emerald-900"
+            onClick={handleValidation}
+          >
+            {loading ? 'Procesando...' : 'Iniciar sesión'}
           </button>
         </div>
       </div>

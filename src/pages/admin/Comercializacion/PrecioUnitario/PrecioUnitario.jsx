@@ -9,36 +9,49 @@ import ConfirmModal from '@components/ConfirmModal';
 import PrecioUnitarioModal from './PrecioUnitarioModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-
+import GraficoBarChart from '@components/GraficoBarChart';
+import { periodoATexto } from '../../../../helpers/normalze.helpers';
 const columnas = [
-  { label: 'Periodo', key: 'periodo' },
   {
-    label: 'presupuesto_mensual',
+    label: 'Periodo',
+    key: 'periodo',
+    render: (row) => periodoATexto(row.periodo),
+  },
+  {
+    label: 'Presupuesto mensual',
     key: 'presupuesto_mensual',
   },
   {
-    label: 'precio_promedio',
+    label: 'Precio promedio',
     key: 'precio_promedio',
   },
   {
-    label: 'region_centro',
+    label: 'Region centro',
     key: 'region_centro',
   },
   {
-    label: 'region_este',
+    label: 'Region este',
     key: 'region_este',
   },
   {
-    label: 'region_oeste',
+    label: 'Region oeste',
     key: 'region_oeste',
   },
   {
-    label: 'fabrica',
+    label: 'Fabrica',
     key: 'fabrica',
   },
   {
-    label: 'exportacion',
+    label: 'Exportacion',
     key: 'exportacion',
+  },
+  {
+    label: 'Meta',
+    key: 'meta',
+  },
+  {
+    label: 'Cumplimiento mensual',
+    key: 'cumplimiento_mensual',
   },
 ];
 
@@ -50,6 +63,7 @@ export default function PrecioUnitario() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -111,6 +125,36 @@ export default function PrecioUnitario() {
       setLoading(false);
     }
   };
+  const series = [
+    {
+      name: 'Presupuesto mensual',
+      data: datosGrafico?.presupuesto_mensual,
+    },
+    {
+      name: 'Precio promedio',
+      data: datosGrafico?.precio_promedio,
+    },
+    {
+      name: 'Region centro',
+      data: datosGrafico?.region_centro,
+    },
+    {
+      name: 'Region este',
+      data: datosGrafico?.region_este,
+    },
+    {
+      name: 'Region oeste',
+      data: datosGrafico?.region_oeste,
+    },
+    {
+      name: 'Fabrica',
+      data: datosGrafico?.fabrica,
+    },
+    {
+      name: 'Exportacion',
+      data: datosGrafico?.exportacion,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
@@ -123,7 +167,18 @@ export default function PrecioUnitario() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
       />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Precio unitario"
+          categories={datosGrafico?.categories}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"

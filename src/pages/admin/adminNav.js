@@ -14,10 +14,15 @@ export const adminNav = [
     title: 'Admin',
     icon: HomeIcon,
     items: [
-      { label: 'Gestion usuarios', to: '/admin/dashboard', icon: ChartBarIcon },
+      { label: 'Gestion usuarios', to: '/admin/usuarios', icon: ChartBarIcon },
       {
         label: 'Gestion roles',
-        to: '/admin/tabla',
+        to: '/admin/roles',
+        icon: ClipboardDocumentListIcon,
+      },
+      {
+        label: 'Gestiones indicadores',
+        to: '/admin/gestion',
         icon: ClipboardDocumentListIcon,
       },
     ],
@@ -49,6 +54,21 @@ export const adminNav = [
     title: 'Produccion',
     icon: UsersIcon,
     items: [
+      {
+        label: 'Gestion lineas',
+        to: '/admin/produccion/lineas',
+        icon: UsersIcon,
+      },
+      {
+        label: 'Gestion de formatos',
+        to: '/admin/produccion/formato',
+        icon: UsersIcon,
+      },
+      {
+        label: 'Informe produccion',
+        to: '/admin/produccion/informe-produccion',
+        icon: UsersIcon,
+      },
       {
         label: 'Moliendo barbotina',
         to: '/admin/produccion/barbotina',

@@ -1,14 +1,6 @@
-import { cuid2, z } from 'zod';
+import { z } from 'zod';
 
-import {
-  reqNum,
-  reqPct,
-  reqStr,
-  reqFloat,
-  optNum,
-  reqTime,
-  optStr,
-} from '../../convert.js';
+import { reqStr, optNum, reqTime, optStr } from '../../convert.js';
 
 const DatosObservaciones = z.object({
   observacion: reqStr('Obervaciones Esmalte'),
@@ -60,7 +52,6 @@ export const DatosEmbalaje = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   producto: reqStr('Producto'),
   horno: optNum('horno'),
-  formato: optStr('Formato'),
   supervisor_turno: reqStr('Supervisor de turno'),
   operador: reqStr('Operador'),
   grupo: reqStr('Grupo'),

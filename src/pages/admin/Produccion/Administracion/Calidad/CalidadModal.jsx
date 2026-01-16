@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { DatosCalidad } from '../../../../../schema/Produccion/Administracion/Calidad.schema';
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
   const [form, setForm] = useState();
