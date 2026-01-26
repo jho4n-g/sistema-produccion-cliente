@@ -2,13 +2,20 @@ import { useState, useEffect } from 'react';
 import { DatosUtilidad } from '../../../../schema/Administracion/Utilidad.schema';
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
-
+const initialForm = () => ({
+  periodo: '',
+  utilidad_mensual: '',
+  meta_mensual: '',
+  meta: '',
+  cumplimiento_mensual: '',
+});
 export default function HorasExtraModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,7 +26,23 @@ export default function HorasExtraModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
     (async () => {
       try {
         const data = await fetchById(id); // ← ahora sí esperamos aquí
@@ -41,7 +64,7 @@ export default function HorasExtraModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 

@@ -4,6 +4,7 @@ import {
   getAllObj,
   updateObj,
   getIdObj,
+  registerObj,
 } from '../../../../../service/Produccion/Administracion/MonitoreGasesCombustion.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import MonitoreoGasesCombustionModal from './MonitoreoGasesCombustionModal';
@@ -43,6 +44,10 @@ export default function IndiceConsumoLinea() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
+  //crear
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
+  const [payloadCreate, setPayloadCreate] = useState({});
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -104,6 +109,36 @@ export default function IndiceConsumoLinea() {
       setLoading(false);
     }
   };
+  //create
+  const handleOpenCreate = () => {
+    setOpenCreate(true);
+  };
+  const handleOpenConfirmCreate = (data) => {
+    setPayloadCreate(data);
+    setOpenCreateConfirm(true);
+  };
+
+  const handleCreate = async () => {
+    try {
+      setLoading(true);
+      const res = await registerObj(payloadCreate);
+      if (res.ok) {
+        toast.success(res.message || 'Registro creado con éxito');
+        tableRef.current?.reload();
+        setOpenCreateConfirm(false);
+        setOpenCreate(false);
+      }
+      if (!res.ok) {
+        setOpenCreateConfirm(false);
+        throw new Error(res.message || 'Error al crear el registro');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al crear el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <TablaRetutilizable
@@ -113,9 +148,13 @@ export default function IndiceConsumoLinea() {
         datosBusqueda={['periodo']}
         columnas={columnas}
         handleDetail={() => {}}
+        isDetalle={false}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
+        botonCrear={true}
+        tituloBoton="Ingresar nuevo periodo"
+        handleCrear={handleOpenCreate}
       />
       <ConfirmModal
         open={openModalDelete}
@@ -135,6 +174,7 @@ export default function IndiceConsumoLinea() {
         onSave={handleOpenConfirmUpdate}
         fetchById={getIdObj}
         id={idRow}
+        isEdit={true}
       />
       <ConfirmModal
         open={openModalUpdate}
@@ -146,6 +186,22 @@ export default function IndiceConsumoLinea() {
         danger={false}
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
+      />
+      <MonitoreoGasesCombustionModal
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSave={handleOpenConfirmCreate}
+      />
+      <ConfirmModal
+        open={openCreateConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={() => setOpenCreateConfirm(false)}
+        onConfirm={handleCreate}
       />
     </>
   );

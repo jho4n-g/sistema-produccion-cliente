@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
-import { DatosIngresoPorVentaTotal } from '@schema/Comercializacion/IngresoPorVentaTotal.Schema';
+import { DatosCalidad } from '@schema/Produccion/Administracion/Calidad.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 
 const initialForm = () => ({
-  periodo: '',
-  presupuesto_mensual: '',
-  venta_mensual_con_otro_ingresos: '',
-  venta_mensual_ceramica: '',
-  otros_ingresos: '',
-  meta: '',
+  fecha: '',
+  produccion_mensual: '',
+  presupuesto: '',
+  produccion_primera_mensual: '',
+  produccion_segunda_mensual: '',
+  produccion_tercera_mensual: '',
+  produccion_cascote_mensual: '',
 });
 
-export default function IngresoVentaTotalModal({
+export default function CalidadModal({
   open,
   onClose,
   onSave,
@@ -80,18 +81,28 @@ export default function IngresoVentaTotalModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosIngresoPorVentaTotal.safeParse(form);
+    const result = DatosCalidad.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
+
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = result.data;
-      onSave(data);
+
+      handleSave(data);
     }
   };
+  const handleSave = (payload) => {
+    onSave(payload);
+  };
 
+  const handleClose = () => {
+    setError({});
+    setForm(initialForm());
+    onClose();
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay (fondo) */}
@@ -117,9 +128,7 @@ export default function IngresoVentaTotalModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">
-                Ingreso venta total
-              </h3>
+              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
@@ -127,64 +136,75 @@ export default function IngresoVentaTotalModal({
                 {/* Fila 1 */}
                 <div className="md:col-span-1 lg:col-span-3">
                   <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
+                    label="Fecha"
+                    type="date"
+                    name="fecha"
+                    value={form?.fecha || ''}
                     onChange={updateBase}
-                    error={error.periodo}
+                    error={error.fecha}
+                  />
+                </div>
+
+                {/* Fila 2 */}
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Produccion mensual"
+                    type="number"
+                    name="produccion_mensual"
+                    value={form?.produccion_mensual || ''}
+                    onChange={updateBase}
+                    error={error.produccion_mensual}
                   />
                 </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Presupuesto mensual"
+                    label="Presupuesto"
                     type="number"
-                    name="presupuesto_mensual"
-                    value={form?.presupuesto_mensual || ''}
+                    name="presupuesto"
+                    value={form?.presupuesto || ''}
                     onChange={updateBase}
-                    error={error.presupuesto_mensual}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Venta mensual con otro ingresos"
-                    type="number"
-                    name="venta_mensual_con_otro_ingresos"
-                    value={form?.venta_mensual_con_otro_ingresos || ''}
-                    onChange={updateBase}
-                    error={error.venta_mensual_con_otro_ingresos}
+                    error={error.presupuesto}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Venta mensual ceramica"
+                    label="Produccion primera mensual"
                     type="number"
-                    name="venta_mensual_ceramica"
-                    value={form?.venta_mensual_ceramica || ''}
+                    name="produccion_primera_mensual"
+                    value={form?.produccion_primera_mensual || ''}
                     onChange={updateBase}
-                    error={error.venta_mensual_ceramica}
+                    error={error.produccion_primera_mensual}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Otros ingresos"
+                    label="Produccion segunda mensual"
                     type="number"
-                    name="otros_ingresos"
-                    value={form?.otros_ingresos || ''}
+                    name="produccion_segunda_mensual"
+                    value={form?.produccion_segunda_mensual || ''}
                     onChange={updateBase}
-                    error={error.otros_ingresos}
+                    error={error.produccion_segunda_mensual}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="meta"
+                    label="Produccion tercera mensual"
                     type="number"
-                    name="meta"
-                    value={form?.meta || ''}
+                    name="produccion_tercera_mensual"
+                    value={form?.produccion_tercera_mensual || ''}
                     onChange={updateBase}
-                    error={error.meta}
+                    error={error.produccion_tercera_mensual}
+                  />
+                </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Produccion cascote mensual"
+                    type="number"
+                    name="produccion_cascote_mensual"
+                    value={form?.produccion_cascote_mensual || ''}
+                    onChange={updateBase}
+                    error={error.produccion_cascote_mensual}
                   />
                 </div>
               </div>
@@ -192,7 +212,7 @@ export default function IngresoVentaTotalModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>
@@ -200,7 +220,7 @@ export default function IngresoVentaTotalModal({
                 className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
                 onClick={handleValidation}
               >
-                Guardar cambios
+                {isEdit ? 'Guardar cambios' : 'Guardar registro'}
               </button>
             </div>
           </>

@@ -3,12 +3,24 @@ import { DatosIndiceSeveridad } from '../../../../schema/Administracion/IndiceSe
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
 
+const initialForm = () => ({
+  periodo: '',
+  n_trabajadores: '',
+  porcentaje_ausentismo: '',
+  dias_baja_medica_administracion: '',
+  dias_baja_medica_mantenimiento: '',
+  dias_baja_medica_produccion: '',
+  dias_baja_medica_comercializacion: '',
+  meta: '',
+});
+
 export default function IndiceFrecuenciaModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +31,24 @@ export default function IndiceFrecuenciaModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +71,7 @@ export default function IndiceFrecuenciaModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 

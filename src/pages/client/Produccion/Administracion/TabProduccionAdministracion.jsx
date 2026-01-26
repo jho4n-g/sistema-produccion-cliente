@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Tabs from '../../../../components/Tabs';
-import Calidad from './Tabs/CalidadLlenado';
-import IndiceConsumoAguaLlenado from './Tabs/IndiceConsumoAguaLlenado';
-import IndiceConsumoBasesLlenado from './Tabs/IndiceConsumoBasesLlenado';
+import Calidad from './Tabs/Calidad/Calidad';
+import IndiceConsumoAguaLlenado from './Tabs/IndiceConsumoAgua/IndiceConsumoAgua';
+import IndiceConsumoBasesLlenado from './Tabs/IndiceConsumoBases/IndiceConsumoBases';
 import IndiceConsumoEeLlenado from './Tabs/IndiceConsumoEeLlenado';
 import IndiceConsumoEngobleLlenado from './Tabs/IndiceConsumoEngobleLlenado';
 import IndiceConsumoEsmalteLlenado from './Tabs/IndiceConsumoEsmalteLlenado';

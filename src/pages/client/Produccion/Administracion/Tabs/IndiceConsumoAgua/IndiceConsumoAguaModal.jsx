@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
-import { DatosIngresoPorVentaTotal } from '@schema/Comercializacion/IngresoPorVentaTotal.Schema';
+import { DatosIndiceConsumoAgua } from '@schema/Produccion/Administracion/IndiceConsumoAgua.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 
 const initialForm = () => ({
-  periodo: '',
-  presupuesto_mensual: '',
-  venta_mensual_con_otro_ingresos: '',
-  venta_mensual_ceramica: '',
-  otros_ingresos: '',
-  meta: '',
+  fecha: '',
+  produccion: '',
+  cisterna_agua: '',
+  medidor_subestacion_ee: '',
+  medidor_tres_produccion: '',
+  medidor_cuatro_eliza: '',
+  medidor_cinco_administracion: '',
+  medidor_seis_arcilla: '',
 });
 
-export default function IngresoVentaTotalModal({
+export default function IndiceConsumoAguaModal({
   open,
   onClose,
   onSave,
@@ -80,18 +82,28 @@ export default function IngresoVentaTotalModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosIngresoPorVentaTotal.safeParse(form);
+    const result = DatosIndiceConsumoAgua.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
+
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = result.data;
-      onSave(data);
+
+      handleSave(data);
     }
   };
+  const handleSave = (payload) => {
+    onSave(payload);
+  };
 
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay (fondo) */}
@@ -118,7 +130,7 @@ export default function IngresoVentaTotalModal({
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
               <h3 className="text-lg font-semibold text-slate-900">
-                Ingreso venta total
+                Indice consumo agua
               </h3>
             </div>
 
@@ -127,64 +139,85 @@ export default function IngresoVentaTotalModal({
                 {/* Fila 1 */}
                 <div className="md:col-span-1 lg:col-span-3">
                   <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
+                    label="Fecha"
+                    type="date"
+                    name="fecha"
+                    value={form?.fecha || ''}
                     onChange={updateBase}
-                    error={error.periodo}
+                    error={error.fecha}
+                  />
+                </div>
+
+                {/* Fila 2 */}
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Produccion"
+                    type="text"
+                    name="produccion"
+                    value={form?.produccion || ''}
+                    onChange={updateBase}
+                    error={error.produccion}
                   />
                 </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Presupuesto mensual"
-                    type="number"
-                    name="presupuesto_mensual"
-                    value={form?.presupuesto_mensual || ''}
+                    label="Cisterna agua"
+                    type="text"
+                    name="cisterna_agua"
+                    value={form?.cisterna_agua || ''}
                     onChange={updateBase}
-                    error={error.presupuesto_mensual}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Venta mensual con otro ingresos"
-                    type="number"
-                    name="venta_mensual_con_otro_ingresos"
-                    value={form?.venta_mensual_con_otro_ingresos || ''}
-                    onChange={updateBase}
-                    error={error.venta_mensual_con_otro_ingresos}
+                    error={error.cisterna_agua}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Venta mensual ceramica"
+                    label="Medidor subestacion ee"
                     type="number"
-                    name="venta_mensual_ceramica"
-                    value={form?.venta_mensual_ceramica || ''}
+                    name="medidor_subestacion_ee"
+                    value={form?.medidor_subestacion_ee || ''}
                     onChange={updateBase}
-                    error={error.venta_mensual_ceramica}
+                    error={error.medidor_subestacion_ee}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Otros ingresos"
+                    label="Medidor tres produccion"
                     type="number"
-                    name="otros_ingresos"
-                    value={form?.otros_ingresos || ''}
+                    name="medidor_tres_produccion"
+                    value={form?.medidor_tres_produccion || ''}
                     onChange={updateBase}
-                    error={error.otros_ingresos}
+                    error={error.medidor_tres_produccion}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="meta"
+                    label="Medidor cuatro eliza"
                     type="number"
-                    name="meta"
-                    value={form?.meta || ''}
+                    name="medidor_cuatro_eliza"
+                    value={form?.medidor_cuatro_eliza || ''}
                     onChange={updateBase}
-                    error={error.meta}
+                    error={error.medidor_cuatro_eliza}
+                  />
+                </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Medidor cinco administracion"
+                    type="number"
+                    name="medidor_cinco_administracion"
+                    value={form?.medidor_cinco_administracion || ''}
+                    onChange={updateBase}
+                    error={error.medidor_cinco_administracion}
+                  />
+                </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Medidor seis arcilla"
+                    type="number"
+                    name="medidor_seis_arcilla"
+                    value={form?.medidor_seis_arcilla || ''}
+                    onChange={updateBase}
+                    error={error.medidor_seis_arcilla}
                   />
                 </div>
               </div>
@@ -192,7 +225,7 @@ export default function IngresoVentaTotalModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>
@@ -200,7 +233,7 @@ export default function IngresoVentaTotalModal({
                 className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
                 onClick={handleValidation}
               >
-                Guardar cambios
+                {isEdit ? 'Guardar cambios' : 'Guardar registro'}
               </button>
             </div>
           </>

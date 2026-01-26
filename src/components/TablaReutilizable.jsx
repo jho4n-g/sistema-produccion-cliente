@@ -4,6 +4,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
+import Select from './Select';
 
 import {
   useState,
@@ -36,9 +37,11 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     isAcccion = true,
     isGetIdObj = false,
     isBuscador = true,
+    isSeleccion = false,
+    getSeleccion,
     id,
   },
-  ref
+  ref,
 ) {
   const [query, setQuery] = useState('');
 
@@ -47,7 +50,8 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
 
   // paginado (cliente)
   const [page, setPage] = useState(0); // 0-based
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [turnoId, setTurnoId] = useState(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -57,7 +61,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
         throw new Error('Falta el id para cargar el registro');
       }
 
-      const obj = isGetIdObj ? await getObj(id) : await getObj();
+      const obj = isSeleccion ? await getObj(turnoId) : await getObj();
       console.log('reload ->', obj);
 
       if (!obj?.ok) {
@@ -79,7 +83,15 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     } finally {
       setLoading(false);
     }
-  }, [getObj, isGrafica, isGetIdObj, id, setDatosGrafico]);
+  }, [
+    getObj,
+    isGrafica,
+    isGetIdObj,
+    id,
+    setDatosGrafico,
+    isSeleccion,
+    turnoId,
+  ]);
 
   useImperativeHandle(ref, () => ({
     reload,
@@ -91,7 +103,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
     return row.filter((r) => {
       // Busca en columnas simples
       const matchSimple = datosBusqueda.some((k) =>
-        normalize(r?.[k]).includes(q)
+        normalize(r?.[k]).includes(q),
       );
       return matchSimple;
     });
@@ -151,30 +163,52 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
           )}
         </div>
         {isBuscador && (
-          <div className="rounded-lg border-2  border-slate-200 bg-white p-6 shadow-sm">
-            <div className="relative w-full max-w-sm">
-              {/* Icono izquierda */}
-              <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+          <div className="rounded-lg border-2 border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              {/* Buscador */}
+              <div className="w-full md:max-w-sm">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Buscar
+                </label>
 
-              <input
-                type="text"
-                placeholder="Buscar por Nombre..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
-                    focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-              />
+                <div className="relative">
+                  <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
-              {/* Botón limpiar */}
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              )}
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
+            focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                  />
+
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => setQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                    >
+                      <XMarkIcon className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Select */}
+              <div className="w-full md:w-90">
+                {isSeleccion ? (
+                  <Select
+                    label="Períodos"
+                    value={turnoId}
+                    onChange={setTurnoId}
+                    placeholder="Selecciona un período"
+                    getDatos={getSeleccion}
+                  />
+                ) : (
+                  <div className="hidden md:block" />
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -314,7 +348,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                   ? '0'
                   : `${page * rowsPerPage + 1}-${Math.min(
                       (page + 1) * rowsPerPage,
-                      filtered.length
+                      filtered.length,
                     )}`}{' '}
                 de {filtered.length}
               </span>

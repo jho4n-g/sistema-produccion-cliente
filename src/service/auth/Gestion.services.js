@@ -18,6 +18,15 @@ export const getObjs = async () => {
   }
 };
 
+export const getPeriodos = async () => {
+  try {
+    const data = await api.get('/gestion/periodo');
+    return data.data;
+  } catch (e) {
+    return e.response.data;
+  }
+};
+
 export const getIdObj = async (id) => {
   try {
     const data = await api.get(`/gestion/${id}`);

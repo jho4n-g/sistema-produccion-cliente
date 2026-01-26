@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 import { DatosDisponibilidaPorLinea } from '@schema/mantenimiento/DisponibilidadPorLinea.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
+const initialForm = () => ({
+  periodo: '',
+  n_horas_productivas_planificadas: '',
+  n_horas_lineas_paradas_linea_b: '',
+  n_horas_lineas_paradas_line_c: '',
+  n_horas_lineas_paradas_line_d: '',
+  meta: '',
+});
 
 export default function DisponibilidadPorLineaModal({
   open,
@@ -9,6 +17,7 @@ export default function DisponibilidadPorLineaModal({
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +28,24 @@ export default function DisponibilidadPorLineaModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +68,7 @@ export default function DisponibilidadPorLineaModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -90,7 +117,9 @@ export default function DisponibilidadPorLineaModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Disponibilidad por linea
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">

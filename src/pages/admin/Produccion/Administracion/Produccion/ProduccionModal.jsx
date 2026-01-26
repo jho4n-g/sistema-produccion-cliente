@@ -3,12 +3,20 @@ import { DatosProduccion } from '../../../../../schema/Produccion/Administracion
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 
+const initialForm = () => ({
+  periodo: '',
+  produccion: '',
+  produccion_mensual: '',
+  meta: '',
+});
+
 export default function ProduccionModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +27,24 @@ export default function ProduccionModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +67,7 @@ export default function ProduccionModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -94,7 +120,7 @@ export default function ProduccionModal({
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
               <h3 className="text-lg font-semibold text-slate-900">
-                Monitoreo gases combustion
+                Produccion
               </h3>
             </div>
 

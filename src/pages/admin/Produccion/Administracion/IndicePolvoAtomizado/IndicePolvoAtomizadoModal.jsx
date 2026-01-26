@@ -3,12 +3,19 @@ import { DatosIndicePolvoAtomizado } from '../../../../../schema/Produccion/Admi
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 
+const initialForm = () => ({
+  periodo: '',
+  produccion: '',
+  consumo_mensual: '',
+  meta: '',
+});
 export default function IndicePolvoAtomizadoModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +26,24 @@ export default function IndicePolvoAtomizadoModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +66,7 @@ export default function IndicePolvoAtomizadoModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 

@@ -3,12 +3,24 @@ import { DatosIndiceFrecuencia } from '../../../../schema/Administracion/IndiceF
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
 
+const initialForm = () => ({
+  periodo: '',
+  n_trabajadores: '',
+  porcentaje_ausentismo: '',
+  accidentes_administracion_personas: '',
+  accidentes_mantenieminto_personas: '',
+  accidentes_produccion_personas: '',
+  accidentes_comercializacion_personas: '',
+  meta: '',
+});
+
 export default function IndiceFrecuenciaModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +31,24 @@ export default function IndiceFrecuenciaModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +71,7 @@ export default function IndiceFrecuenciaModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -89,7 +119,9 @@ export default function IndiceFrecuenciaModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Indice frencuencia
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">

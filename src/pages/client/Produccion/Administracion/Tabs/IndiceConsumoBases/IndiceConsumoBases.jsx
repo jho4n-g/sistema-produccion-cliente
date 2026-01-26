@@ -5,50 +5,33 @@ import {
   updateObj,
   getIdObj,
   registerObj,
-} from '@service/Mantenimiento/DisponibilidadPorLinea';
+} from '@service/Produccion/Administracion/IndiceConsumoBases.services';
+import { getPeriodos } from '@service/auth/Gestion.services.js';
 import ConfirmModal from '@components/ConfirmModal';
-import DisponibilidadPorLineaModal from './DisponibilidadPorLineaModal';
+import IndiceConsumoBasesModal from './IndiceConsumoBasesModal';
+import EchartsStackedAreaChart from '@components/EchartsStackedAreaChart';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+
+import { normalizarFecha } from '@helpers/normalze.helpers';
+
 const columnas = [
   {
-    label: 'Periodo',
-    key: 'periodo',
-    render: (row) => periodoATexto(row.periodo),
+    label: 'Fecha',
+    key: 'fecha',
+    render: (row) => normalizarFecha(row.fecha),
   },
   {
-    label: 'N° horas lineas paradas linea b',
-    key: 'n_horas_lineas_paradas_linea_b',
+    label: 'Produccion ',
+    key: 'produccion',
   },
   {
-    label: 'N° horas lineas paradas linea c',
-    key: 'n_horas_lineas_paradas_line_c',
-  },
-  {
-    label: 'N horas lineas paradas linea d',
-    key: 'n_horas_lineas_paradas_line_d',
-  },
-  {
-    label: 'Disponibilidad linea b',
-    key: 'disponibilidad_linea_b',
-  },
-  {
-    label: 'Disponibilidad linea c',
-    key: 'disponibilidad_linea_c',
-  },
-  {
-    label: 'Disponibilidad linea d',
-    key: 'disponibilidad_linea_d',
-  },
-  {
-    label: 'Meta',
-    key: 'meta',
+    label: 'Consumo mensual',
+    key: 'consumo_mensual',
   },
 ];
 
-export default function DisponibilidadPorLinea() {
+export default function IndiceConsumoBases() {
   const [idRow, setIdRow] = useState(null);
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,7 +97,8 @@ export default function DisponibilidadPorLinea() {
         setOpenModal(false);
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
+        toast.error(res.message || 'Error al actualizar el registro');
+        setOpenModalUpdate(false);
       }
     } catch (e) {
       toast.error(e.message || 'Error al actualizar el registro');
@@ -122,7 +106,7 @@ export default function DisponibilidadPorLinea() {
       setLoading(false);
     }
   };
-  //create
+  //crear
   const handleOpenCreate = () => {
     setOpenCreate(true);
   };
@@ -151,44 +135,21 @@ export default function DisponibilidadPorLinea() {
       setLoading(false);
     }
   };
-  const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
-    periodoATexto(row),
-  );
+
+  const labelCategorias = datosGrafico?.categories ?? [];
+
   const series = [
-    {
-      name: 'N horas lineas paradas b',
-      data: datosGrafico?.n_horas_lineas_paradas_linea_b,
-    },
-    {
-      name: 'N horas lineas paradas c',
-      data: datosGrafico?.n_horas_lineas_paradas_line_c,
-    },
-    {
-      name: 'N horas lineas paradas d',
-      data: datosGrafico?.n_horas_lineas_paradas_line_d,
-    },
-    {
-      name: 'Disponibilidad linea b',
-      data: datosGrafico?.disponibilidad_linea_b,
-    },
-    {
-      name: 'Disponibilidad linea c',
-      data: datosGrafico?.disponibilidad_linea_c,
-    },
-    {
-      name: 'Disponibilidad linea d',
-      data: datosGrafico?.disponibilidad_linea_d,
-    },
+    { name: 'Produccion', data: datosGrafico?.produccion },
+    { name: 'Consumo mensual', data: datosGrafico?.consumo_mensual },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
         getObj={getAllObj}
-        titulo="Mantenimineto/ Desponibilidad por linea"
-        datosBusqueda={['periodo']}
+        titulo="Produccion/ Administracion/ Indice cosumo bases"
+        datosBusqueda={['fecha']}
         columnas={columnas}
-        handleDetail={() => {}}
         isDetalle={false}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
@@ -198,10 +159,12 @@ export default function DisponibilidadPorLinea() {
         botonCrear={true}
         tituloBoton="Ingresar nuevo periodo"
         handleCrear={handleOpenCreate}
+        isSeleccion={true}
+        getSeleccion={getPeriodos}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <GraficoBarChart
-          title="Produccion"
+        <EchartsStackedAreaChart
+          title="Indice consumo agua"
           categories={labelCategorias}
           series={series}
           height={400}
@@ -219,7 +182,8 @@ export default function DisponibilidadPorLinea() {
         onClose={closeDelete}
         onConfirm={hanldeDelete}
       />
-      <DisponibilidadPorLineaModal
+
+      <IndiceConsumoBasesModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         onSave={handleOpenConfirmUpdate}
@@ -238,7 +202,7 @@ export default function DisponibilidadPorLinea() {
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
       />
-      <DisponibilidadPorLineaModal
+      <IndiceConsumoBasesModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleOpenConfirmCreate}

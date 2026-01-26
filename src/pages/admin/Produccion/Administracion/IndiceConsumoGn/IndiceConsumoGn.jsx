@@ -4,6 +4,7 @@ import {
   getAllObj,
   updateObj,
   getIdObj,
+  registerObj,
 } from '../../../../../service/Produccion/Administracion/IndiceConsumoGn.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndiceConsumoGnModal from './IndiceConsumoGnModal';
@@ -61,6 +62,10 @@ export default function IndiceConsumoEsmalte() {
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
+  //crear
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
+  const [payloadCreate, setPayloadCreate] = useState({});
 
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
@@ -122,6 +127,39 @@ export default function IndiceConsumoEsmalte() {
       setLoading(false);
     }
   };
+  //create
+  const handleOpenCreate = () => {
+    setOpenCreate(true);
+  };
+  const handleOpenConfirmCreate = (data) => {
+    setPayloadCreate(data);
+    setOpenCreateConfirm(true);
+  };
+
+  const handleCreate = async () => {
+    try {
+      setLoading(true);
+      const res = await registerObj(payloadCreate);
+      if (res.ok) {
+        toast.success(res.message || 'Registro creado con éxito');
+        tableRef.current?.reload();
+        setOpenCreateConfirm(false);
+        setOpenCreate(false);
+      }
+      if (!res.ok) {
+        setOpenCreateConfirm(false);
+        throw new Error(res.message || 'Error al crear el registro');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al crear el registro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
+    periodoATexto(row),
+  );
   const series = [
     { name: 'Consumo gas natural', data: datosGrafico?.consumoGas },
   ];
@@ -134,16 +172,20 @@ export default function IndiceConsumoEsmalte() {
         datosBusqueda={['periodo']}
         columnas={columnas}
         handleDetail={() => {}}
+        isDetalle={false}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
+        botonCrear={true}
+        tituloBoton="Ingresar nuevo periodo"
+        handleCrear={handleOpenCreate}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         <GraficoBarChart
           title="Ratio de consumo de bases"
-          categories={datosGrafico?.categories}
+          categories={labelCategorias}
           series={series}
           height={400}
           showToolbox
@@ -167,6 +209,7 @@ export default function IndiceConsumoEsmalte() {
         onSave={handleOpenConfirmUpdate}
         fetchById={getIdObj}
         id={idRow}
+        isEdit={true}
       />
       <ConfirmModal
         open={openModalUpdate}
@@ -178,6 +221,22 @@ export default function IndiceConsumoEsmalte() {
         danger={false}
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
+      />
+      <IndiceConsumoGnModal
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSave={handleOpenConfirmCreate}
+      />
+      <ConfirmModal
+        open={openCreateConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger={false}
+        onClose={() => setOpenCreateConfirm(false)}
+        onConfirm={handleCreate}
       />
     </>
   );

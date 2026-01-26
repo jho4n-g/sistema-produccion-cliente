@@ -1,48 +1,35 @@
 import { useState, useEffect } from 'react';
-import { DatosIndiceConsumoAgua } from '../../../../../schema/Produccion/Administracion/IndiceConsumoAgua.schema';
+import { DatosMetaAgua } from '../../../../../schema/Produccion/Administracion/IndiceConsumoAgua.schema';
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+const initialForm = () => ({
+  meta: '',
+});
 
 export default function IndiceConsumoAguaModal({
   open,
   onClose,
   onSave,
   fetchById,
-  id,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !id) return; // evita correr si no aplica
-
-    let active = true; // evita setState tras unmount
-    setLoading(true);
-
-    (async () => {
-      try {
-        const data = await fetchById(id); // ← ahora sí esperamos aquí
-
-        if (!active) return;
-
-        if (data?.ok) {
-          setForm(data.dato ?? {});
-        } else {
-          toast.error(data?.message || 'No se pudo cargar el registro');
-        }
-      } catch (e) {
-        if (active) toast.error(e?.message || 'Error del servidor');
-      } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [open, id, fetchById]);
+    if (!open) return; // evita correr si no aplica
+    try {
+      setLoading(true);
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+    } catch (e) {
+      toast.error(e.message || 'Error en la modal');
+    } finally {
+      setLoading(false);
+    }
+  }, [open, fetchById]);
 
   if (!open) return null;
 
@@ -53,7 +40,7 @@ export default function IndiceConsumoAguaModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosIndiceConsumoAgua.safeParse(form);
+    const result = DatosMetaAgua.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
 
@@ -68,6 +55,12 @@ export default function IndiceConsumoAguaModal({
   };
   const handleSave = (payload) => {
     onSave(payload);
+  };
+
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -94,105 +87,13 @@ export default function IndiceConsumoAguaModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Indice consumo agua
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-                {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
-                    onChange={updateBase}
-                    error={error.periodo}
-                  />
-                </div>
-
-                {/* Fila 2 */}
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Produccion"
-                    type="text"
-                    name="produccion"
-                    value={form?.produccion || ''}
-                    onChange={updateBase}
-                    error={error.produccion}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Consumo agua"
-                    type="text"
-                    name="consumo_agua"
-                    value={form?.consumo_agua || ''}
-                    onChange={updateBase}
-                    error={error.consumo_agua}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Cisterna agua"
-                    type="text"
-                    name="cisterna_agua"
-                    value={form?.cisterna_agua || ''}
-                    onChange={updateBase}
-                    error={error.cisterna_agua}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Medidor subestacion ee"
-                    type="number"
-                    name="medidor_subestacion_ee"
-                    value={form?.medidor_subestacion_ee || ''}
-                    onChange={updateBase}
-                    error={error.medidor_subestacion_ee}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Medidor tres produccion"
-                    type="number"
-                    name="medidor_tres_produccion"
-                    value={form?.medidor_tres_produccion || ''}
-                    onChange={updateBase}
-                    error={error.medidor_tres_produccion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Medidor cuatro eliza"
-                    type="number"
-                    name="medidor_cuatro_eliza"
-                    value={form?.medidor_cuatro_eliza || ''}
-                    onChange={updateBase}
-                    error={error.medidor_cuatro_eliza}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Medidor cinco administracion"
-                    type="number"
-                    name="medidor_cinco_administracion"
-                    value={form?.medidor_cinco_administracion || ''}
-                    onChange={updateBase}
-                    error={error.medidor_cinco_administracion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Medidor seis arcilla"
-                    type="number"
-                    name="medidor_seis_arcilla"
-                    value={form?.medidor_seis_arcilla || ''}
-                    onChange={updateBase}
-                    error={error.medidor_seis_arcilla}
-                  />
-                </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
                     label="Meta"
@@ -208,7 +109,7 @@ export default function IndiceConsumoAguaModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

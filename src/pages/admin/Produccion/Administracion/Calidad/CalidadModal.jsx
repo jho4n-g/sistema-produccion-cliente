@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
-import { DatosCalidad } from '../../../../../schema/Produccion/Administracion/Calidad.schema';
+import { DatosMetaCalidad } from '../../../../../schema/Produccion/Administracion/Calidad.schema';
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 
-export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
+const initialForm = () => ({
+  meta_primera: '',
+  meta_cascote: '',
+});
+
+export default function CalidadModal({
+  open,
+  onClose,
+  onSave,
+  fetchById,
+  id,
+  isEdit = false,
+}) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -13,6 +25,24 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -35,7 +65,7 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -46,7 +76,7 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
   };
 
   const handleValidation = async () => {
-    const result = DatosCalidad.safeParse(form);
+    const result = DatosMetaCalidad.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
 
@@ -61,6 +91,12 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
   };
   const handleSave = (payload) => {
     onSave(payload);
+  };
+
+  const handleClose = () => {
+    setError({});
+    setForm(initialForm());
+    onClose();
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -87,103 +123,33 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Cambiar meta de calidad
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-                {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
-                    onChange={updateBase}
-                    error={error.periodo}
-                  />
-                </div>
-
                 {/* Fila 2 */}
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Produccion mensual"
-                    type="text"
-                    name="produccion_mensual"
-                    value={form?.produccion_mensual || ''}
+                    label="Meta primera"
+                    type="number"
+                    name="meta_primera"
+                    value={form?.meta_primera || ''}
                     onChange={updateBase}
-                    error={error.produccion_mensual}
+                    error={error.meta_primera}
                   />
                 </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Presupuesto"
-                    type="text"
-                    name="presupuesto"
-                    value={form?.presupuesto || ''}
-                    onChange={updateBase}
-                    error={error.presupuesto}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Produccion primera mensual"
-                    type="text"
-                    name="produccion_primera_mensual"
-                    value={form?.produccion_primera_mensual || ''}
-                    onChange={updateBase}
-                    error={error.produccion_primera_mensual}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Produccion segunda mensual"
+                    label="Meta cascote"
                     type="number"
-                    name="produccion_segunda_mensual"
-                    value={form?.produccion_segunda_mensual || ''}
+                    name="meta_cascote"
+                    value={form?.meta_cascote || ''}
                     onChange={updateBase}
-                    error={error.produccion_segunda_mensual}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Produccion tercera mensual"
-                    type="number"
-                    name="produccion_tercera_mensual"
-                    value={form?.produccion_tercera_mensual || ''}
-                    onChange={updateBase}
-                    error={error.produccion_tercera_mensual}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Produccion cascote mensual"
-                    type="number"
-                    name="produccion_cascote_mensual"
-                    value={form?.produccion_cascote_mensual || ''}
-                    onChange={updateBase}
-                    error={error.produccion_cascote_mensual}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Meta primera calidad"
-                    type="number"
-                    name="meta_primera_calidad"
-                    value={form?.meta_primera_calidad || ''}
-                    onChange={updateBase}
-                    error={error.meta_primera_calidad}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Meta cascote calidad"
-                    type="number"
-                    name="meta_cascote_calidad"
-                    value={form?.meta_cascote_calidad || ''}
-                    onChange={updateBase}
-                    error={error.meta_cascote_calidad}
+                    error={error.meta_cascote}
                   />
                 </div>
               </div>
@@ -191,7 +157,7 @@ export default function CalidadModal({ open, onClose, onSave, fetchById, id }) {
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

@@ -37,7 +37,9 @@ export function periodoATexto(periodo) {
     'noviembre',
     'diciembre',
   ];
-
+  if (!periodo) {
+    return 'sin periodo';
+  }
   const [y, m] = periodo.split('-').map(Number);
 
   const mes = meses[m - 1];
@@ -45,3 +47,18 @@ export function periodoATexto(periodo) {
 
   return `${mesCap} ${y}`;
 }
+
+export const normalizarFecha = (fecha) => {
+  const [y, m, d] = fecha.split('-').map(Number);
+  const date = new Date(y, m - 1, d); // LOCAL (sin UTC)
+
+  return new Intl.DateTimeFormat('es-ES', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+};
+
+export const normalizarPorcentaje = (numero) => {
+  return `${numero * 100} %`;
+};

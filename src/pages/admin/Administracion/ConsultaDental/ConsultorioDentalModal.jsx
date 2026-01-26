@@ -3,12 +3,24 @@ import { DatosConsultorioDental } from '../../../../schema/Administracion/Consul
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
 
+const initialForm = () => ({
+  periodo: '',
+  n_trabajadores: '',
+  produccion: '',
+  consultas_preventivas_trabajadores: '',
+  consultas_curativas_trabajadores: '',
+  consultas_preventivas_familiares: '',
+  consultas_curativas_familiares: '',
+  observacion: '',
+});
+
 export default function ConsultorioDentalModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +31,24 @@ export default function ConsultorioDentalModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +71,7 @@ export default function ConsultorioDentalModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -89,7 +119,9 @@ export default function ConsultorioDentalModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Consultorio dental
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
@@ -116,65 +148,66 @@ export default function ConsultorioDentalModal({
                     error={error.n_trabajadores}
                   />
                 </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Produccion"
+                    type="number"
+                    name="produccion"
+                    value={form?.produccion || ''}
+                    onChange={updateBase}
+                    error={error.produccion}
+                  />
+                </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Porcentaje ausentismo"
+                    label="Consultas preventivas trabajadores"
                     type="number"
-                    name="porcentaje_ausentismo"
-                    value={form?.porcentaje_ausentismo || ''}
+                    name="consultas_preventivas_trabajadores"
+                    value={form?.consultas_preventivas_trabajadores || ''}
                     onChange={updateBase}
-                    error={error.porcentaje_ausentismo}
+                    error={error.consultas_preventivas_trabajadores}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Dias baja medica administracion"
+                    label="Consultas curativas trabajadores"
                     type="number"
-                    name="dias_baja_medica_administracion"
-                    value={form?.dias_baja_medica_administracion || ''}
+                    name="consultas_curativas_trabajadores"
+                    value={form?.consultas_curativas_trabajadores || ''}
                     onChange={updateBase}
-                    error={error.dias_baja_medica_administracion}
+                    error={error.consultas_curativas_trabajadores}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Dias baja medica mantenimiento"
+                    label="Consultas preventivas familiares"
                     type="number"
-                    name="dias_baja_medica_mantenimiento"
-                    value={form?.dias_baja_medica_mantenimiento || ''}
+                    name="consultas_preventivas_familiares"
+                    value={form?.consultas_preventivas_familiares || ''}
                     onChange={updateBase}
-                    error={error.dias_baja_medica_mantenimiento}
+                    error={error.consultas_preventivas_familiares}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Dias baja medica produccion"
+                    label="Consultas curativas familiares"
                     type="number"
-                    name="dias_baja_medica_produccion"
-                    value={form?.dias_baja_medica_produccion || ''}
+                    name="consultas_curativas_familiares"
+                    value={form?.consultas_curativas_familiares || ''}
                     onChange={updateBase}
-                    error={error.dias_baja_medica_produccion}
+                    error={error.consultas_curativas_familiares}
                   />
                 </div>
-                <div className="md:col-span-1 lg:col-span-6">
+
+                <div className="md:col-span-6 lg:col-span-6">
                   <InputField
-                    label="Dias baja medica comercializacion"
-                    type="number"
-                    name="dias_baja_medica_comercializacion"
-                    value={form?.dias_baja_medica_comercializacion || ''}
+                    label="Observacion"
+                    type="text"
+                    name="observacion"
+                    value={form?.observacion || ''}
                     onChange={updateBase}
-                    error={error.dias_baja_medica_comercializacion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="meta"
-                    type="number"
-                    name="meta"
-                    value={form?.meta || ''}
-                    onChange={updateBase}
-                    error={error.meta}
+                    error={error.observacion}
                   />
                 </div>
               </div>

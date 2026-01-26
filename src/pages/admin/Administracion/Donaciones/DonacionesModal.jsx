@@ -2,13 +2,19 @@ import { useState, useEffect } from 'react';
 import { DatosDonaciones } from '../../../../schema/Administracion/Donaciones.Schema';
 import InputField from '../../../../components/InputField';
 import { toast } from 'react-toastify';
-
+const initialForm = () => ({
+  periodo: '',
+  produccion_menual: '',
+  cascote_mensual: '',
+  donacion: '',
+});
 export default function DonacionesModal({
   open,
   onClose,
   onSave,
   fetchById,
   id,
+  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
@@ -19,6 +25,24 @@ export default function DonacionesModal({
 
     let active = true; // evita setState tras unmount
     setLoading(true);
+
+    // CREAR
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    // EDITAR
+    if (!id) {
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     (async () => {
       try {
@@ -41,7 +65,7 @@ export default function DonacionesModal({
     return () => {
       active = false;
     };
-  }, [open, id, fetchById]);
+  }, [open, id, fetchById, isEdit]);
 
   if (!open) return null;
 
@@ -89,7 +113,9 @@ export default function DonacionesModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Donaciones
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">

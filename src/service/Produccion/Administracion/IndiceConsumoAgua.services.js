@@ -1,8 +1,42 @@
 import { api } from '../../api';
 
-export const getAllObj = async () => {
+export const getObjsDesempenioMes = async (id) => {
   try {
-    const data = await api.get('/produccion/indice-consumo-agua/');
+    const data = await api.get(
+      `/produccion/indice-consumo-agua/desempenio/${id}`,
+    );
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+
+export const registerObjMetas = async (payload) => {
+  try {
+    const data = await api.post(
+      `/produccion/indice-consumo-agua/metas`,
+      payload,
+    );
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+export const getObjPromedios = async () => {
+  try {
+    const data = await api.get(`/produccion/indice-consumo-agua/promedios/`);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+
+export const getAllObj = async (id) => {
+  try {
+    const data = await api.get(`/produccion/indice-consumo-agua/cliente/${id}`);
     return data.data;
   } catch (e) {
     console.log(e);
@@ -30,7 +64,7 @@ export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(
       `/produccion/indice-consumo-agua/${id}`,
-      payload
+      payload,
     );
     return data.data;
   } catch (e) {

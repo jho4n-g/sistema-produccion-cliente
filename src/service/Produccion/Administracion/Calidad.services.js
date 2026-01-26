@@ -1,8 +1,46 @@
 import { api } from '../../api';
 
-export const getAllObj = async () => {
+export const registerObj = async (payload) => {
   try {
-    const data = await api.get('/produccion/calidad/');
+    const data = await api.post('/produccion/calidad/', payload);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+
+export const registerObjMetas = async (payload) => {
+  try {
+    const data = await api.post('/produccion/calidad/metas', payload);
+    return data.data;
+  } catch (e) {
+    console.log(e);
+    return e.response.data;
+  }
+};
+
+export const createObj = async (payload) => {
+  try {
+    const data = await api.post('/produccion/calidad/', payload);
+    return data.data;
+  } catch (e) {
+    return e.response.data;
+  }
+};
+
+export const getObjsPromedios = async () => {
+  try {
+    const data = await api.get('/produccion/calidad/promedios');
+
+    return data.data;
+  } catch (e) {
+    return e.response.data;
+  }
+};
+export const getAllObj = async (id) => {
+  try {
+    const data = await api.get(`/produccion/calidad/periodo/${id}`);
     return data.data;
   } catch (e) {
     console.log(e);
@@ -29,16 +67,6 @@ export const getIdObj = async (id) => {
 export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(`/produccion/calidad/${id}`, payload);
-    return data.data;
-  } catch (e) {
-    console.log(e);
-    return e.response.data;
-  }
-};
-
-export const registerObj = async (payload) => {
-  try {
-    const data = await api.post('/produccion/calidad/', payload);
     return data.data;
   } catch (e) {
     console.log(e);

@@ -1,16 +1,18 @@
 import { z } from 'zod';
 
-import { reqPeriodo, reqNum, reqPct } from '../../convert.js';
+import { reqFloat, reqPct } from '../../convert.js';
 
 export const DatosCalidad = z.object({
-  periodo: reqPeriodo('periodo'),
-  produccion_mensual: reqNum('produccion_mensual'),
-  presupuesto: reqNum('presupuesto'),
-  produccion_primera_mensual: reqNum('produccion_primera_mensual'),
-  produccion_segunda_mensual: reqNum('produccion_segunda_mensual'),
-  produccion_tercera_mensual: reqNum('produccion_tercera_mensual'),
-  produccion_cascote_mensual: reqNum('produccion_cascote_mensual'),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
+  produccion_mensual: reqFloat('produccion_mensual'),
+  presupuesto: reqFloat('presupuesto'),
+  produccion_primera_mensual: reqFloat('produccion_primera_mensual'),
+  produccion_segunda_mensual: reqFloat('produccion_segunda_mensual'),
+  produccion_tercera_mensual: reqFloat('produccion_tercera_mensual'),
+  produccion_cascote_mensual: reqFloat('produccion_cascote_mensual'),
+});
 
-  meta_primera_calidad: reqPct('meta_primera_calidad'),
-  meta_cascote_calidad: reqPct('meta_cascote_calidad'),
+export const DatosMetaCalidad = z.object({
+  meta_primera: reqPct('Meta primera'),
+  meta_cascote: reqPct('Meta_cascote'),
 });

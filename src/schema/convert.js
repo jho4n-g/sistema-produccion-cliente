@@ -40,7 +40,7 @@ export const optNum = (label) =>
         invalid_type_error: `El campo ${label} debe ser numérico`,
       })
       .min(0, `${label} debe ser mayor o igual a 0`)
-      .optional()
+      .optional(),
   );
 
 export const optStr = (label) => {
@@ -67,7 +67,7 @@ export const optPct = (label) =>
       })
       .min(0, `${label} debe ser ≥ 0`)
       .max(100, `${label} debe ser ≤ 100`)
-      .nullish() // permite undefined/null
+      .nullish(), // permite undefined/null
   );
 
 export const reqStr = (label) => {
@@ -87,8 +87,7 @@ export const reqNum = (label) =>
       invalid_type_error: `El campo ${label} debe ser numérico`,
     })
     .finite(`${label} debe ser numérico válido`) // ✅ reemplaza refine
-    .min(1, `Debe ser mayor o igual a 1`)
-    .int();
+    .min(1, `Debe ser mayor o igual a 1`);
 
 export const reqPct = (label) => {
   return reqFloat(label)
@@ -122,7 +121,7 @@ export const reqPeriodo = (label = 'Período') => {
       .min(1, `${label} es requerido`)
       .regex(
         /^\d{4}-\d{2}$/,
-        `${label}: Formato inválido. Use YYYY-MM (ej: 2024-01)`
+        `${label}: Formato inválido. Use YYYY-MM (ej: 2024-01)`,
       )
       // 👉 validar MES usando solo el segundo valor
       .refine((value) => {
@@ -150,7 +149,7 @@ export const reqEntero = (label = 'Valor') =>
       })
       .int(`${label} debe ser un número entero`)
       .min(0, `${label} debe ser mayor o igual a 0`)
-      .optional()
+      .optional(),
   );
 
 export const reqEnteroMayorCero = (label) => {

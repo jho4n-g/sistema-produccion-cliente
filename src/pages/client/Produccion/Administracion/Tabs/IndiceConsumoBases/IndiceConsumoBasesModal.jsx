@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
-import { DatosIngresoPorVentaTotal } from '@schema/Comercializacion/IngresoPorVentaTotal.Schema';
+import { DatosIndiceConsumoBases } from '@schema/Produccion/Administracion/IndiceConsumoBases.shcema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const initialForm = () => ({
-  periodo: '',
-  presupuesto_mensual: '',
-  venta_mensual_con_otro_ingresos: '',
-  venta_mensual_ceramica: '',
-  otros_ingresos: '',
-  meta: '',
+  fecha: '',
+  produccion: '',
+  consumo_mensual: '',
 });
 
-export default function IngresoVentaTotalModal({
+export default function IndiceConsumoBasesModal({
   open,
   onClose,
   onSave,
@@ -80,18 +78,26 @@ export default function IngresoVentaTotalModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosIngresoPorVentaTotal.safeParse(form);
+    const result = DatosIndiceConsumoBases.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
+
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = result.data;
-      onSave(data);
+      handleSave(data);
     }
   };
-
+  const handleSave = (payload) => {
+    onSave(payload);
+  };
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay (fondo) */}
@@ -118,7 +124,7 @@ export default function IngresoVentaTotalModal({
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
               <h3 className="text-lg font-semibold text-slate-900">
-                Ingreso venta total
+                Indice consumo bases
               </h3>
             </div>
 
@@ -127,64 +133,35 @@ export default function IngresoVentaTotalModal({
                 {/* Fila 1 */}
                 <div className="md:col-span-1 lg:col-span-3">
                   <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
+                    label="Fecha"
+                    type="date"
+                    name="fecha"
+                    value={form?.fecha || ''}
                     onChange={updateBase}
-                    error={error.periodo}
+                    error={error.fecha}
+                  />
+                </div>
+
+                {/* Fila 2 */}
+                <div className="md:col-span-1 lg:col-span-6">
+                  <InputField
+                    label="Produccion"
+                    type="number"
+                    name="produccion"
+                    value={form?.produccion || ''}
+                    onChange={updateBase}
+                    error={error.produccion}
                   />
                 </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Presupuesto mensual"
+                    label="Consumo mensual"
                     type="number"
-                    name="presupuesto_mensual"
-                    value={form?.presupuesto_mensual || ''}
+                    name="consumo_mensual"
+                    value={form?.consumo_mensual || ''}
                     onChange={updateBase}
-                    error={error.presupuesto_mensual}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Venta mensual con otro ingresos"
-                    type="number"
-                    name="venta_mensual_con_otro_ingresos"
-                    value={form?.venta_mensual_con_otro_ingresos || ''}
-                    onChange={updateBase}
-                    error={error.venta_mensual_con_otro_ingresos}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Venta mensual ceramica"
-                    type="number"
-                    name="venta_mensual_ceramica"
-                    value={form?.venta_mensual_ceramica || ''}
-                    onChange={updateBase}
-                    error={error.venta_mensual_ceramica}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Otros ingresos"
-                    type="number"
-                    name="otros_ingresos"
-                    value={form?.otros_ingresos || ''}
-                    onChange={updateBase}
-                    error={error.otros_ingresos}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="meta"
-                    type="number"
-                    name="meta"
-                    value={form?.meta || ''}
-                    onChange={updateBase}
-                    error={error.meta}
+                    error={error.consumo_mensual}
                   />
                 </div>
               </div>
@@ -192,7 +169,7 @@ export default function IngresoVentaTotalModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

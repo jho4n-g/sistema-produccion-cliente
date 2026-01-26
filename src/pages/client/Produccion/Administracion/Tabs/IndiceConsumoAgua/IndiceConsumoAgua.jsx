@@ -5,50 +5,53 @@ import {
   updateObj,
   getIdObj,
   registerObj,
-} from '@service/Mantenimiento/DisponibilidadPorLinea';
+} from '@service/Produccion/Administracion/IndiceConsumoAgua.services';
+import { getPeriodos } from '@service/auth/Gestion.services.js';
 import ConfirmModal from '@components/ConfirmModal';
-import DisponibilidadPorLineaModal from './DisponibilidadPorLineaModal';
+import IndiceConsumoAguaModal from './IndiceConsumoAguaModal';
+import EchartsStackedAreaChart from '@components/EchartsStackedAreaChart';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import { normalizarFecha } from '@helpers/normalze.helpers';
+
 const columnas = [
   {
-    label: 'Periodo',
-    key: 'periodo',
-    render: (row) => periodoATexto(row.periodo),
+    label: 'Fecha',
+    key: 'fecha',
+    render: (row) => normalizarFecha(row.fecha),
   },
   {
-    label: 'N° horas lineas paradas linea b',
-    key: 'n_horas_lineas_paradas_linea_b',
+    label: 'Produccion ',
+    key: 'produccion',
   },
   {
-    label: 'N° horas lineas paradas linea c',
-    key: 'n_horas_lineas_paradas_line_c',
+    label: 'Cisterna agua',
+    key: 'cisterna_agua',
   },
   {
-    label: 'N horas lineas paradas linea d',
-    key: 'n_horas_lineas_paradas_line_d',
+    label: 'Medidor subestacion ee',
+    key: 'medidor_subestacion_ee',
   },
   {
-    label: 'Disponibilidad linea b',
-    key: 'disponibilidad_linea_b',
+    label: 'Medidor tres produccion',
+    key: 'medidor_tres_produccion',
   },
   {
-    label: 'Disponibilidad linea c',
-    key: 'disponibilidad_linea_c',
+    label: 'Medidor cuatro eliza',
+    key: 'medidor_cuatro_eliza',
+  },
+
+  {
+    label: 'Medidor cinco administracion',
+    key: 'medidor_cinco_administracion',
   },
   {
-    label: 'Disponibilidad linea d',
-    key: 'disponibilidad_linea_d',
-  },
-  {
-    label: 'Meta',
-    key: 'meta',
+    label: 'Medidor seis arcilla',
+    key: 'medidor_seis_arcilla',
   },
 ];
 
-export default function DisponibilidadPorLinea() {
+export default function Calidad() {
   const [idRow, setIdRow] = useState(null);
   const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,6 +60,7 @@ export default function DisponibilidadPorLinea() {
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
+
   //crear
   const [openCreate, setOpenCreate] = useState(false);
   const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
@@ -114,7 +118,8 @@ export default function DisponibilidadPorLinea() {
         setOpenModal(false);
       }
       if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
+        toast.error(res.message || 'Error al actualizar el registro');
+        setOpenModalUpdate(false);
       }
     } catch (e) {
       toast.error(e.message || 'Error al actualizar el registro');
@@ -122,7 +127,7 @@ export default function DisponibilidadPorLinea() {
       setLoading(false);
     }
   };
-  //create
+  //crear
   const handleOpenCreate = () => {
     setOpenCreate(true);
   };
@@ -151,57 +156,42 @@ export default function DisponibilidadPorLinea() {
       setLoading(false);
     }
   };
-  const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
-    periodoATexto(row),
-  );
+
+  const labelCategorias = datosGrafico?.categories ?? [];
   const series = [
+    { name: 'Produccion', data: datosGrafico?.produccion },
+    { name: 'Cisterna agua', data: datosGrafico?.cisterna_agua },
+    { name: 'Cisterna agua', data: datosGrafico?.medidor_subestacion_ee },
+    { name: 'Medido # 4 Eliza', data: datosGrafico?.medidor_cuatro_eliza },
     {
-      name: 'N horas lineas paradas b',
-      data: datosGrafico?.n_horas_lineas_paradas_linea_b,
+      name: 'Medido # 5 Administracion',
+      data: datosGrafico?.medidor_cinco_administracion,
     },
-    {
-      name: 'N horas lineas paradas c',
-      data: datosGrafico?.n_horas_lineas_paradas_line_c,
-    },
-    {
-      name: 'N horas lineas paradas d',
-      data: datosGrafico?.n_horas_lineas_paradas_line_d,
-    },
-    {
-      name: 'Disponibilidad linea b',
-      data: datosGrafico?.disponibilidad_linea_b,
-    },
-    {
-      name: 'Disponibilidad linea c',
-      data: datosGrafico?.disponibilidad_linea_c,
-    },
-    {
-      name: 'Disponibilidad linea d',
-      data: datosGrafico?.disponibilidad_linea_d,
-    },
+    { name: 'Medido # 6 Arcilla', data: datosGrafico?.medidor_seis_arcilla },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
         getObj={getAllObj}
-        titulo="Mantenimineto/ Desponibilidad por linea"
-        datosBusqueda={['periodo']}
+        titulo="Produccion/ Administracion/ Indice cosumo agua"
+        datosBusqueda={['fecha']}
         columnas={columnas}
-        handleDetail={() => {}}
         isDetalle={false}
+        handleDetail={() => {}}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
-        enableHorizontalScroll={false}
-        isGrafica={true}
-        setDatosGrafico={setDatosGrafica}
         botonCrear={true}
         tituloBoton="Ingresar nuevo periodo"
         handleCrear={handleOpenCreate}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
+        isSeleccion={true}
+        getSeleccion={getPeriodos}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <GraficoBarChart
-          title="Produccion"
+        <EchartsStackedAreaChart
+          title="Indice consumo agua"
           categories={labelCategorias}
           series={series}
           height={400}
@@ -219,7 +209,8 @@ export default function DisponibilidadPorLinea() {
         onClose={closeDelete}
         onConfirm={hanldeDelete}
       />
-      <DisponibilidadPorLineaModal
+
+      <IndiceConsumoAguaModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         onSave={handleOpenConfirmUpdate}
@@ -238,7 +229,7 @@ export default function DisponibilidadPorLinea() {
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
       />
-      <DisponibilidadPorLineaModal
+      <IndiceConsumoAguaModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleOpenConfirmCreate}
