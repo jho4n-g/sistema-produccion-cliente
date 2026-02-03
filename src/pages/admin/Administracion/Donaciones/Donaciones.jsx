@@ -1,17 +1,12 @@
 import TablaRetutilizable from '../../../../components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
+  getObjPromedios,
+  getObjsDesempenioMes,
 } from '../../../../service/Administracion/Donaciones.services';
-import ConfirmModal from '../../../../components/ConfirmModal';
-import DonacionesModal from './DonacionesModal';
 import { useState, useRef } from 'react';
-import { toast } from 'react-toastify';
 import GraficoBarChart from '@components/GraficoBarChart';
 import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
 
 const columnas = [
   {
@@ -21,123 +16,43 @@ const columnas = [
   },
   {
     label: 'Produccion menual',
-    key: 'produccion_menual',
+    key: 'produccion_mensual_prom',
   },
-  { label: 'Cascote mensual', key: 'cascote_mensual' },
-  { label: 'Cascote acumulado', key: 'acumulado_cascote' },
+  { label: 'Cascote mensual', key: 'cascote_mensual_prom' },
   {
     label: 'Donacion',
-    key: 'donacion',
+    key: 'donacion_prom',
   },
-  { label: 'Donacion acumulado', key: 'acumulado_donacion' },
-  { label: ' Donacion / Produccion', key: 'donacion_produccion' },
-  { label: ' Cascote / Produccion', key: 'cascote_produccion' },
+  {
+    label: 'Produccion acumulado',
+    key: 'produccion_acumulada',
+  },
+  { label: 'Cascote acumulado', key: 'cascote_acumulado' },
+
+  { label: 'Donacion acumulado', key: 'donacion_acumulada' },
+  { label: ' Donacion / Produccion', key: 'donacion_mensual_cascote' },
+  { label: ' Cascote / Produccion', key: 'cascote_mensual_cascote' },
   { label: ' Costo promedio donacion', key: 'costo_promedio_donacion' },
 ];
 
 export default function Donaciones() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
+
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
-
-  const hanldeOpenConfirmDelete = (id) => {
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
-  };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
-  };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
-      if (res.ok) {
-        toast.success(res.message || 'Registro creado con éxito');
-        tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
-      }
-      if (!res.ok) {
-        setOpenCreateConfirm(false);
-        throw new Error(res.message || 'Error al crear el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al crear el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
   const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
     periodoATexto(row),
   );
@@ -145,31 +60,37 @@ export default function Donaciones() {
   const series = [
     {
       name: 'Produccion mensual',
-      data: datosGrafico?.produccion_menual,
+      data: datosGrafico?.produccion_mensual_prom,
     },
     {
       name: 'Cascote mensual',
-      data: datosGrafico?.cascote_mensual,
+      data: datosGrafico?.cascote_mensual_prom,
+    },
+    {
+      name: 'Donacion',
+      data: datosGrafico?.donacion_prom,
     },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="Administracion/ Indice no conformidad y acciones correctivas"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
-        botonCrear={true}
+        botonCrear={false}
         tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        handleCrear={() => {}}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         <GraficoBarChart
@@ -180,51 +101,33 @@ export default function Donaciones() {
           showToolbox
         />
       </div>
-      <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
-      />
-      <DonacionesModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <DonacionesModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Horas extra"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'Produccion mensual',
+                data: g?.produccion_mensual,
+              },
+              {
+                name: 'Cascote mensual',
+                data: g?.cascote_mensual,
+              },
+              {
+                name: 'Donacion',
+                data: g?.donacion,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

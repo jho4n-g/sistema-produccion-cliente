@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { optNum, reqPeriodo } from '../convert.js';
+import { optNum } from '../convert.js';
 
 export const DatosGeneracionResidiosSolidos = z.object({
-  periodo: reqPeriodo('periodo'),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   n_trabajadores: optNum('n trabajadores'),
   kg_carton: optNum('kg carton'),
   pe: optNum('Pe'),
@@ -16,7 +16,7 @@ export const DatosGeneracionResidiosSolidos = z.object({
   kg_bidon_azul: optNum('kg_bidon_azul'),
   kg_aceite_sucio: optNum('kg_aceite_sucio'),
   kg_bolsas_plasticas_transparentes: optNum(
-    'kg_bolsas_plasticas_transparentes'
+    'kg_bolsas_plasticas_transparentes',
   ),
   kg_bolsas_yute: optNum('kg_bolsas_yute'),
 });

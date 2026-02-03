@@ -1,17 +1,19 @@
 import TablaRetutilizable from '../../../../../components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
+  registerObjMetas,
+  getObjPromedios,
+  getObjsDesempenioMes,
 } from '../../../../../service/Produccion/Administracion/IndicePolvoAtomizado.services';
 import ConfirmModal from '../../../../../components/ConfirmModal';
 import IndicePolvoAtomizadoModal from './IndicePolvoAtomizadoModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../../helpers/normalze.helpers';
+import {
+  periodoATexto,
+  normalizarPorcentaje,
+} from '../../../../../helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
 
 const columnas = [
   {
@@ -21,143 +23,88 @@ const columnas = [
   },
   {
     label: 'Produccion ',
-    key: 'produccion',
+    key: 'produccion_prom',
   },
   {
     label: 'Consumo mensual',
-    key: 'consumo_mensual',
+    key: 'consumo_mensual_prom',
   },
   {
     label: 'Ratio consumo',
     key: 'ratio_consumo',
   },
   {
-    label: 'Meta',
-    key: 'meta',
+    label: 'Meta [gr/m²]',
+    key: 'meta_kg_m',
   },
   {
     label: 'Cumplimiento mensual',
     key: 'cumplimiento_mensual',
+    render: (row) => normalizarPorcentaje(row.cumplimiento_mensual),
   },
   {
-    label: 'Produccion acumulada',
-    key: 'produccion_acumulada',
+    label: 'Produccion acumulado',
+    key: 'produccion_acumulado',
   },
   {
-    label: 'Consumo acumulado',
-    key: 'consumo_acumulado',
+    label: 'Consumo mensual acumulado',
+    key: 'consumo_mensual_acumulado',
   },
   {
-    label: 'Ratio consumo acumulado',
-    key: 'ratio_consumo_acumulado',
+    label: 'Indice consumo acumulado',
+    key: 'indice_consumo_acumulado',
   },
   {
-    label: 'Cumplimiento acumulado',
+    label: 'Cumplimineto acumulado',
     key: 'cumplimiento_acumulado',
-  },
-  {
-    label: 'Meta acumulada',
-    key: 'meta_acumulada',
+    render: (row) => normalizarPorcentaje(row.cumplimiento_acumulado),
   },
 ];
 
 export default function IndicePolvoAtomizado() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
+
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
 
-  const hanldeOpenConfirmDelete = (id) => {
+  //Cambiear meta
+  const [openMeta, setOpenMeta] = useState(false);
+  const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
+  const [payloadMeta, setPayloadMeta] = useState(null);
+
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
+  const handleOpenMeta = () => {
+    setOpenMeta(true);
   };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+  const handleOpenMetaConfirm = (payload) => {
+    setPayloadMeta(payload);
+    setOpenMetaConfirm(true);
   };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
+  const handleCreateMeta = async () => {
     try {
       setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
-      console.log(res);
-
+      const res = await registerObjMetas(payloadMeta);
       if (res.ok) {
         toast.success(res.message || 'Registro creado con éxito');
         tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
+        setOpenMetaConfirm(false);
+        setOpenMeta(false);
       }
       if (!res.ok) {
-        setOpenCreateConfirm(false);
+        setOpenMetaConfirm(false);
         throw new Error(res.message || 'Error al crear el registro');
       }
     } catch (e) {
@@ -171,26 +118,37 @@ export default function IndicePolvoAtomizado() {
     periodoATexto(row),
   );
   const series = [
-    { name: 'Ratio de cosumo', data: datosGrafico?.ratioConsumo },
+    {
+      name: 'Ratio de cosumo insumos linea',
+      data: datosGrafico?.ratio_consumo,
+    },
+  ];
+  const seriesDos = [
+    {
+      name: 'Cumplimiento menta',
+      data: datosGrafico?.cumplimiento_mensual,
+    },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="Produccion/ Administracion/ Indice polvo atomizado"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
         botonCrear={true}
         tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        handleCrear={handleOpenMeta}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         <GraficoBarChart
@@ -201,52 +159,51 @@ export default function IndicePolvoAtomizado() {
           showToolbox
         />
       </div>
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Cumplimiento meta"
+          categories={labelCategorias}
+          series={seriesDos}
+          height={400}
+          showToolbox
+        />
+      </div>
+      <IndicePolvoAtomizadoModal
+        open={openMeta}
+        onClose={() => setOpenMeta(false)}
+        onSave={handleOpenMetaConfirm}
+      />
       <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
+        open={openMetaConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
+        danger={false}
+        onClose={() => setOpenMetaConfirm(false)}
+        onConfirm={handleCreateMeta}
       />
-
-      <IndicePolvoAtomizadoModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <IndicePolvoAtomizadoModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Indice consumo insumos linea"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              { name: 'Produccion', data: g.produccion ?? [] },
+              {
+                name: 'Consumo',
+                data: g.consumo_mensual ?? [],
+              },
+            ],
+          };
+        }}
       />
     </>
   );

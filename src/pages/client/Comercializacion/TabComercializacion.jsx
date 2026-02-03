@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Tabs from '@components/Tabs';
-import IngresoPorVentaTotalLlendo from './Tabs/IngresoPorVentaTotalLlendo';
-import VentaTotalLlenado from './Tabs/VentaTotalLlenado';
-import PrecioUnitarioLlenado from './Tabs/PrecioUnitarioLlenado';
+import IngresoPorVentaTotalLlendo from './Tabs/IngresoVentaTotal/IngresoVentaTotal';
+import VentaTotalLlenado from './Tabs/VentaTotal/VentaTotal';
+import PrecioUnitarioLlenado from './Tabs/PrecioUnitario/PrecioUnitario';
 
 const tabs = [
   { key: 'general', label: 'General' },

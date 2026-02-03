@@ -1,16 +1,20 @@
-import TablaRetutilizable from '../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
-} from '../../../../service/Administracion/Utilidad.serveces';
-import ConfirmModal from '../../../../components/ConfirmModal';
+  registerObjMetas,
+  getObjPromedios,
+  getObjsDesempenioMes,
+} from '@service/Administracion/Utilidad.serveces';
+import ConfirmModal from '@components/ConfirmModal';
 import UtilidadModal from './UtilidadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import {
+  periodoATexto,
+  normalizarPorcentaje,
+  AgregarPorcentaje,
+} from '@helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
+import GraficoBarChart from '@components/GraficoBarChart';
 
 const columnas = [
   {
@@ -18,112 +22,71 @@ const columnas = [
     key: 'periodo',
     render: (row) => periodoATexto(row.periodo),
   },
-  { label: 'Utilidad mensual', key: 'utilidad_mensual' },
-  { label: 'Meta mensual', key: 'meta_mensual' },
+  { label: 'Utilidad mensual', key: 'utilidad_mensual_prom' },
+  { label: 'Meta mensual', key: 'meta_mensual_prom' },
   {
-    label: 'Meta',
-    key: 'meta',
+    label: 'Utilidad acumulado',
+    key: 'utilidad_acumulada',
+  },
+  {
+    label: 'Meta acumulado',
+    key: 'meta_acumulada',
   },
   {
     label: 'Cumplimiento mensual',
-    key: 'cumplimiento_mensual',
+    key: 'cumplimiento_acumulado',
+    render: (row) => normalizarPorcentaje(row.cumplimiento_acumulado),
+  },
+  {
+    label: 'Meta',
+    key: 'meta',
+    render: (row) => AgregarPorcentaje(row.meta),
   },
 ];
 
 export default function Utilidad() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
+  const [datosGrafico, setDatosGrafica] = useState(null);
 
-  const hanldeOpenConfirmDelete = (id) => {
+  //Cambiear meta
+  const [openMeta, setOpenMeta] = useState(false);
+  const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
+  const [payloadMeta, setPayloadMeta] = useState(null);
+
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
+  const handleOpenMeta = () => {
+    setOpenMeta(true);
   };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+  const handleOpenMetaConfirm = (payload) => {
+    setPayloadMeta(payload);
+    setOpenMetaConfirm(true);
   };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
+  const handleCreateMeta = async () => {
     try {
       setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
+      const res = await registerObjMetas(payloadMeta);
       if (res.ok) {
         toast.success(res.message || 'Registro creado con éxito');
         tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
+        setOpenMetaConfirm(false);
+        setOpenMeta(false);
       }
       if (!res.ok) {
-        setOpenCreateConfirm(false);
+        setOpenMetaConfirm(false);
         throw new Error(res.message || 'Error al crear el registro');
       }
     } catch (e) {
@@ -132,68 +95,96 @@ export default function Utilidad() {
       setLoading(false);
     }
   };
+  const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
+    periodoATexto(row),
+  );
+  const series = [
+    {
+      name: 'Utilidad mensual',
+      data: datosGrafico?.utilidad_mensual_prom,
+    },
+    {
+      name: 'Meta mensual',
+      data: datosGrafico?.meta_mensual_prom,
+    },
+    {
+      name: 'Utilidad acumulada',
+      data: datosGrafico?.utilidad_acumulada,
+    },
+    {
+      name: 'Meta acumulada',
+      data: datosGrafico?.meta_acumulada,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="Produccion/ Control de proceso de seleccion y embalaje"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         botonCrear={true}
-        tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        tituloBoton="Cambiar meta"
+        handleCrear={handleOpenMeta}
+        isDelete={false}
+        isEdit={false}
+        isGrafica={true}
+        setDatosGrafico={setDatosGrafica}
+      />
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <GraficoBarChart
+          title="Utilidad"
+          categories={labelCategorias}
+          series={series}
+          height={400}
+          showToolbox
+        />
+      </div>
+      <UtilidadModal
+        open={openMeta}
+        onClose={() => setOpenMeta(false)}
+        onSave={handleOpenMetaConfirm}
       />
       <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
+        open={openMetaConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
+        danger={false}
+        onClose={() => setOpenMetaConfirm(false)}
+        onConfirm={handleCreateMeta}
       />
-      <UtilidadModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <UtilidadModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Horas extra"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'Utilidad Mensual',
+                data: g?.utilidad_mensual,
+              },
+              {
+                name: 'Meta mensual',
+                data: g?.meta_mensual,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

@@ -1,17 +1,16 @@
 import TablaRetutilizable from '../../../../components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
+  registerObjMetas,
+  getObjPromedios,
+  getObjsDesempenioMes,
 } from '../../../../service/Administracion/IndeceSeveridad.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import IndiceSeveridadModal from './IndiceSeveridadModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import EchartsStackedAreaChart from '@components/EchartsStackedAreaChart';
+import { periodoATexto } from '@helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
 
 const columnas = [
   {
@@ -19,36 +18,41 @@ const columnas = [
     key: 'periodo',
     render: (row) => periodoATexto(row.periodo),
   },
-  { label: 'N trabajadores', key: 'n_trabajadores' },
-  { label: 'porcentaje_ausentismo', key: 'porcentaje_ausentismo' },
+  { label: 'N trabajadores', key: 'n_trabajadores_prom' },
+  {
+    label: 'Horas trabajadas mes',
+    key: 'horas_trabajadas_mes',
+  },
+  { label: 'porcentaje_ausentismo', key: 'porcentaje_ausentismo_prom' },
   { label: 'Horas expuesta riesgo', key: 'horas_expuesta_riesgo' },
   {
     label: 'Dias baja medica administracion',
-    key: 'dias_baja_medica_administracion',
+    key: 'dias_baja_medica_administracion_prom',
   },
   {
     label: 'Dias baja medica mantenimiento',
-    key: 'dias_baja_medica_mantenimiento',
+    key: 'dias_baja_medica_mantenimiento_prom',
   },
   {
     label: 'Dias baja medica produccion',
-    key: 'dias_baja_medica_produccion',
+    key: 'dias_baja_medica_produccion_prom',
   },
   {
     label: 'Dias baja medica comercializacion',
-    key: 'dias_baja_medica_comercializacion',
+    key: 'dias_baja_medica_comercializacion_prom',
   },
+
   {
     label: 'Dias baja medica mes',
-    key: 'dias_baja_medica_mes',
+    key: 'dias_baja_medica',
   },
   {
     label: 'Indice gravedad',
     key: 'indice_gravedad',
   },
   {
-    label: 'Indice graveda acumulado',
-    key: 'indice_graveda_acumulado',
+    label: 'Indice gravedad acumulado',
+    key: 'indice_gravedad_acumulado',
   },
   {
     label: 'Meta',
@@ -57,100 +61,48 @@ const columnas = [
 ];
 
 export default function IndiceSeveridad() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
 
-  const hanldeOpenConfirmDelete = (id) => {
+  //Cambiear meta
+  const [openMeta, setOpenMeta] = useState(false);
+  const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
+  const [payloadMeta, setPayloadMeta] = useState(null);
+
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
+  const handleOpenMeta = () => {
+    setOpenMeta(true);
   };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+  const handleOpenMetaConfirm = (payload) => {
+    setPayloadMeta(payload);
+    setOpenMetaConfirm(true);
   };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
+  const handleCreateMeta = async () => {
     try {
       setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
+      const res = await registerObjMetas(payloadMeta);
       if (res.ok) {
         toast.success(res.message || 'Registro creado con éxito');
         tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
+        setOpenMetaConfirm(false);
+        setOpenMeta(false);
       }
       if (!res.ok) {
-        setOpenCreateConfirm(false);
+        setOpenMetaConfirm(false);
         throw new Error(res.message || 'Error al crear el registro');
       }
     } catch (e) {
@@ -159,6 +111,7 @@ export default function IndiceSeveridad() {
       setLoading(false);
     }
   };
+
   const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
     periodoATexto(row),
   );
@@ -168,79 +121,102 @@ export default function IndiceSeveridad() {
       data: datosGrafico?.indice_gravedad,
     },
   ];
+  const seriesTwo = [
+    {
+      name: 'Indice gravedad acumulado',
+      data: datosGrafico?.indice_gravedad_acumulado,
+    },
+  ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="administracion/ Indice severidad"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
         botonCrear={true}
-        tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        tituloBoton="Cambiar meta"
+        handleCrear={handleOpenMeta}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <GraficoBarChart
-          title="Indice severidad"
+        <EchartsStackedAreaChart
+          title="Indice Frecuencia mensual"
           categories={labelCategorias}
           series={series}
           height={400}
           showToolbox
         />
       </div>
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <EchartsStackedAreaChart
+          title="Indice Frecuencia mensual acumulado"
+          categories={labelCategorias}
+          series={seriesTwo}
+          height={400}
+          showToolbox
+        />
+      </div>
+      <IndiceSeveridadModal
+        open={openMeta}
+        onClose={() => setOpenMeta(false)}
+        onSave={handleOpenMetaConfirm}
+      />
       <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
+        open={openMetaConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
+        danger={false}
+        onClose={() => setOpenMetaConfirm(false)}
+        onConfirm={handleCreateMeta}
       />
-      <IndiceSeveridadModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <IndiceSeveridadModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Indice severidad"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'Dias baja medica administracion',
+                data: g?.dias_baja_medica_administracion,
+              },
+              {
+                name: 'Dias baja medica mantenimiento',
+                data: g?.dias_baja_medica_mantenimiento,
+              },
+              {
+                name: 'Dias baja medica administracion',
+                data: g?.dias_baja_medica_administracion,
+              },
+              {
+                name: 'Dias baja medica produccion',
+                data: g?.dias_baja_medica_produccion,
+              },
+              {
+                name: 'Dias baja medica comercializacion',
+                data: g?.dias_baja_medica_comercializacion,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

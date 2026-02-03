@@ -87,7 +87,7 @@ export default function IndiceConsumoBasesModal({
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
               <h3 className="text-lg font-semibold text-slate-900">
-                Indice consumo bases
+                Indice consumo ee
               </h3>
             </div>
 

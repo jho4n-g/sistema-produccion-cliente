@@ -1,50 +1,50 @@
-import TablaRetutilizable from '../../../../components/TablaReutilizable';
+import TablaRetutilizable from '@components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
-} from '../../../../service/Administracion/IndiceFrecuencia.services';
+  registerObjMetas,
+  getObjPromedios,
+  getObjsDesempenioMes,
+} from '@service/Administracion/IndiceFrecuencia.services';
 import IndiceFrecuenciaModal from './IndiceFrecuenciaModal';
-import ConfirmModal from '../../../../components/ConfirmModal';
+import ConfirmModal from '@components/ConfirmModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import EchartsStackedAreaChart from '@components/EchartsStackedAreaChart';
+import { periodoATexto } from '@helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
+
 const columnas = [
   {
     label: 'Periodo',
     key: 'periodo',
     render: (row) => periodoATexto(row.periodo),
   },
-  { label: 'N trabajadores', key: 'n_trabajadores' },
-  { label: 'Hora trabajadas mes', key: 'hora_trabajadas_mes' },
-  { label: 'Porcentaje ausentismo', key: 'porcentaje_ausentismo' },
+  { label: 'N trabajadores', key: 'n_trabajadores_prom' },
+  { label: 'Hora trabajadas mes', key: 'horas_trabajadas_mes' },
+  { label: 'Porcentaje ausentismo', key: 'porcentaje_ausentismo_prom' },
   { label: 'Horas expuesta riesgo', key: 'horas_expuesta_riesgo' },
   {
     label: 'Accidentes administracion personas',
-    key: 'accidentes_administracion_personas',
+    key: 'accidentes_administracion_personas_prom',
   },
   {
     label: 'Accidentes mantenieminto personas',
-    key: 'accidentes_mantenieminto_personas',
+    key: 'accidentes_mantenieminto_personas_prom',
   },
   {
     label: 'Accidentes produccion personas',
-    key: 'accidentes_produccion_personas',
+    key: 'accidentes_produccion_personas_prom',
   },
   {
     label: 'Accidentes comercializacion personas',
-    key: 'accidentes_comercializacion_personas',
+    key: 'accidentes_comercializacion_personas_prom',
   },
   {
     label: 'Accidentes mes',
-    key: 'accidentes_mes',
+    key: 'accidente_por_mes',
   },
   {
     label: 'Indice frecuencia mensual',
-    key: 'indice_frecuencia_mensual',
+    key: 'indice_frecuencia',
   },
   {
     label: 'Indice frecuencia acumulado',
@@ -57,100 +57,48 @@ const columnas = [
 ];
 
 export default function IndiceFrecuencia() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
 
-  const hanldeOpenConfirmDelete = (id) => {
+  //Cambiear meta
+  const [openMeta, setOpenMeta] = useState(false);
+  const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
+  const [payloadMeta, setPayloadMeta] = useState(null);
+
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
+  const handleOpenMeta = () => {
+    setOpenMeta(true);
   };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+  const handleOpenMetaConfirm = (payload) => {
+    setPayloadMeta(payload);
+    setOpenMetaConfirm(true);
   };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
+  const handleCreateMeta = async () => {
     try {
       setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
+      const res = await registerObjMetas(payloadMeta);
       if (res.ok) {
         toast.success(res.message || 'Registro creado con éxito');
         tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
+        setOpenMetaConfirm(false);
+        setOpenMeta(false);
       }
       if (!res.ok) {
-        setOpenCreateConfirm(false);
+        setOpenMetaConfirm(false);
         throw new Error(res.message || 'Error al crear el registro');
       }
     } catch (e) {
@@ -159,88 +107,109 @@ export default function IndiceFrecuencia() {
       setLoading(false);
     }
   };
+
   const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
     periodoATexto(row),
   );
   const series = [
     {
       name: 'Indice frecuencia',
-      data: datosGrafico?.indice_frecuencia_mensual,
+      data: datosGrafico?.indice_frecuencia,
     },
   ];
+  const seriesTwo = [
+    {
+      name: 'Indice frecuencia acumulado',
+      data: datosGrafico?.indice_frecuencia_acumulado,
+    },
+  ];
+
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="administracion/ Indice frecuencia"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
         botonCrear={true}
         tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        handleCrear={handleOpenMeta}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <GraficoBarChart
-          title="Indice de frecuencia mensual"
+        <EchartsStackedAreaChart
+          title="Indice Frecuencia mensual"
           categories={labelCategorias}
           series={series}
           height={400}
           showToolbox
         />
       </div>
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <EchartsStackedAreaChart
+          title="Indice Frecuencia mensual acumulado"
+          categories={labelCategorias}
+          series={seriesTwo}
+          height={400}
+          showToolbox
+        />
+      </div>
+      <IndiceFrecuenciaModal
+        open={openMeta}
+        onClose={() => setOpenMeta(false)}
+        onSave={handleOpenMetaConfirm}
+      />
       <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
+        open={openMetaConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
+        danger={false}
+        onClose={() => setOpenMetaConfirm(false)}
+        onConfirm={handleCreateMeta}
       />
-      <IndiceFrecuenciaModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <IndiceFrecuenciaModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Horas extra"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'Accidentes administracion personas',
+                data: g?.accidentes_administracion_personas,
+              },
+              {
+                name: 'Accidentes mantenieminto personas',
+                data: g?.accidentes_mantenieminto_personas,
+              },
+              {
+                name: 'Accidentes produccion personas',
+                data: g?.accidentes_produccion_personas,
+              },
+              {
+                name: 'Accidentes comercializacion personas',
+                data: g?.accidentes_comercializacion_personas,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

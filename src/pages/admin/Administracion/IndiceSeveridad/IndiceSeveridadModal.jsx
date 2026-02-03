@@ -1,77 +1,29 @@
 import { useState, useEffect } from 'react';
-import { DatosIndiceSeveridad } from '../../../../schema/Administracion/IndiceSeveridad.shcema';
-import InputField from '../../../../components/InputField';
+import { DatosMetaSeveridad } from '@schema/Administracion/IndiceSeveridad.shcema';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
-
 const initialForm = () => ({
-  periodo: '',
-  n_trabajadores: '',
-  porcentaje_ausentismo: '',
-  dias_baja_medica_administracion: '',
-  dias_baja_medica_mantenimiento: '',
-  dias_baja_medica_produccion: '',
-  dias_baja_medica_comercializacion: '',
   meta: '',
 });
 
-export default function IndiceFrecuenciaModal({
-  open,
-  onClose,
-  onSave,
-  fetchById,
-  id,
-  isEdit = false,
-}) {
+export default function IndiceSeveridadModal({ open, onClose, onSave }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !id) return; // evita correr si no aplica
-
-    let active = true; // evita setState tras unmount
-    setLoading(true);
-
-    // CREAR
-    if (!isEdit) {
+    if (!open) return; // evita correr si no aplica
+    try {
+      setLoading(true);
       setForm(initialForm());
       setError({});
       setLoading(false);
-      return () => {
-        active = false;
-      };
-    }
-
-    // EDITAR
-    if (!id) {
+    } catch (e) {
+      toast.error(e.message || 'Error en la modal');
+    } finally {
       setLoading(false);
-      return () => {
-        active = false;
-      };
     }
-
-    (async () => {
-      try {
-        const data = await fetchById(id); // ← ahora sí esperamos aquí
-
-        if (!active) return;
-
-        if (data?.ok) {
-          setForm(data.dato ?? {});
-        } else {
-          toast.error(data?.message || 'No se pudo cargar el registro');
-        }
-      } catch (e) {
-        if (active) toast.error(e?.message || 'Error del servidor');
-      } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [open, id, fetchById, isEdit]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -82,18 +34,28 @@ export default function IndiceFrecuenciaModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosIndiceSeveridad.safeParse(form);
+    const result = DatosMetaSeveridad.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
+
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = result.data;
-      onSave(data);
+
+      handleSave(data);
     }
   };
+  const handleSave = (payload) => {
+    onSave(payload);
+  };
 
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay (fondo) */}
@@ -119,87 +81,16 @@ export default function IndiceFrecuenciaModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Indice severidad
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-                {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
-                    onChange={updateBase}
-                    error={error.periodo}
-                  />
-                </div>
-
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="N° trabajadores"
-                    type="number"
-                    name="n_trabajadores"
-                    value={form?.n_trabajadores || ''}
-                    onChange={updateBase}
-                    error={error.n_trabajadores}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Porcentaje ausentismo"
-                    type="number"
-                    name="porcentaje_ausentismo"
-                    value={form?.porcentaje_ausentismo || ''}
-                    onChange={updateBase}
-                    error={error.porcentaje_ausentismo}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Dias baja medica administracion"
-                    type="number"
-                    name="dias_baja_medica_administracion"
-                    value={form?.dias_baja_medica_administracion || ''}
-                    onChange={updateBase}
-                    error={error.dias_baja_medica_administracion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Dias baja medica mantenimiento"
-                    type="number"
-                    name="dias_baja_medica_mantenimiento"
-                    value={form?.dias_baja_medica_mantenimiento || ''}
-                    onChange={updateBase}
-                    error={error.dias_baja_medica_mantenimiento}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Dias baja medica produccion"
-                    type="number"
-                    name="dias_baja_medica_produccion"
-                    value={form?.dias_baja_medica_produccion || ''}
-                    onChange={updateBase}
-                    error={error.dias_baja_medica_produccion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Dias baja medica comercializacion"
-                    type="number"
-                    name="dias_baja_medica_comercializacion"
-                    value={form?.dias_baja_medica_comercializacion || ''}
-                    onChange={updateBase}
-                    error={error.dias_baja_medica_comercializacion}
-                  />
-                </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="meta"
+                    label="Meta"
                     type="number"
                     name="meta"
                     value={form?.meta || ''}
@@ -212,7 +103,7 @@ export default function IndiceFrecuenciaModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

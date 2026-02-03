@@ -4,11 +4,10 @@ import * as echarts from 'echarts';
 
 export default function EchartsStackedAreaChart({
   title = '',
-  categories = [], // e.g. ['01', '02', ..., '31'] o fechas
-  series = [], // e.g. [{ name:'1ra', data:[...] }, { name:'2da', data:[...] }]
+  categories = [],
+  series = [],
   height = 420,
   showToolbox = true,
-  showDataZoom = true,
   smooth = true,
 }) {
   const chartRef = useRef(null);
@@ -47,11 +46,7 @@ export default function EchartsStackedAreaChart({
 
       tooltip: {
         trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-        },
-        // opcional: formatear tooltip bonito
-        // formatter: (params) => { ... }
+        axisPointer: { type: 'cross' },
       },
 
       legend: {
@@ -73,21 +68,14 @@ export default function EchartsStackedAreaChart({
         top: title ? 90 : 60,
         left: 55,
         right: 35,
-        bottom: showDataZoom ? 55 : 45,
+        bottom: 45, // fijo, sin dataZoom
         containLabel: true,
       },
-
-      dataZoom: showDataZoom
-        ? [
-            { type: 'inside', xAxisIndex: 0 },
-            { type: 'slider', xAxisIndex: 0, height: 14, bottom: 6 },
-          ]
-        : undefined,
 
       xAxis: [
         {
           type: 'category',
-          boundaryGap: false, // ✅ clave para area chart
+          boundaryGap: false,
           data: categories,
           axisLabel: {
             interval: 0,
@@ -102,17 +90,17 @@ export default function EchartsStackedAreaChart({
       series: series.map((s) => ({
         name: s.name,
         type: 'line',
-        stack: 'Total', // ✅ apilado
-        areaStyle: {}, // ✅ area
-        smooth, // ✅ suaviza
+        stack: 'Total',
+        areaStyle: {},
+        smooth,
         emphasis: { focus: 'series' },
-        symbol: 'none', // ✅ quita puntitos (más limpio)
+        symbol: 'none',
         data: s.data,
       })),
     };
 
     chartInstanceRef.current.setOption(option, true);
-  }, [title, categories, series, height, showToolbox, showDataZoom, smooth]);
+  }, [title, categories, series, height, showToolbox, smooth]);
 
   return (
     <div

@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-import { optNum, reqPeriodo } from '../convert.js';
+import { optNum, reqPct } from '../convert.js';
 
 export const DatosUtilidad = z.object({
-  periodo: reqPeriodo('periodo'),
-  utilidad_mensual: optNum('Horas extra total'),
-  meta_mensual: optNum('Adm'),
-  meta: optNum('Prd'),
-  cumplimiento_mensual: optNum('Mantto'),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
+  utilidad_mensual: optNum('Utilidad mensual'),
+  meta_mensual: optNum('Meta mensual'),
+});
+
+export const DatosMetaUtilidad = z.object({
+  meta: reqPct('Meta'),
 });

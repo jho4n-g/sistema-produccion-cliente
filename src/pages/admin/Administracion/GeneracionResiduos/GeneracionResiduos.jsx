@@ -1,17 +1,16 @@
 import TablaRetutilizable from '../../../../components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
+  getObjPromedios,
+  getObjsDesempenioMes,
 } from '../../../../service/Administracion/GeneracionResiduos.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import GeneracionResiduosModal from './GeneracionResiduosModal';
 import { useState, useRef } from 'react';
-import { toast } from 'react-toastify';
+
 import GraficoBarChart from '@components/GraficoBarChart';
 import { periodoATexto } from '../../../../helpers/normalze.helpers';
+
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
 
 const columnas = [
   {
@@ -19,233 +18,157 @@ const columnas = [
     key: 'periodo',
     render: (row) => periodoATexto(row.periodo),
   },
-  { label: 'N trabajadores', key: 'n_trabajadores' },
-  { label: 'Kg carton', key: 'kg_carton' },
+  { label: 'N trabajadores', key: 'n_trabajadores_prom' },
+  { label: 'Kg carton', key: 'kg_carton_prom' },
   {
     label: 'Pe',
-    key: 'pe',
+    key: 'pe_prom',
   },
   {
     label: 'Kg strechfilm',
-    key: 'kg_strechfilm',
+    key: 'kg_strechfilm_prom',
   },
   {
     label: 'Kg bolsas bigbag',
-    key: 'kg_bolsas_bigbag',
+    key: 'kg_bolsas_bigbag_prom',
   },
   {
     label: 'Kg turriles plasticos',
-    key: 'kg_turriles_plasticos',
+    key: 'kg_turriles_plasticos_prom',
   },
   {
     label: 'Kg envase mil litros',
-    key: 'kg_envase_mil_litros',
+    key: 'kg_envase_mil_litros_prom',
   },
 
   {
     label: 'Sunchu kg',
-    key: 'sunchu_kg',
+    key: 'sunchu_kg_prom',
   },
   {
     label: 'Kg madera',
-    key: 'kg_madera',
+    key: 'kg_madera_prom',
   },
   {
     label: 'Kg bidon azul',
-    key: 'kg_bidon_azul',
+    key: 'kg_bidon_azul_prom',
   },
   {
     label: 'Kg aceite sucio',
-    key: 'kg_aceite_sucio',
+    key: 'kg_aceite_sucio_prom',
   },
   {
     label: 'Kg bolsas plasticas transparentes',
-    key: 'kg_bolsas_plasticas_transparentes',
+    key: 'kg_bolsas_plasticas_transparentes_prom',
   },
   {
     label: 'Kg bolsas yute',
-    key: 'kg_bolsas_yute',
+    key: 'kg_bolsas_yute_prom',
+  },
+  {
+    label: 'Total residuos',
+    key: 'total_residuos',
+  },
+  {
+    label: 'Indice residuos',
+    key: 'indice_residuos',
   },
 ];
 
 export default function GeneracionResiduos() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
-
-  const hanldeOpenConfirmDelete = (id) => {
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
-  };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
-  };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
-      if (res.ok) {
-        toast.success(res.message || 'Registro creado con éxito');
-        tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
-      }
-      if (!res.ok) {
-        setOpenCreateConfirm(false);
-        throw new Error(res.message || 'Error al crear el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al crear el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
   const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
     periodoATexto(row),
   );
   const series = [
     {
       name: 'N trabajadoresdm',
-      data: datosGrafico?.n_trabajadores,
+      data: datosGrafico?.n_trabajadores_prom,
     },
     {
       name: 'Kg carton',
-      data: datosGrafico?.kg_carton,
+      data: datosGrafico?.kg_carton_prom,
     },
     {
       name: 'Pe',
-      data: datosGrafico?.pe,
+      data: datosGrafico?.pe_prom,
     },
     {
       name: 'Kg strechfilm',
-      data: datosGrafico?.kg_strechfilm,
+      data: datosGrafico?.kg_strechfilm_prom,
     },
     {
       name: 'Kg bolsas bigbag',
-      data: datosGrafico?.kg_bolsas_bigbag,
+      data: datosGrafico?.kg_bolsas_bigbag_prom,
     },
     {
       name: 'Kg turriles plasticos',
-      data: datosGrafico?.kg_turriles_plasticos,
+      data: datosGrafico?.kg_turriles_plasticos_prom,
     },
     {
       name: 'Kg envase mil litros',
-      data: datosGrafico?.kg_envase_mil_litros,
+      data: datosGrafico?.kg_envase_mil_litros_prom,
     },
     {
       name: 'Kg sunchu',
-      data: datosGrafico?.sunchu_kg,
+      data: datosGrafico?.sunchu_kg_prom,
     },
     {
       name: 'Kg madera',
-      data: datosGrafico?.kg_madera,
+      data: datosGrafico?.kg_madera_prom,
     },
     {
       name: 'Kg bidon azul',
-      data: datosGrafico?.kg_bidon_azul,
+      data: datosGrafico?.kg_bidon_azul_prom,
     },
     {
       name: 'Kg aceite sucio',
-      data: datosGrafico?.kg_aceite_sucio,
+      data: datosGrafico?.kg_aceite_sucio_prom,
     },
     {
       name: 'Kg bolsas transparentes',
-      data: datosGrafico?.kg_bolsas_plasticas_transparentes,
+      data: datosGrafico?.kg_bolsas_plasticas_transparentes_prom,
     },
     {
       name: 'Kg bolsas yute',
-      data: datosGrafico?.kg_bolsas_yute,
+      data: datosGrafico?.kg_bolsas_yute_prom,
     },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
-        titulo="Produccion/ Control de proceso de seleccion y embalaje"
+        getObj={getObjPromedios}
+        titulo="Produccion/ Generacion de residuos solidos"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
-        botonCrear={true}
+        botonCrear={false}
         tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        handleCrear={() => {}}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         <GraficoBarChart
@@ -256,51 +179,73 @@ export default function GeneracionResiduos() {
           showToolbox
         />
       </div>
-      <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
-      />
-      <GeneracionResiduosModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <GeneracionResiduosModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Generacion de residuos solidos"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'N trabajadoresdm',
+                data: g?.n_trabajadores,
+              },
+              {
+                name: 'Kg carton',
+                data: g?.kg_carton,
+              },
+              {
+                name: 'Pe',
+                data: g?.pe,
+              },
+              {
+                name: 'Kg strechfilm',
+                data: g?.kg_strechfilm,
+              },
+              {
+                name: 'Kg bolsas bigbag',
+                data: g?.kg_bolsas_bigbag,
+              },
+              {
+                name: 'Kg turriles plasticos',
+                data: g?.kg_turriles_plasticos,
+              },
+              {
+                name: 'Kg envase mil litros',
+                data: g?.kg_envase_mil_litros,
+              },
+              {
+                name: 'Kg sunchu',
+                data: g?.sunchu_kg,
+              },
+              {
+                name: 'Kg madera',
+                data: g?.kg_madera,
+              },
+              {
+                name: 'Kg bidon azul',
+                data: g?.kg_bidon_azul,
+              },
+              {
+                name: 'Kg aceite sucio',
+                data: g?.kg_aceite_sucio,
+              },
+              {
+                name: 'Kg bolsas transparentes',
+                data: g?.kg_bolsas_plasticas_transparentes,
+              },
+              {
+                name: 'Kg bolsas yute',
+                data: g?.kg_bolsas_yute,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

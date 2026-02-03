@@ -21,6 +21,7 @@ import LineasAdmin from './pages/admin/Produccion/Lineas/Lineas.jsx';
 import FormatoAdmin from './pages/admin/Produccion/Formatos/Formato.jsx';
 //produccio administracion
 
+import ProductoNoConforme from './pages/admin/Produccion/Administracion/ProductoNoConforme/ProductoNoConforme.jsx';
 import IndiceConsumoAgua from './pages/admin/Produccion/Administracion/IndiceConsumoAgua/IndiceConsumoAgua.jsx';
 import IndiceConsumoBases from './pages/admin/Produccion/Administracion/IndiceConsumoBases/IndiceConsumoBases.jsx';
 import IndiceConsumoEe from './pages/admin/Produccion/Administracion/IndiceConsumoEE/IndiceConsumoEe.jsx';
@@ -105,6 +106,10 @@ function App() {
               element={<InformeProduccion />}
             />
             {/* Produccion Admistracion */}
+            <Route
+              path="produccion/administracion/no-conforme"
+              element={<ProductoNoConforme />}
+            />
             <Route
               path="produccion/administracion/calidad"
               element={<Calidad />}

@@ -163,12 +163,7 @@ export const adminNav = [
       },
       {
         label: 'Producto no conforme',
-        to: '/admin/config/preferencias11',
-        icon: Cog6ToothIcon,
-      },
-      {
-        label: 'Reclamo producto no terminado',
-        to: '/admin/config/preferencias12',
+        to: '/admin/produccion/administracion/no-conforme',
         icon: Cog6ToothIcon,
       },
     ],
@@ -217,6 +212,12 @@ export const adminNav = [
         icon: Cog6ToothIcon,
       },
       {
+        label: 'Donaciones',
+        to: '/admin/administracion/donaciones',
+        icon: Cog6ToothIcon,
+      },
+
+      {
         label: 'Consultorio dental',
         to: '/admin/administracion/consultorio-dental',
         icon: Cog6ToothIcon,
@@ -224,21 +225,6 @@ export const adminNav = [
       {
         label: 'Atencion consultorio',
         to: '/admin/administracion/atencion-consultorio',
-        icon: Cog6ToothIcon,
-      },
-      {
-        label: 'Indice de acciones correctivas',
-        to: '/admin/administracion/indice-acciones-correctivas',
-        icon: Cog6ToothIcon,
-      },
-      {
-        label: 'Donaciones',
-        to: '/admin/administracion/donaciones',
-        icon: Cog6ToothIcon,
-      },
-      {
-        label: 'Evolucion contado',
-        to: '/admin/administracion/evolucion-contado-credito',
         icon: Cog6ToothIcon,
       },
     ],

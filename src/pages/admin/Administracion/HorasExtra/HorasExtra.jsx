@@ -1,17 +1,19 @@
 import TablaRetutilizable from '../../../../components/TablaReutilizable';
 import {
-  deleteObj,
-  getAllObj,
-  updateObj,
-  getIdObj,
-  registerObj,
+  registerObjMetas,
+  getObjPromedios,
+  getObjsDesempenioMes,
 } from '../../../../service/Administracion/HorasExtra.services';
 import ConfirmModal from '../../../../components/ConfirmModal';
 import HoraExtraModal from './HoraExtraModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import GraficoBarChart from '@components/GraficoBarChart';
-import { periodoATexto } from '../../../../helpers/normalze.helpers';
+import {
+  periodoATexto,
+  normalizarPorcentaje,
+} from '../../../../helpers/normalze.helpers';
+import ModalChartDesempenio from '@components/ModalChartDesempenio';
 
 const columnas = [
   {
@@ -19,44 +21,48 @@ const columnas = [
     key: 'periodo',
     render: (row) => periodoATexto(row.periodo),
   },
-  { label: 'adm', key: 'adm' },
-  { label: 'prd', key: 'prd' },
+  { label: 'adm', key: 'adm_prom' },
+  { label: 'prd', key: 'prd_prom' },
   {
     label: 'mantto',
-    key: 'mantto',
+    key: 'mantto_prom',
   },
   {
     label: 'ampliacion',
-    key: 'ampliacion',
+    key: 'ampliacion_prom',
   },
   {
     label: 'Cc',
-    key: 'cc',
+    key: 'cc_prom',
   },
   {
     label: 'Seg ind',
-    key: 'seg_ind',
+    key: 'seg_ind_prom',
   },
   {
     label: 'Region centro',
-    key: 'r_centro',
+    key: 'r_centro_prom',
   },
 
   {
     label: 'Region oeste',
-    key: 'r_oeste',
+    key: 'r_oeste_prom',
   },
   {
     label: 'Region este',
-    key: 'r_este',
+    key: 'r_este_prom',
   },
   {
     label: 'Region fabr',
-    key: 'r_fabr',
+    key: 'r_fabr_prom',
   },
   {
     label: 'Total personas',
-    key: 'total_personas',
+    key: 'total_personas_prom',
+  },
+  {
+    label: 'Horas extra total',
+    key: 'horas_extra_total',
   },
   {
     label: 'Indice horas extra',
@@ -67,110 +73,59 @@ const columnas = [
     key: 'indice_horas_extra_acumulado',
   },
   {
-    label: 'Cumplimineto meta',
-    key: 'cumplimineto_meta',
-  },
-  {
     label: 'Meta',
     key: 'meta',
+  },
+  {
+    label: 'Cumplimineto meta',
+    key: 'cumplimiento_meta',
+    render: (row) => normalizarPorcentaje(row.cumplimiento_meta),
   },
 ];
 
 export default function HorasExtra() {
-  const [idRow, setIdRow] = useState(null);
-  const [openModalDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const tableRef = useRef(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [payload, setPayload] = useState(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
-  //crear
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
-  const [payloadCreate, setPayloadCreate] = useState({});
+  const tableRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
-  const hanldeOpenConfirmDelete = (id) => {
+  //Cambiear meta
+  const [openMeta, setOpenMeta] = useState(false);
+  const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
+  const [payloadMeta, setPayloadMeta] = useState(null);
+
+  //Detalles
+  const [idRow, setIdRow] = useState(null);
+  const [openDetalles, setOpenDetalles] = useState(false);
+  //Detalles
+  const handleOpenDetalles = (id) => {
     setIdRow(id);
-    setOpenDelete(true);
+    setOpenDetalles(true);
   };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idRow);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        tableRef.current?.reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-  const closeDelete = () => {
-    setOpenDelete(false);
+
+  const handleCloseDetalles = () => {
+    setOpenDetalles(false);
     setIdRow(null);
   };
 
-  const hanldeEdit = (id) => {
-    setIdRow(id);
-    setOpenModal(true);
+  const handleOpenMeta = () => {
+    setOpenMeta(true);
   };
-
-  const handleOpenConfirmUpdate = (data) => {
-    setPayload(data);
-    setOpenModalUpdate(true);
+  const handleOpenMetaConfirm = (payload) => {
+    setPayloadMeta(payload);
+    setOpenMetaConfirm(true);
   };
-  const handleCloseConfirmUpdate = () => {
-    setIdRow(null);
-    setPayload(null);
-    setOpenModalUpdate(false);
-  };
-  const handleSave = async () => {
+  const handleCreateMeta = async () => {
     try {
       setLoading(true);
-      const res = await updateObj(idRow, payload);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenModalUpdate(false);
-        tableRef.current?.reload();
-        setOpenModal(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro12');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
-  //create
-  const handleOpenCreate = () => {
-    setOpenCreate(true);
-  };
-  const handleOpenConfirmCreate = (data) => {
-    setPayloadCreate(data);
-    setOpenCreateConfirm(true);
-  };
-
-  const handleCreate = async () => {
-    try {
-      setLoading(true);
-      const res = await registerObj(payloadCreate);
+      const res = await registerObjMetas(payloadMeta);
       if (res.ok) {
         toast.success(res.message || 'Registro creado con éxito');
         tableRef.current?.reload();
-        setOpenCreateConfirm(false);
-        setOpenCreate(false);
+        setOpenMetaConfirm(false);
+        setOpenMeta(false);
       }
       if (!res.ok) {
-        setOpenCreateConfirm(false);
+        setOpenMetaConfirm(false);
         throw new Error(res.message || 'Error al crear el registro');
       }
     } catch (e) {
@@ -179,69 +134,76 @@ export default function HorasExtra() {
       setLoading(false);
     }
   };
+
   const labelCategorias = (datosGrafico?.categories ?? []).map((row) =>
     periodoATexto(row),
   );
   const series = [
     {
       name: 'Adm',
-      data: datosGrafico?.adm,
+      data: datosGrafico?.adm_prom,
     },
     {
       name: 'Prd',
-      data: datosGrafico?.prd,
+      data: datosGrafico?.prd_prom,
     },
     {
       name: 'Mantto',
-      data: datosGrafico?.mantto,
+      data: datosGrafico?.mantto_prom,
     },
     {
       name: 'Ampliacion',
-      data: datosGrafico?.ampliacion,
+      data: datosGrafico?.ampliacion_prom,
     },
     {
       name: 'Cc',
-      data: datosGrafico?.cc,
+      data: datosGrafico?.cc_prom,
     },
     {
       name: 'Seg ind',
-      data: datosGrafico?.seg_ind,
+      data: datosGrafico?.seg_ind_prom,
     },
     {
       name: 'Region centro',
-      data: datosGrafico?.r_centro,
+      data: datosGrafico?.r_centro_prom,
     },
     {
       name: 'Region oeste',
-      data: datosGrafico?.r_oeste,
+      data: datosGrafico?.r_oeste_prom,
     },
     {
       name: 'Region este',
-      data: datosGrafico?.r_este,
+      data: datosGrafico?.r_este_prom,
     },
     {
       name: 'Region fabr',
-      data: datosGrafico?.r_fabr,
+      data: datosGrafico?.r_fabr_prom,
+    },
+    {
+      name: 'Horas extra total',
+      data: datosGrafico?.horas_extra_total,
     },
   ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getAllObj}
+        getObj={getObjPromedios}
         titulo="Produccion/ Control de proceso de seleccion y embalaje"
         datosBusqueda={['periodo']}
         columnas={columnas}
-        handleDetail={() => {}}
-        isDetalle={false}
-        handleEdit={hanldeEdit}
-        hanldeDelete={hanldeOpenConfirmDelete}
+        handleDetail={handleOpenDetalles}
+        isDetalle={true}
+        handleEdit={() => {}}
+        hanldeDelete={() => {}}
         enableHorizontalScroll={false}
         isGrafica={true}
         setDatosGrafico={setDatosGrafica}
         botonCrear={true}
-        tituloBoton="Ingresar nuevo periodo"
-        handleCrear={handleOpenCreate}
+        tituloBoton="Cambiar meta"
+        handleCrear={handleOpenMeta}
+        isDelete={false}
+        isEdit={false}
       />
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
         <GraficoBarChart
@@ -252,51 +214,77 @@ export default function HorasExtra() {
           showToolbox
         />
       </div>
+      <HoraExtraModal
+        open={openMeta}
+        onClose={() => setOpenMeta(false)}
+        onSave={handleOpenMetaConfirm}
+      />
       <ConfirmModal
-        open={openModalDelete}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
+        open={openMetaConfirm}
+        title="Guardar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
         cancelText="Cancelar"
         loading={loading}
-        danger
-        onClose={closeDelete}
-        onConfirm={hanldeDelete}
+        danger={false}
+        onClose={() => setOpenMetaConfirm(false)}
+        onConfirm={handleCreateMeta}
       />
-      <HoraExtraModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSave={handleOpenConfirmUpdate}
-        fetchById={getIdObj}
+      <ModalChartDesempenio
+        open={openDetalles}
+        onClose={handleCloseDetalles}
+        fetchById={getObjsDesempenioMes}
         id={idRow}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openModalUpdate}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={handleCloseConfirmUpdate}
-        onConfirm={handleSave}
-      />
-      <HoraExtraModal
-        open={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSave={handleOpenConfirmCreate}
-      />
-      <ConfirmModal
-        open={openCreateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenCreateConfirm(false)}
-        onConfirm={handleCreate}
+        titleModal="Desempeño del mes"
+        titleChart="Horas extra"
+        mapResponseToChart={(resp) => {
+          const g = resp?.datos?.datoGrafico ?? {};
+          return {
+            categories: g.categories ?? [],
+            series: [
+              {
+                name: 'Adm',
+                data: g?.adm ?? [],
+              },
+              {
+                name: 'Prd',
+                data: g?.prd,
+              },
+              {
+                name: 'Mantto',
+                data: g?.mantto,
+              },
+              {
+                name: 'Ampliacion',
+                data: g?.ampliacion,
+              },
+              {
+                name: 'Cc',
+                data: g?.cc,
+              },
+              {
+                name: 'Seg ind',
+                data: g?.seg_ind,
+              },
+              {
+                name: 'Region centro',
+                data: g?.r_centro,
+              },
+              {
+                name: 'Region oeste',
+                data: g?.r_oeste,
+              },
+              {
+                name: 'Region este',
+                data: g?.r_este,
+              },
+              {
+                name: 'Region fabr',
+                data: g?.r_fabr,
+              },
+            ],
+          };
+        }}
       />
     </>
   );

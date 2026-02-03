@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import { optNum, reqPeriodo } from '../convert.js';
+import { optNum, reqFecha } from '../convert.js';
 
 export const DatosDonaciones = z.object({
-  periodo: reqPeriodo('periodo'),
-  produccion_menual: optNum('produccion_menual'),
+  fecha: reqFecha(),
+  produccion_mensual: optNum('produccion_mensual'),
   cascote_mensual: optNum('cascote_mensual'),
   donacion: optNum('donacion'),
 });

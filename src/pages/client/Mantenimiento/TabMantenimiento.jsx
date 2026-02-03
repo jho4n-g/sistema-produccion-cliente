@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Tabs from '@components/Tabs';
-import DisponibilidadPorLineaLlenado from './Tabs/DisponibilidadPorLineaLlenado';
+import DisponibilidadPorLineaLlenado from './Tabs/DisponibilidadPorLinea';
 
 const tabs = [
   { key: 'general', label: 'General' },

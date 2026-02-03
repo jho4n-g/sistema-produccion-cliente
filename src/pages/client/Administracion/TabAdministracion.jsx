@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import Tabs from '@components/Tabs';
-import HoraExtraLlenado from './Tabs/HoraExtraLlenado';
-import UtilidadLlenado from './Tabs/UtilidadLlenado';
-import GeneracionResiduosSolidosLlenado from './Tabs/GeneracionResiduosSolidosLlenado';
-import IndiceFrecuenciaLlenado from './Tabs/IndiceFrecuenciaLlenado';
-import IndiceSeveridadLlenado from './Tabs/IndiceSeveridadLlenado';
+import HoraExtraLlenado from './Tabs/HorasExtra/HorasExtra';
+import UtilidadLlenado from './Tabs/Utilidad/Utilidad';
+import GeneracionResiduosSolidosLlenado from './Tabs/GeneracionResiduos/GeneracionResiduos';
+import IndiceFrecuenciaLlenado from './Tabs/IndiceFrecuencia/IndiceFrecuencia';
+import IndiceSeveridadLlenado from './Tabs/IndiceSeveridad/IndiceSeveridad';
+//
 import ConsultorioDentaLlenado from './Tabs/ConsultorioDentaLlenado';
-import DonacionesLlenado from './Tabs/DonacionesLlenado';
+//
+import DonacionesLlenado from './Tabs/Donaciones/Donaciones';
 
 const tabs = [
   { key: 'general', label: 'General' },

@@ -30,6 +30,10 @@ const columnas = [
     label: 'Ratio consumo',
     key: 'ratio_consumo',
   },
+  {
+    label: 'Meta',
+    key: 'meta',
+  },
 
   {
     label: 'Cumplimiento mensual',
@@ -40,16 +44,12 @@ const columnas = [
     key: 'produccion_acumulada',
   },
   {
-    label: 'Consumo mensual acumulado',
+    label: 'Consumo acumulado',
     key: 'consumo_acumulado',
   },
   {
     label: 'Ratio consumo acumulado',
     key: 'ratio_consumo_acumulado',
-  },
-  {
-    label: 'Meta',
-    key: 'meta',
   },
 ];
 
@@ -58,7 +58,6 @@ export default function IndiceConsumoBases() {
   const tableRef = useRef(null);
   const [datosGrafico, setDatosGrafica] = useState(null);
   //Cambiear meta
-
   const [openMeta, setOpenMeta] = useState(false);
   const [openMetaConfirm, setOpenMetaConfirm] = useState(false);
   const [payloadMeta, setPayloadMeta] = useState(null);

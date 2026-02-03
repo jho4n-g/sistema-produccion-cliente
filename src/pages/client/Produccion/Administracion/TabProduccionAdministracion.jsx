@@ -3,14 +3,14 @@ import Tabs from '../../../../components/Tabs';
 import Calidad from './Tabs/Calidad/Calidad';
 import IndiceConsumoAguaLlenado from './Tabs/IndiceConsumoAgua/IndiceConsumoAgua';
 import IndiceConsumoBasesLlenado from './Tabs/IndiceConsumoBases/IndiceConsumoBases';
-import IndiceConsumoEeLlenado from './Tabs/IndiceConsumoEeLlenado';
-import IndiceConsumoEngobleLlenado from './Tabs/IndiceConsumoEngobleLlenado';
-import IndiceConsumoEsmalteLlenado from './Tabs/IndiceConsumoEsmalteLlenado';
-import IndiceConsumoGnLlenado from './Tabs/IndiceConsumoGnLlenado';
-import IndiceConsumoLineaLlenado from './Tabs/IndiceConsumoLineaLlenado';
-import IndicePolvoAtomizadoLlenado from './Tabs/IndicePolvoAtomizadoLlenado';
-import MonitoreoGasesCombustionLlenado from './Tabs/MonitoreoGasesCombustionLlenado';
-import ProduccionLlenado from './Tabs/ProduccionLlenado';
+import IndiceConsumoEeLlenado from './Tabs/IndiceConsumoEe/IndiceConsumoEe';
+import IndiceConsumoEngobleLlenado from './Tabs/IndiceConsumoEngobe/IndiceConsumoEngobe';
+import IndiceConsumoEsmalteLlenado from './Tabs/IndiceConsumoEsmalte/IndiceConsumoEsmalte';
+import IndiceConsumoGnLlenado from './Tabs/IndiceConsumoGn/IndiceConsumoGn';
+import IndiceConsumoLineaLlenado from './Tabs/IndiceConsumoLinea/IndiceConsumoLinea';
+import IndicePolvoAtomizadoLlenado from './Tabs/IndicePolvoAtomizao/IndicePolvoAtomizado';
+import MonitoreoGasesCombustionLlenado from './Tabs/MonitoreoGasesCombustion/MonitoreoGasesCombustion';
+import ProduccionLlenado from './Tabs/Produccion/Produccion';
 
 const tabs = [
   { key: 'general', label: 'General' },

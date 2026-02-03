@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+export const reqFecha = (label = 'Fecha') =>
+  z
+    .string({
+      required_error: 'Debe llenar este espacio',
+      invalid_type_error: 'Debe llenar este espacio',
+    })
+    .min(1, 'Debe llenar este espacio') // 👈 captura ''
+    .regex(/^\d{4}-\d{2}-\d{2}$/, `${label} debe tener formato AAAA-MM-DD`);
+
 export const reqTime = (label) =>
   z
     .string({
@@ -28,11 +37,13 @@ export const optTimeAllowEmpty = (label) =>
 export const optNum = (label) =>
   z.preprocess(
     (val) => {
-      if (val === '' || val == null) return undefined;
+      if (val === '' || val == null) return 0;
+
       if (typeof val === 'string') {
         const n = Number(val);
-        return isNaN(n) ? undefined : n;
+        return Number.isNaN(n) ? 0 : n;
       }
+
       return val;
     },
     z

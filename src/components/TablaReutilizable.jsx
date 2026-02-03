@@ -220,7 +220,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                 <tr className="divide-x divide-slate-200">
                   {columnas.map((c, i) => (
                     <th
-                      key={c.key}
+                      key={`${c.key}-${i}`}
                       className={[
                         'border-b px-4 py-3 text-left font-semibold whitespace-nowrap',
                         i === 0 && 'sticky left-0 z-20 bg-slate-50',
@@ -260,14 +260,18 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                     </td>
                   </tr>
                 ) : (
-                  paginated.map((data) => (
+                  paginated.map((data, ri) => (
                     <tr
-                      key={data.id}
+                      key={
+                        data.id ??
+                        data.periodo_id ??
+                        `${data.periodo}-${data.numero}-${ri}`
+                      }
                       className="border border-slate-300  divide-x divide-slate-200 hover:bg-slate-100/60 transition-colors"
                     >
                       {columnas.map((c, i) => (
                         <td
-                          key={c.key}
+                          key={`${c.key}-${i}`}
                           className={[
                             'px-4 py-3  whitespace-nowrap',
                             i === 0 && 'sticky left-0 z-10 bg-white',

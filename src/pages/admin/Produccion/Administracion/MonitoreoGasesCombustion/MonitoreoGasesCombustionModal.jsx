@@ -1,72 +1,33 @@
 import { useState, useEffect } from 'react';
-import { DatosMonitoreoGasesCombustion } from '../../../../../schema/Produccion/Administracion/MonitoreoGasesCombustion.schema';
-import InputField from '../../../../../components/InputField';
+import { DatosMetaMonitoreoGases } from '@schema/Produccion/Administracion/MonitoreoGasesCombustion.schema';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 const initialForm = () => ({
-  periodo: '',
-  horno_b: '',
-  horno_c: '',
-  horno_d: '',
   meta: '',
 });
+
 export default function MonitoreoGasesCombustionModal({
   open,
   onClose,
   onSave,
-  fetchById,
-  id,
-  isEdit = false,
 }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !id) return; // evita correr si no aplica
-
-    let active = true; // evita setState tras unmount
-    setLoading(true);
-
-    // CREAR
-    if (!isEdit) {
+    if (!open) return; // evita correr si no aplica
+    try {
+      setLoading(true);
       setForm(initialForm());
       setError({});
       setLoading(false);
-      return () => {
-        active = false;
-      };
-    }
-
-    // EDITAR
-    if (!id) {
+    } catch (e) {
+      toast.error(e.message || 'Error en la modal');
+    } finally {
       setLoading(false);
-      return () => {
-        active = false;
-      };
     }
-
-    (async () => {
-      try {
-        const data = await fetchById(id); // ← ahora sí esperamos aquí
-
-        if (!active) return;
-
-        if (data?.ok) {
-          setForm(data.dato ?? {});
-        } else {
-          toast.error(data?.message || 'No se pudo cargar el registro');
-        }
-      } catch (e) {
-        if (active) toast.error(e?.message || 'Error del servidor');
-      } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [open, id, fetchById, isEdit]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -77,7 +38,7 @@ export default function MonitoreoGasesCombustionModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosMonitoreoGasesCombustion.safeParse(form);
+    const result = DatosMetaMonitoreoGases.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
 
@@ -92,6 +53,12 @@ export default function MonitoreoGasesCombustionModal({
   };
   const handleSave = (payload) => {
     onSave(payload);
+  };
+
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -125,52 +92,6 @@ export default function MonitoreoGasesCombustionModal({
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-                {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
-                    onChange={updateBase}
-                    error={error.periodo}
-                  />
-                </div>
-
-                {/* Fila 2 */}
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Horno b"
-                    type="number"
-                    name="horno_b"
-                    value={form?.horno_b || ''}
-                    onChange={updateBase}
-                    error={error.horno_b}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Horno c"
-                    type="number"
-                    name="horno_c"
-                    value={form?.horno_c || ''}
-                    onChange={updateBase}
-                    error={error.horno_c}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Horno d"
-                    type="number"
-                    name="horno_d"
-                    value={form?.horno_d || ''}
-                    onChange={updateBase}
-                    error={error.horno_d}
-                  />
-                </div>
-
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
                     label="Meta"
@@ -186,7 +107,7 @@ export default function MonitoreoGasesCombustionModal({
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

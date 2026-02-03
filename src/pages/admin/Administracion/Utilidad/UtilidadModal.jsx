@@ -1,70 +1,29 @@
 import { useState, useEffect } from 'react';
-import { DatosUtilidad } from '../../../../schema/Administracion/Utilidad.schema';
-import InputField from '../../../../components/InputField';
+import { DatosMetaUtilidad } from '@schema/Administracion/Utilidad.schema';
+import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 const initialForm = () => ({
-  periodo: '',
-  utilidad_mensual: '',
-  meta_mensual: '',
   meta: '',
-  cumplimiento_mensual: '',
 });
-export default function HorasExtraModal({
-  open,
-  onClose,
-  onSave,
-  fetchById,
-  id,
-  isEdit = false,
-}) {
+
+export default function HorasExtraModal({ open, onClose, onSave }) {
   const [form, setForm] = useState();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !id) return; // evita correr si no aplica
-
-    let active = true; // evita setState tras unmount
-    setLoading(true);
-    // CREAR
-    if (!isEdit) {
+    if (!open) return; // evita correr si no aplica
+    try {
+      setLoading(true);
       setForm(initialForm());
       setError({});
       setLoading(false);
-      return () => {
-        active = false;
-      };
-    }
-
-    // EDITAR
-    if (!id) {
+    } catch (e) {
+      toast.error(e.message || 'Error en la modal');
+    } finally {
       setLoading(false);
-      return () => {
-        active = false;
-      };
     }
-    (async () => {
-      try {
-        const data = await fetchById(id); // ← ahora sí esperamos aquí
-
-        if (!active) return;
-
-        if (data?.ok) {
-          setForm(data.dato ?? {});
-        } else {
-          toast.error(data?.message || 'No se pudo cargar el registro');
-        }
-      } catch (e) {
-        if (active) toast.error(e?.message || 'Error del servidor');
-      } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [open, id, fetchById, isEdit]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -75,18 +34,28 @@ export default function HorasExtraModal({
   };
 
   const handleValidation = async () => {
-    const result = DatosUtilidad.safeParse(form);
+    const result = DatosMetaUtilidad.safeParse(form);
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
+
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
       const data = result.data;
-      onSave(data);
+
+      handleSave(data);
     }
   };
+  const handleSave = (payload) => {
+    onSave(payload);
+  };
 
+  const handleClose = () => {
+    setError([]);
+    setForm(initialForm());
+    onClose();
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay (fondo) */}
@@ -112,44 +81,13 @@ export default function HorasExtraModal({
         {!loading && (
           <>
             <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-semibold text-slate-900">Calidad</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                Horas extra
+              </h3>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
-                {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="Periodo"
-                    type="month"
-                    name="periodo"
-                    value={form?.periodo || ''}
-                    onChange={updateBase}
-                    error={error.periodo}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Utilidad mensual"
-                    type="number"
-                    name="utilidad_mensual"
-                    value={form?.utilidad_mensual || ''}
-                    onChange={updateBase}
-                    error={error.utilidad_mensual}
-                  />
-                </div>
-
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Meta mensual"
-                    type="number"
-                    name="meta_mensual"
-                    value={form?.meta_mensual || ''}
-                    onChange={updateBase}
-                    error={error.meta_mensual}
-                  />
-                </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
                     label="Meta"
@@ -160,22 +98,12 @@ export default function HorasExtraModal({
                     error={error.meta}
                   />
                 </div>
-                <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Cumplimiento mensual"
-                    type="number"
-                    name="cumplimiento_mensual"
-                    value={form?.cumplimiento_mensual || ''}
-                    onChange={updateBase}
-                    error={error.cumplimiento_mensual}
-                  />
-                </div>
               </div>
             </div>
             <div className="flex justify-end gap-2 p-5">
               <button
                 className="rounded-xl bg-red-800 px-3 py-2 text-white hover:bg-red-900"
-                onClick={onClose}
+                onClick={handleClose}
               >
                 Cancelar
               </button>

@@ -60,5 +60,16 @@ export const normalizarFecha = (fecha) => {
 };
 
 export const normalizarPorcentaje = (numero) => {
-  return `${numero * 100} %`;
+  if (numero == null || isNaN(numero)) return '-';
+
+  const value = numero * 100;
+
+  return `${parseFloat(value.toFixed(2))} %`;
+};
+
+export const AgregarPorcentaje = (numero) => {
+  const n = Number(numero);
+  if (!Number.isFinite(n)) return null;
+
+  return `${numero.toFixed(2)} %`;
 };

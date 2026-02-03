@@ -1,10 +1,14 @@
 import { z } from 'zod';
 
-import { reqNum, reqPeriodo, optNum, optPct } from '../../convert.js';
+import { optNum, reqFloat } from '../../convert.js';
 
 export const DatosIndiceConsumoEngobe = z.object({
-  periodo: reqPeriodo('periodo'),
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato AAAA-MM-DD'),
   produccion: optNum('produccion'),
   consumo_mensual: optNum('consumo_mensual'),
-  meta: optPct('meta'),
+});
+
+export const DatosMetaEngobe = z.object({
+  meta: reqFloat('Meta'),
+  meta_gr_m: reqFloat('Meta gr/m'),
 });
