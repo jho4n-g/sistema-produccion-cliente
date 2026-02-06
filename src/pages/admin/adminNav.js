@@ -180,6 +180,35 @@ export const adminNav = [
       },
     ],
   },
+  {
+    id: 'secretaria',
+    title: 'Secretaria',
+    icon: Cog6ToothIcon,
+    items: [
+      {
+        label: 'Contratos',
+        to: '/admin/secretaria/contrato',
+        icon: Cog6ToothIcon,
+      },
+      {
+        label: 'Correspondencia recibida',
+        to: '/admin/secretaria/correspondencia',
+        icon: Cog6ToothIcon,
+      },
+    ],
+  },
+  {
+    id: 'medico',
+    title: 'Consultorio medico',
+    icon: Cog6ToothIcon,
+    items: [
+      {
+        label: 'Inventario',
+        to: '/admin/medicina/inventario',
+        icon: Cog6ToothIcon,
+      },
+    ],
+  },
 
   {
     id: 'administracion',
@@ -214,12 +243,6 @@ export const adminNav = [
       {
         label: 'Donaciones',
         to: '/admin/administracion/donaciones',
-        icon: Cog6ToothIcon,
-      },
-
-      {
-        label: 'Consultorio dental',
-        to: '/admin/administracion/consultorio-dental',
         icon: Cog6ToothIcon,
       },
       {

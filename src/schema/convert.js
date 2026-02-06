@@ -147,20 +147,30 @@ export const reqPeriodo = (label = 'Período') => {
   );
 };
 
-export const reqEntero = (label = 'Valor') =>
+export const reqEntero = (label = 'Valor', opcional = false) =>
   z.preprocess(
     (val) => {
-      if (val === '') return undefined;
-      if (typeof val === 'string') return Number(val);
+      if (val === '') return opcional ? undefined : 0;
+
+      if (typeof val === 'string') {
+        const n = Number(val);
+        return Number.isNaN(n) ? (opcional ? undefined : 0) : n;
+      }
+
       return val;
     },
-    z
-      .number({
-        invalid_type_error: `El campo ${label} debe ser numérico`,
-      })
-      .int(`${label} debe ser un número entero`)
+    (opcional
+      ? z.number({
+          invalid_type_error: `El campo ${label} debe ser numérico`,
+        })
+      : z.number({
+          invalid_type_error: `El campo ${label} debe ser numérico`,
+          required_error: `Se requiere ${label}`,
+        })
+    )
       .min(0, `${label} debe ser mayor o igual a 0`)
-      .optional(),
+      .int(`${label} debe ser un número entero`)
+      .optional(), // 👈 solo afecta cuando opcional = true
   );
 
 export const reqEnteroMayorCero = (label) => {

@@ -5,6 +5,14 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import ClienteLayout from './layouts/ClienteLayout.jsx';
 
 //admin
+
+//CONSULTORIO MEDICO
+import InventarioMedicina from './pages/admin/OficinaMedica/Inventario/InventarioMedicina.jsx';
+
+//SECRETARIA
+import ContratoAdmin from './pages/admin/Secretaria/Contrato/Contrato.jsx';
+import CorrespondenciaRecibida from './pages/admin/Secretaria/CorrespondenciaRecibida/CorrespondenciaRecibida.jsx';
+
 //documentos
 import ProcedimientoAmin from './pages/admin/Documento/Procedimiento/Procedimiento.jsx';
 import PoliticaAdmin from './pages/admin/Documento/Politica/Politica.jsx';
@@ -33,7 +41,7 @@ import IndicePolvoAtomizado from './pages/admin/Produccion/Administracion/Indice
 import MonitoreoGasesCombustion from './pages/admin/Produccion/Administracion/MonitoreoGasesCombustion/MonitoreoGasesCombustion.jsx';
 import Produccion from './pages/admin/Produccion/Administracion/Produccion/Produccion.jsx';
 //administracion
-import AtencionConsultorio from './pages/admin/Administracion/AtencionConsultorio/AtencionConsultorio.jsx';
+import AtencionConsultorio from './pages/admin/Administracion/AtencionConsultorio/AtencionConsultorioMedico.jsx';
 import ConsultorioDental from './pages/admin/Administracion/ConsultaDental/ConsultorioDental.jsx';
 import HorasExtra from './pages/admin/Administracion/HorasExtra/HorasExtra.jsx';
 import Utilidad from './pages/admin/Administracion/Utilidad/Utilidad.jsx';
@@ -211,6 +219,16 @@ function App() {
             />
             <Route path="documento/politica" element={<PoliticaAdmin />} />
             <Route path="documento/boletin" element={<BoletinAdmin />} />
+
+            <Route path="secretaria/contrato" element={<ContratoAdmin />} />
+            <Route
+              path="secretaria/correspondencia"
+              element={<CorrespondenciaRecibida />}
+            />
+            <Route
+              path="medicina/inventario"
+              element={<InventarioMedicina />}
+            />
           </Route>
           <Route path="/cliente" element={<ClienteLayout />}>
             <Route index element={<Inicio />} />

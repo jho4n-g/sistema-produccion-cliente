@@ -5,24 +5,24 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import {
+  deleteObj,
   getObjsUser,
   updateObj,
   registerObj,
-  deleteObj,
-  getIdObj,
-} from '@service/Produccion/Administracion/ProductoNoConforme.services';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { toast } from 'react-toastify';
-import { normalize } from '@helpers/normalze.helpers';
+} from '../../../../service/Administracion/AtencionConsultorio.services';
 import ConfirmModal from '@components/ConfirmModal';
-import ProductoNoConformeModal from './ProductoNoConformeModal';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { toast } from 'react-toastify';
+import { normalizarFecha, normalize } from '@helpers/normalze.helpers';
+import Select from '@components/Select';
+import { getPeriodos } from '@service/auth/Gestion.services.js';
+import AtencionConsultorioMedicoModal from './AtencionConsultorioMedicoModal';
 
-export default function ProductoNoConforme() {
+export default function AtencionConsultorio() {
   const [query, setQuery] = useState('');
-  const [open, setOpen] = useState(false);
-
   const [row, setRow] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [turnoId, setTurnoId] = useState(null);
 
   // paginado (cliente)
   const [page, setPage] = useState(0);
@@ -32,74 +32,6 @@ export default function ProductoNoConforme() {
   const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
   const [payloadCreate, setPayloadCreate] = useState(null);
 
-  //editar
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [openUpdateConfirm, setOpenUpdateConfirm] = useState(false);
-  const [idUpdate, setIdUpdate] = useState(null);
-  const [payloadUpdate, setPayloadUpdate] = useState(null);
-  //delete
-
-  const [openDelete, setOpenDelete] = useState(false);
-  const [idDelete, setIdDelete] = useState(false);
-
-  const hanldeOpenConfirmDelete = (id) => {
-    setIdDelete(id);
-    setOpenDelete(true);
-  };
-  const hanldeDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await deleteObj(idDelete);
-      if (res.ok) {
-        toast.success('Registro eliminado con éxito');
-        closeDelete();
-        reload();
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al eliminar el registro');
-      }
-    } catch (e) {
-      toast.error(e.message || 'Problemos en el servidor');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const closeDelete = () => {
-    setOpenDelete(false);
-    setIdDelete(null);
-  };
-  //editar
-  const handleUpdate = (id) => {
-    setOpenUpdate(true);
-    setIdUpdate(id);
-  };
-
-  const handleUpdateConfirm = (payload) => {
-    setOpenUpdateConfirm(true);
-    setPayloadUpdate(payload);
-  };
-
-  const handleSaveUpdate = async () => {
-    try {
-      setLoading(true);
-      const res = await updateObj(idUpdate, payloadUpdate);
-      if (res.ok) {
-        toast.success('Registro actualizado con éxito');
-        setOpenUpdate(false);
-        reload();
-        setOpenUpdateConfirm(false);
-      }
-      if (!res.ok) {
-        toast.error(res.message || 'Error al actualizar el registro');
-        setOpenUpdateConfirm(false);
-      }
-    } catch (e) {
-      toast.error(e.message || 'Error al actualizar el registro');
-    } finally {
-      setLoading(false);
-    }
-  };
   //crear
   const handleCreate = () => {
     setOpenCreate(true);
@@ -133,7 +65,7 @@ export default function ProductoNoConforme() {
   const reload = useCallback(async () => {
     setLoading(true);
     try {
-      const obj = await getObjsUser();
+      const obj = await getObjsUser(1);
       if (obj.ok) {
         setRow(Array.isArray(obj?.datos?.data) ? obj.datos?.data : []);
         console.log(obj);
@@ -196,145 +128,158 @@ export default function ProductoNoConforme() {
     setRowsPerPage(parseInt(evt.target.value, 10));
     setPage(0);
   };
-
   return (
     <>
-      <div>
+      <>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-semibold text">
-            Produccion / Administracion / Producto no conforme
+            Produccion / Administracion / Atencion consulta medica
           </h2>
           <button
             className="rounded-xl bg-emerald-800 px-10 py-2 text-white hover:bg-emerald-900"
             onClick={handleCreate}
           >
-            Registrar no conformidad
+            Registrar dia
           </button>
         </div>
-        <div className="rounded-lg border-2  border-slate-200 bg-white p-6 shadow-sm">
-          <div className="relative w-full max-w-sm">
-            {/* Icono izquierda */}
-            <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+        <div className="rounded-lg border-2 border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            {/* Buscador */}
+            <div className="w-full md:max-w-sm">
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Buscar
+              </label>
 
-            <input
-              type="text"
-              placeholder="Buscar por Nombre..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
-                    focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-            />
+              <div className="relative">
+                <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
-            {/* Botón limpiar */}
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-              >
-                <XMarkIcon className="h-4 w-4" />
-              </button>
-            )}
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-10 text-sm text-slate-900
+                   focus:border-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                />
+
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Select */}
+            <div className="w-full md:w-90">
+              <Select
+                label="Períodos"
+                value={turnoId}
+                onChange={setTurnoId}
+                placeholder="Selecciona un período"
+                getDatos={getPeriodos}
+              />
+            </div>
           </div>
         </div>
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className=" mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="max-h-[70vh] overflow-auto rounded-2xl">
-            <table className="min-w-350 w-full border-separate border-spacing-0 text-sm">
+            <table className="w-full border-separate border-spacing-0 text-sm">
               <thead className="sticky top-0 z-20 bg-slate-50">
                 <tr className="divide-x divide-slate-200">
                   <th
-                    className="border-b border-slate-200 px-4 py-3 font-semibold text-slate-700 text-center"
-                    colSpan={5}
-                  />
-                  <th
-                    className="border-b border-slate-200 px-4 py-3 font-semibold text-slate-700 "
-                    colSpan={11}
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
                   >
-                    CANTIDAD RECUPERADA
+                    DIA
                   </th>
                   <th
-                    className="border-b border-slate-200 px-4 py-3  font-semibold text-slate-700"
-                    colSpan={3}
-                  />
+                    className="border-b border-slate-200 px-2 py-4 font-semibold text-slate-700"
+                    colSpan={15}
+                  >
+                    PRESENTACIONES MEDICAS
+                  </th>
+                  <th
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
+                  >
+                    TOTAL CONSULTAS
+                  </th>
+                  <th
+                    className="border border-slate-200 px-1 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
+                  >
+                    CONTROL P.A.
+                  </th>
+                  <th
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
+                  >
+                    GLICEMIA CAPILAR
+                  </th>
+                  <th
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
+                  >
+                    RIESGO PROF.
+                  </th>
+                  <th
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    rowSpan={2}
+                  >
+                    RIESGO COMUN
+                  </th>
+                  <th
+                    className="border border-slate-200  font-semibold text-slate-700 text-center "
+                    rowSpan={2}
+                  >
+                    ACCIONES
+                  </th>
                 </tr>
 
                 <tr className="divide-x divide-slate-200">
-                  <th
-                    className="border-b border-slate-200 px-4 py-3"
-                    colSpan={5}
-                  />
-                  <th
-                    className="border-b border-slate-200 px-4 py-3 font-semibold text-slate-700"
-                    colSpan={5}
-                  >
-                    EXTRA m²
+                  <th className="border  border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    ALRGIAS
                   </th>
-                  <th
-                    className="border-b border-slate-200 px-4 py-3 font-semibold text-slate-700"
-                    colSpan={5}
-                  >
-                    CALIBRE m²
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    CARDIOVASCULAR
                   </th>
-                  <th
-                    className="border-b border-slate-200 px-4 py-3"
-                    colSpan={1}
-                  />
-                  <th
-                    className="border-b border-slate-200 px-4 py-3"
-                    colSpan={3}
-                  />
-                </tr>
-
-                <tr className="divide-x divide-slate-200">
-                  {/* Sticky columnas */}
-                  <th className="sticky left-0 z-30 w-28 border-b border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-700">
-                    Fecha
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    CEFALEAS
                   </th>
-                  <th className=" left-28 z-30 w-64 border-b border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-700 ">
-                    Producto
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    OFTAMOLOGICAS
                   </th>
-
-                  <th className="w-44 border-b border-slate-200 px-4 py-3 font-semibold text-slate-700 ">
-                    No conformidad
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    DISGESTIVAS
                   </th>
-                  <th className="w-64 border-b border-slate-200 px-4 py-3 font-semibold text-slate-700">
-                    Desvío
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    GENITOURINARIAS
                   </th>
-
-                  <th className="w-44 border-b border-slate-200 px-4 py-3 font-semibold text-slate-700">
-                    Cant. rechazada m²
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    MUSCULO ESQUELETICAS
                   </th>
-
-                  {/* Números alineados a la derecha */}
-                  {[
-                    'A',
-                    'B',
-                    'C',
-                    'D',
-                    'DD',
-                    'C1',
-                    'C2/C4',
-                    'C3',
-                    'Standard m²',
-                    'Oferta m²',
-                    'Casco m²',
-                  ].map((h) => (
-                    <th
-                      key={h}
-                      className="border-b border-slate-200 px-4 py-3  font-semibold text-slate-700 whitespace-nowrap"
-                    >
-                      {h}
-                    </th>
-                  ))}
-
-                  <th className="w-28 border-b border-slate-200 px-4 py-3  font-semibold text-slate-700">
-                    Estado
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    ODONTALGIA
                   </th>
-                  <th className="w-56 border-b border-slate-200 px-4 py-3 font-semibold text-slate-700">
-                    Observación
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    QUEMADURAS
                   </th>
-                  <th className="sticky right-0 z-30 w-36 border-b border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-700">
-                    Acciones
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    PIEL Y ANEXOS
+                  </th>
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    OTROS
+                  </th>
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    CURACIONES
+                  </th>
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                    INYECTABLES
                   </th>
                 </tr>
               </thead>
@@ -367,82 +312,91 @@ export default function ProductoNoConforme() {
                       key={data.id ?? `${data.fecha}-${index}`}
                       className="divide-x divide-slate-200 transition-colors odd:bg-white even:bg-slate-50 hover:bg-slate-100"
                     >
-                      {/* Sticky celdas */}
                       <td className="sticky left-0 z-10 bg-inherit px-4 py-3 text-slate-700 whitespace-nowrap">
                         {data.fecha}
                       </td>
 
                       <td className=" left-28 z-10 bg-inherit px-4 py-3 text-slate-900 whitespace-normal">
-                        {data.producto}
+                        {data.prestacion_medica_alergias}
                       </td>
 
                       <td className="px-4 py-3 text-slate-900 whitespace-normal">
-                        {data.no_conformidad_descripcion}
+                        {data.prestacion_medica_cardiovasculares}
                       </td>
                       <td className="px-4 py-3 text-slate-900 whitespace-normal">
-                        {data.desvios_cajas}
+                        {data.prestacion_medica_cefaleas}
                       </td>
 
                       <td className="px-4 py-3 text-right tabular-nums text-slate-900">
-                        {data.cantidad_rechazado_cajas}
-                      </td>
-
-                      {/* Números */}
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_extra_a ?? 0}
-                      </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_extra_b ?? 0}
-                      </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_extra_c ?? 0}
-                      </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_extra_d ?? 0}
-                      </td>
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_extra_dd ?? 0}
+                        {data.prestacion_medica_oftamologicas}
                       </td>
 
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_calibre_c1_cajas ?? 0}
+                        {data?.prestacion_medica_oticas}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_calibre_c2c4_cajas ?? 0}
+                        {data?.prestacion_medica_respiratorias}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.cantidad_recuperada_calibre_c3_cajas ?? 0}
+                        {data?.prestacion_medica_digestivas}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                        {data?.prestacion_medica_genitourinarias}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                        {data?.prestacion_medica_musculo_esqueleticas}
+                      </td>
+
+                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                        {data?.prestacion_medica_odontologia}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                        {data?.prestacion_medica_quemaduras}
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
+                        {data?.prestacion_medica_piel_anexos}
                       </td>
 
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.standard ?? 0}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.oferta ?? 0}
+                        {data?.prestacion_medica_otros}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.casco ?? 0}
+                        {data?.prestacion_medica_curaciones}
                       </td>
 
                       <td className="px-4 py-3 text-slate-700 whitespace-nowrap">
-                        {data?.estado}
+                        {data?.prestacion_medica_inyectables}
                       </td>
                       <td className="px-4 py-3 text-slate-700 whitespace-normal">
-                        {data?.observacion}
+                        {'12'}
                       </td>
-
+                      <td className="px-4 py-3 text-slate-700 whitespace-normal">
+                        {data?.control_pa}
+                      </td>
+                      <td className="px-4 py-3 text-slate-700 whitespace-normal">
+                        {data?.glicemia_capilar}
+                      </td>
+                      <td className="px-4 py-3 text-slate-700 whitespace-normal">
+                        {data?.riesgo_prof}
+                      </td>
+                      <td className="px-4 py-3 text-slate-700 whitespace-normal">
+                        {data?.riesto_comun}
+                      </td>
                       <td className="px-4 py-3 sticky right-0 z-10 bg-white">
                         <div className="flex flex-col gap-2">
                           <button
                             type="button"
                             className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-                            onClick={() => handleUpdate(data?.id)}
+                            onClick={() => {}}
                           >
                             Editar
                           </button>
                           <button
                             className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
-                            onClick={() => hanldeOpenConfirmDelete(data?.id)}
+                            onClick={() => {}}
                           >
                             Eliminar
                           </button>
@@ -455,7 +409,6 @@ export default function ProductoNoConforme() {
             </table>
           </div>
         </div>
-
         <div className="flex flex-col gap-3 border-t border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Filas por página */}
           <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -551,21 +504,8 @@ export default function ProductoNoConforme() {
             </button>
           </div>
         </div>
-      </div>
-
-      <ConfirmModal
-        open={open}
-        title="Eliminar registro"
-        message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-        confirmText="Sí, eliminar"
-        cancelText="Cancelar"
-        danger
-        onClose={() => setOpen(false)}
-        onConfirm={() => {
-          setOpen(false);
-        }}
-      />
-      <ProductoNoConformeModal
+      </>
+      <AtencionConsultorioMedicoModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleCreateComfirm}
@@ -580,36 +520,6 @@ export default function ProductoNoConforme() {
         danger={false}
         onClose={() => setOpenCreateConfirm(false)}
         onConfirm={handleSaveCreate}
-      />
-      <ProductoNoConformeModal
-        open={openUpdate}
-        onClose={() => setOpenUpdate(false)}
-        onSave={handleUpdateConfirm}
-        fetchById={getIdObj}
-        id={idUpdate}
-        isEdit={true}
-      />
-      <ConfirmModal
-        open={openUpdateConfirm}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenUpdateConfirm(false)}
-        onConfirm={handleSaveUpdate}
-      />
-      <ConfirmModal
-        open={openDelete}
-        title="Guardar registro"
-        message="¿Deseas continuar?"
-        confirmText="Sí, guardar"
-        cancelText="Cancelar"
-        loading={loading}
-        danger={false}
-        onClose={() => setOpenDelete(false)}
-        onConfirm={hanldeDelete}
       />
     </>
   );

@@ -1,33 +1,41 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   deleteObj,
-  getObjsUser,
+  getObjs,
   updateObj,
   getIdObj,
   registerObj,
-} from '@service/Administracion/Donaciones.services';
+} from '@service/OficinaMedica/InventarioMedicina.services.js';
 import ConfirmModal from '@components/ConfirmModal';
-import DonacionesModal from './DonacionesModal';
+import InventarioMedicinaModa from './InventarioMedicinaModa';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { normalizarFecha } from '@helpers/normalze.helpers';
-import { getPeriodos } from '@service/auth/Gestion.services.js';
-import EchartsStackedAreaChart from '@components/EchartsStackedAreaChart';
 
 const columnas = [
   {
-    label: 'Fecha',
-    key: 'fecha',
-    render: (row) => normalizarFecha(row.fecha),
+    label: 'Codigo',
+    key: 'codigo',
   },
   {
-    label: 'Produccion menual',
-    key: 'produccion_mensual',
+    label: 'Descripcion',
+    key: 'descripcion',
   },
-  { label: 'Cascote mensual', key: 'cascote_mensual' },
+  { label: 'Cotcion', key: 'cotcion' },
   {
-    label: 'Donacion',
-    key: 'donacion',
+    label: 'Unidad',
+    key: 'unidad',
+  },
+  {
+    label: 'Salida',
+    key: 'salida',
+  },
+  {
+    label: 'Saldo actual',
+    key: 'saldo_actual',
+  },
+  {
+    label: 'Saldo anterior',
+    key: 'saldo_anterior',
   },
 ];
 
@@ -39,7 +47,6 @@ export default function Donaciones() {
   const [openModal, setOpenModal] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
-  const [datosGrafico, setDatosGrafica] = useState(null);
   //crear
   const [openCreate, setOpenCreate] = useState(false);
   const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
@@ -134,28 +141,12 @@ export default function Donaciones() {
     }
   };
 
-  const labelCategorias = datosGrafico?.categories ?? [];
-
-  const series = [
-    {
-      name: 'Produccion mensual',
-      data: datosGrafico?.produccion_mensual,
-    },
-    {
-      name: 'Cascote mensual',
-      data: datosGrafico?.cascote_mensual,
-    },
-    {
-      name: 'Donacion',
-      data: datosGrafico?.donacion,
-    },
-  ];
   return (
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getObjsUser}
-        titulo="Administracion/ Donaciones"
+        getObj={getObjs}
+        titulo="Consultorio medico/ Inventario"
         datosBusqueda={['fecha']}
         columnas={columnas}
         handleDetail={() => {}}
@@ -163,23 +154,11 @@ export default function Donaciones() {
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
-        isGrafica={true}
-        setDatosGrafico={setDatosGrafica}
         botonCrear={true}
         tituloBoton="Registrar datos"
         handleCrear={handleOpenCreate}
-        isSeleccion={true}
-        getSeleccion={getPeriodos}
       />
-      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <EchartsStackedAreaChart
-          title="Indice Frecuencia"
-          categories={labelCategorias}
-          series={series}
-          height={400}
-          showToolbox
-        />
-      </div>
+
       <ConfirmModal
         open={openModalDelete}
         title="Eliminar registro"
@@ -191,7 +170,7 @@ export default function Donaciones() {
         onClose={closeDelete}
         onConfirm={hanldeDelete}
       />
-      <DonacionesModal
+      <InventarioMedicinaModa
         open={openModal}
         onClose={() => setOpenModal(false)}
         onSave={handleOpenConfirmUpdate}
@@ -210,7 +189,7 @@ export default function Donaciones() {
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
       />
-      <DonacionesModal
+      <InventarioMedicinaModa
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleOpenConfirmCreate}
