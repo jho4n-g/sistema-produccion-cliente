@@ -12,6 +12,7 @@ import InventarioMedicina from './pages/admin/OficinaMedica/Inventario/Inventari
 //SECRETARIA
 import ContratoAdmin from './pages/admin/Secretaria/Contrato/Contrato.jsx';
 import CorrespondenciaRecibida from './pages/admin/Secretaria/CorrespondenciaRecibida/CorrespondenciaRecibida.jsx';
+import CorrespondenciaExternaRecibida from './pages/admin/Secretaria/CorrespondenciaRecibidaExterna/CorrespondenciaExternaRecibida.jsx';
 
 //documentos
 import ProcedimientoAmin from './pages/admin/Documento/Procedimiento/Procedimiento.jsx';
@@ -224,6 +225,10 @@ function App() {
             <Route
               path="secretaria/correspondencia"
               element={<CorrespondenciaRecibida />}
+            />
+            <Route
+              path="secretaria/externa"
+              element={<CorrespondenciaExternaRecibida />}
             />
             <Route
               path="medicina/inventario"

@@ -49,8 +49,17 @@ export function periodoATexto(periodo) {
 }
 
 export const normalizarFecha = (fecha) => {
-  const [y, m, d] = fecha.split('-').map(Number);
-  const date = new Date(y, m - 1, d); // LOCAL (sin UTC)
+  if (!fecha) return '-'; // evita el error si viene null/undefined/vacío
+
+  // Si viene como "YYYY-MM-DD" o "YYYY-MM-DDTHH:mm:ss"
+  const base = typeof fecha === 'string' ? fecha.split('T')[0] : fecha;
+
+  const [y, m, d] = base.split('-').map(Number);
+
+  // Validar números
+  if (!y || !m || !d) return '-';
+
+  const date = new Date(y, m - 1, d);
 
   return new Intl.DateTimeFormat('es-ES', {
     day: '2-digit',

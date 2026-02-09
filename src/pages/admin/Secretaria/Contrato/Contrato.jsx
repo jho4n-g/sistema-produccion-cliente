@@ -11,6 +11,7 @@ import ContratoModal from './ContratoModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { normalizarFecha } from '@helpers/normalze.helpers';
+import ContratoDetallesModal from './ContratoDetallesModal';
 
 const columnas = [
   {
@@ -20,14 +21,21 @@ const columnas = [
   { label: 'Area del contrato', key: 'area_contrato' },
   { label: 'Empresa', key: 'empresa' },
   { label: 'Proveedor', key: 'proveedor' },
-  { label: 'Objeto', key: 'objeto' },
+  {
+    label: 'Objeto',
+    key: 'objeto',
+    render: (row) => (
+      <div className="max-w-100 whitespace-normal wrap-break-word">
+        {row.objeto}
+      </div>
+    ),
+  },
   { label: 'Monto del contrato', key: 'monto_contrato' },
   {
     label: 'Fecha Inicio',
     key: 'fecha_inicio',
     render: (row) => normalizarFecha(row.fecha_inicio),
   },
-
   {
     label: 'Finalizacion contrato',
     key: 'finalizacion_contrato',
@@ -50,6 +58,15 @@ export default function Politica() {
   const [openCreate, setOpenCreate] = useState(false);
   const [openConfirmCreate, setOpenConfirmCreate] = useState(false);
   const [payloadCreate, setPayloadCreate] = useState(false);
+  //detalles
+  const [openDetails, setOpenDetails] = useState(false);
+  const [detailId, setDetailId] = useState(null);
+
+  const handleView = (id) => {
+    console.log('click');
+    setDetailId(id);
+    setOpenDetails(true);
+  };
 
   //create
   const handleCreate = (payload) => {
@@ -139,9 +156,14 @@ export default function Politica() {
         ref={tableRef}
         getObj={getDocuments}
         titulo="Secretaria/ Contratos"
-        datosBusqueda={['titulo']}
+        datosBusqueda={[
+          'n_contrato_cite',
+          'area_contrato',
+          'empresa',
+          'proveedor',
+        ]}
         columnas={columnas}
-        handleDetail={() => {}}
+        handleDetail={handleView}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
@@ -197,6 +219,12 @@ export default function Politica() {
           setOpenConfirmCreate(false);
         }}
         onConfirm={handleConfirmCreate}
+      />
+      <ContratoDetallesModal
+        open={openDetails}
+        onClose={() => setOpenDetails(false)}
+        fetchById={getIdDocument}
+        id={detailId}
       />
     </>
   );

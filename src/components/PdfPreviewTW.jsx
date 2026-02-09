@@ -62,10 +62,6 @@ export default function PdfPreviewTW({ documentoId, getDocument }) {
   return (
     <div className="mt-4 min-h-65 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-slate-900">
-          Vista previa del documento
-        </h4>
-
         {loading && (
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-700" />

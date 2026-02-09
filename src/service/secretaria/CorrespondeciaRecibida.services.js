@@ -84,13 +84,15 @@ export const updatedDocument = async (id, payload) => {
     const fd = new FormData();
     fd.append('fecha', payload.fecha);
     fd.append('cite', payload.cite);
+    fd.append('referencia', payload.referencia);
     fd.append('emitido_por', payload.emitido_por);
-
+    fd.append('derivado_a', payload.derivado_a);
     fd.append('file', payload.file);
 
     const res = await api.put(`/secretaria/correspondencia/${id}`, fd);
     return res.data;
   } catch (e) {
+    console.log(e);
     if (e.code == 'ERR_NETWORK') {
       return {
         ok: false,

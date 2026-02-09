@@ -1,27 +1,47 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
-  createDocuments,
-  delelteDocument,
-  getDocuments,
-  updatedDocument,
-  getIdDocument,
-} from '@service/secretaria/CorrespondeciaRecibida.services.js';
+  getObjs,
+  registerObj,
+  getIdObj,
+  UpdateIdObj,
+  deleteObj,
+} from '@service/secretaria/CorrespondenciaExterno.services.js';
 import ConfirmModal from '@components/ConfirmModal';
-import CorrespondenciaRecibidaModal from './CorrespondenciaRecibidaModal';
-import CorrespondenciaInternaDetallesModal from './CorrespondenciaInternaDetallesModal';
+import CorrespondenciaRecibidaExternaModal from './CorrespondenciaRecibidaExternaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { normalizarFecha } from '@helpers/normalze.helpers';
+import CorrespondenciaExternaDetalles from './CorrespondenciaExternaDetalles';
 
 const columnas = [
   {
-    label: 'Fecha',
-    key: 'fecha',
-    render: (row) => normalizarFecha(row.fecha),
+    label: 'Entregado por',
+    key: 'entregado_por',
   },
-  { label: 'Cite', key: 'cite' },
-  { label: 'Referencia', key: 'referencia' },
-  { label: 'Emitido Por', key: 'emitido_por' },
+  {
+    label: 'Fecha entregado',
+    key: 'fecha_entregado',
+    render: (row) => normalizarFecha(row.fecha_entregado),
+  },
+  { label: 'Documento', key: 'documento' },
+  { label: 'Enviado por', key: 'enviado_por' },
+  {
+    label: 'Descripcion',
+    key: 'descripcion',
+  },
+  {
+    label: 'Entragado a',
+    key: 'entragado_a',
+  },
+  {
+    label: 'Devolucion',
+    key: 'dev',
+  },
+  {
+    label: 'Fecha devolucion',
+    key: 'fecha_devolucion',
+    render: (row) => normalizarFecha(row.fecha_devolucion),
+  },
   {
     label: 'Derivado a',
     key: 'derivado_a',
@@ -43,15 +63,14 @@ export default function CorrespondenciaRecibida() {
   const [openCreate, setOpenCreate] = useState(false);
   const [openConfirmCreate, setOpenConfirmCreate] = useState(false);
   const [payloadCreate, setPayloadCreate] = useState(false);
-  //Detalles
+  //detalles
   const [openDetails, setOpenDetails] = useState(false);
   const [detailId, setDetailId] = useState(null);
-
+  //Detalles
   const handleView = (id) => {
     setDetailId(id);
     setOpenDetails(true);
   };
-
   //create
   const handleCreate = (payload) => {
     setPayloadCreate(payload);
@@ -60,7 +79,7 @@ export default function CorrespondenciaRecibida() {
   const handleConfirmCreate = async () => {
     try {
       setLoading(true);
-      const res = await createDocuments(payloadCreate);
+      const res = await registerObj(payloadCreate);
       if (res.ok) {
         toast.success(res.message || 'Registro guardado con éxito');
         setOpenConfirmCreate(false);
@@ -86,7 +105,7 @@ export default function CorrespondenciaRecibida() {
   const hanldeDelete = async () => {
     setLoading(true);
     try {
-      const res = await delelteDocument(idRow);
+      const res = await deleteObj(idRow);
       if (res.ok) {
         toast.success('Registro eliminado con éxito');
         closeDelete();
@@ -118,7 +137,7 @@ export default function CorrespondenciaRecibida() {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      const res = await updatedDocument(idRow, payloadUpdate);
+      const res = await UpdateIdObj(idRow, payloadUpdate);
       if (res.ok) {
         toast.success('Registro actualizado con éxito');
         setOpenConfirmUpdate(false);
@@ -139,9 +158,16 @@ export default function CorrespondenciaRecibida() {
     <>
       <TablaRetutilizable
         ref={tableRef}
-        getObj={getDocuments}
-        titulo="Secretaria/ Correspondencia recibida"
-        datosBusqueda={['cite', 'referencia', 'emitido_por', 'derivado_a']}
+        getObj={getObjs}
+        titulo="Secretaria/ Correspondencia externa - Gerencia"
+        datosBusqueda={[
+          'entregado_por',
+          'documento',
+          'enviado_por',
+          'entragado_a',
+          'dev',
+          'derivado_a',
+        ]}
         columnas={columnas}
         handleDetail={handleView}
         handleEdit={hanldeEdit}
@@ -163,11 +189,11 @@ export default function CorrespondenciaRecibida() {
         onConfirm={hanldeDelete}
       />
 
-      <CorrespondenciaRecibidaModal
+      <CorrespondenciaRecibidaExternaModal
         open={openUpdate}
         onClose={() => setOpenUpdate(false)}
         onSave={handleOpenConfirmUpdate}
-        fetchById={getIdDocument}
+        fetchById={getIdObj}
         id={idRow}
         isEditing={true}
       />
@@ -182,7 +208,7 @@ export default function CorrespondenciaRecibida() {
         onClose={() => setOpenConfirmUpdate(false)}
         onConfirm={handleUpdate}
       />
-      <CorrespondenciaRecibidaModal
+      <CorrespondenciaRecibidaExternaModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleCreate}
@@ -200,10 +226,10 @@ export default function CorrespondenciaRecibida() {
         }}
         onConfirm={handleConfirmCreate}
       />
-      <CorrespondenciaInternaDetallesModal
+      <CorrespondenciaExternaDetalles
         open={openDetails}
         onClose={() => setOpenDetails(false)}
-        fetchById={getIdDocument} // tu función getById del service
+        fetchById={getIdObj}
         id={detailId}
       />
     </>

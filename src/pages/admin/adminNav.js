@@ -191,8 +191,13 @@ export const adminNav = [
         icon: Cog6ToothIcon,
       },
       {
-        label: 'Correspondencia recibida',
+        label: 'Correspondencia recibida unidad',
         to: '/admin/secretaria/correspondencia',
+        icon: Cog6ToothIcon,
+      },
+      {
+        label: 'Correspondencia externa-Gerencia',
+        to: '/admin/secretaria/externa',
         icon: Cog6ToothIcon,
       },
     ],
