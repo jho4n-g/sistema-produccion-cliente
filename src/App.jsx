@@ -8,11 +8,11 @@ import ClienteLayout from './layouts/ClienteLayout.jsx';
 
 //CONSULTORIO MEDICO
 import InventarioMedicina from './pages/admin/OficinaMedica/Inventario/InventarioMedicina.jsx';
-
 //SECRETARIA
 import ContratoAdmin from './pages/admin/Secretaria/Contrato/Contrato.jsx';
 import CorrespondenciaRecibida from './pages/admin/Secretaria/CorrespondenciaRecibida/CorrespondenciaRecibida.jsx';
 import CorrespondenciaExternaRecibida from './pages/admin/Secretaria/CorrespondenciaRecibidaExterna/CorrespondenciaExternaRecibida.jsx';
+import CorrespondenciaExternaComercial from './pages/admin/Secretaria/CorrespondenciaExternaComercial/CorrespondenciaExternaComercial.jsx';
 
 //documentos
 import ProcedimientoAmin from './pages/admin/Documento/Procedimiento/Procedimiento.jsx';
@@ -42,6 +42,7 @@ import IndicePolvoAtomizado from './pages/admin/Produccion/Administracion/Indice
 import MonitoreoGasesCombustion from './pages/admin/Produccion/Administracion/MonitoreoGasesCombustion/MonitoreoGasesCombustion.jsx';
 import Produccion from './pages/admin/Produccion/Administracion/Produccion/Produccion.jsx';
 //administracion
+import ReclamoProductoTerminado from './pages/admin/Administracion/ReclamoPoductoTerminado/ReclamoProductoTerminado.jsx';
 import AtencionConsultorio from './pages/admin/Administracion/AtencionConsultorio/AtencionConsultorioMedico.jsx';
 import ConsultorioDental from './pages/admin/Administracion/ConsultaDental/ConsultorioDental.jsx';
 import HorasExtra from './pages/admin/Administracion/HorasExtra/HorasExtra.jsx';
@@ -195,6 +196,10 @@ function App() {
               path="administracion/evolucion-contado-credito"
               element={<EvolucionContadoContraCredito />}
             />
+            <Route
+              path="administracion/reclamo-producto-terminado"
+              element={<ReclamoProductoTerminado />}
+            />
             {/** administracion */}
             <Route
               path="comercializacion/ingreso-venta-total"
@@ -227,7 +232,11 @@ function App() {
               element={<CorrespondenciaRecibida />}
             />
             <Route
-              path="secretaria/externa"
+              path="secretaria/comercial"
+              element={<CorrespondenciaExternaComercial />}
+            />
+            <Route
+              path="secretaria/gerencia"
               element={<CorrespondenciaExternaRecibida />}
             />
             <Route

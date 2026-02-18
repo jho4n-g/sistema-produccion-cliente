@@ -2,15 +2,14 @@ import InputField from '@components/InputField';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { DatosFormato } from '@schema/Produccion/Seccion/Formato.schema.js';
-
 import { getObjs } from '@service/Produccion/Secciones/Lineas.services';
 
-const initialForm = {
+const initialForm = () => ({
   nombre_formato: '',
   caja_metros: '',
   caja_piezas: '',
   piezas_metro: '',
-};
+});
 
 function norm(s) {
   return String(s ?? '')
@@ -32,7 +31,7 @@ export default function FormatoModal({
   const [lineas, setLineas] = useState([]);
 
   // form base (controlado)
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(initialForm());
 
   // detalles (guardaremos como [{linea_id, cantidad}])
   const [detalles, setDetalles] = useState([]);
@@ -43,6 +42,25 @@ export default function FormatoModal({
 
   // errores zod
   const [error, setError] = useState({});
+
+  useEffect(() => {
+    if (!open) {
+      setForm(initialForm());
+      setDetalles([]);
+      setError({});
+      setLoading(false);
+      setLineaSel('');
+      setCantidadSel(1);
+      return;
+    }
+    if (!isEdit) {
+      setForm(initialForm());
+      setDetalles([]);
+      setError({});
+      setLineaSel('');
+      setCantidadSel(1);
+    }
+  }, [open, isEdit]);
 
   // cargar líneas + (si edita) cargar formato
   useEffect(() => {
@@ -57,7 +75,6 @@ export default function FormatoModal({
       setCantidadSel(1);
 
       try {
-        // 1) cargar líneas
         const res = await getObjs();
         if (!active) return;
 
@@ -65,20 +82,19 @@ export default function FormatoModal({
           throw new Error(res?.message || 'No se pudo cargar líneas');
         }
 
-        const dataLineas = res?.datos?.data ?? [];
+        const dataLineas =
+          res?.datos?.data ?? res?.datos ?? res?.data ?? res?.dato ?? [];
         const lineasArr = Array.isArray(dataLineas) ? dataLineas : [];
         setLineas(lineasArr);
 
-        // 2) si es nuevo
         if (!isEdit) {
-          setForm(initialForm);
+          setForm(initialForm());
           setDetalles([]);
           return;
         }
 
-        // 3) si es editar
         if (!id || typeof fetchById !== 'function') {
-          setForm(initialForm);
+          setForm(initialForm());
           setDetalles([]);
           return;
         }
@@ -88,65 +104,82 @@ export default function FormatoModal({
 
         if (!dataFormato?.ok) {
           throw new Error(
-            dataFormato?.message || 'No se pudo cargar el formato'
+            dataFormato?.message || 'No se pudo cargar el formato',
           );
         }
 
-        // tu API: dato es un ARRAY
         const dto = dataFormato?.dato?.[0] ?? null;
 
         if (!dto) {
-          setForm(initialForm);
+          setForm(initialForm());
           setDetalles([]);
           return;
         }
 
-        // mapear campos API -> form
         setForm({
-          // tu API: "nombre", tu form: "nombre_formato"
           nombre_formato: dto?.nombre ?? '',
           caja_metros: dto?.caja_metros ?? '',
           caja_piezas: dto?.caja_piezas ?? '',
           piezas_metro: dto?.piezas_metro ?? '',
         });
 
-        // mapear detalles API -> detalles UI
-        // API: [{linea:"Linea b", alias:"Pequeña", cantidad:6}]
-        // UI:  [{linea_id:2, cantidad:6}]  (buscando en catálogo)
         const incomingDetalles = Array.isArray(dto?.detalles)
           ? dto.detalles
           : [];
 
-        const mappedDetalles = incomingDetalles
+        const mapped = incomingDetalles
           .map((d) => {
+            const cantidad = Number(d?.cantidad ?? 0);
+            if (!Number.isFinite(cantidad) || cantidad <= 0) return null;
+
+            // ✅ 1) Prioridad: ID directo (asumiendo que d.id es ID de línea)
+            const idFromApi = Number(d?.id);
+            if (Number.isFinite(idFromApi) && idFromApi > 0) {
+              const exists = lineasArr.some((l) => Number(l?.id) === idFromApi);
+              if (exists) return { linea_id: idFromApi, cantidad };
+            }
+
+            // ✅ 2) Fallback por texto (estricto para evitar alias repetidos)
             const alias = norm(d?.alias);
             const nombre = norm(d?.linea);
 
             const found = lineasArr.find((l) => {
               const a = norm(l?.alias);
               const n = norm(l?.nombre);
-              return (alias && a === alias) || (nombre && n === nombre);
+
+              if (alias && nombre) return a === alias && n === nombre;
+              if (alias) return a === alias;
+              if (nombre) return n === nombre;
+              return false;
             });
 
             if (!found?.id) return null;
-
-            const cantidad = Number(d?.cantidad ?? 0);
-            if (!Number.isFinite(cantidad) || cantidad <= 0) return null;
-
             return { linea_id: Number(found.id), cantidad };
           })
           .filter(Boolean);
 
-        setDetalles(mappedDetalles);
+        // ✅ consolidar duplicados
+        const consolidated = [];
+        for (const d of mapped) {
+          const idx = consolidated.findIndex(
+            (x) => Number(x.linea_id) === Number(d.linea_id),
+          );
+          if (idx === -1) consolidated.push(d);
+          else
+            consolidated[idx].cantidad =
+              Number(consolidated[idx].cantidad) + Number(d.cantidad);
+        }
 
-        if (incomingDetalles.length > mappedDetalles.length) {
+        setDetalles(consolidated);
+
+        if (incomingDetalles.length > consolidated.length) {
           toast.warn(
-            'Algunas líneas del formato no se pudieron relacionar con el catálogo (revisa nombres/alias).'
+            'Algunas líneas del formato no se pudieron relacionar con el catálogo (revisa nombres/alias o IDs).',
           );
         }
       } catch (e) {
         toast.error(e?.message || 'Error al cargar datos');
-        setForm(initialForm);
+        setForm(initialForm());
         setDetalles([]);
       } finally {
         if (active) setLoading(false);
@@ -167,6 +200,19 @@ export default function FormatoModal({
       return `${l.nombre} — ${l.alias}`;
     };
   }, [lineas]);
+
+  // ✅ líneas disponibles para el select (ocultamos las ya agregadas)
+  const lineasDisponibles = useMemo(() => {
+    const used = new Set(detalles.map((d) => String(d.linea_id)));
+    return (lineas || []).filter((l) => !used.has(String(l.id)));
+  }, [lineas, detalles]);
+
+  // ✅ si la línea seleccionada ya fue agregada (por edición o por acción), limpiar select
+  useEffect(() => {
+    if (!lineaSel) return;
+    const used = new Set(detalles.map((d) => String(d.linea_id)));
+    if (used.has(String(lineaSel))) setLineaSel('');
+  }, [detalles, lineaSel]);
 
   if (!open) return null;
 
@@ -195,11 +241,11 @@ export default function FormatoModal({
       return;
     }
 
-    // si ya existe la línea en detalles, sumamos cantidad
     setDetalles((prev) => {
       const idx = prev.findIndex((d) => Number(d.linea_id) === linea_id);
       if (idx === -1) return [...prev, { linea_id, cantidad }];
 
+      // (si llegara a pasar) si ya existe, suma
       const copy = [...prev];
       copy[idx] = {
         ...copy[idx],
@@ -208,14 +254,16 @@ export default function FormatoModal({
       return copy;
     });
 
+    // ✅ limpiar selección para que no quede una opción "desaparecida"
     setLineaSel('');
     setCantidadSel(1);
   };
 
   const eliminarDetalle = (linea_id) => {
     setDetalles((prev) =>
-      prev.filter((d) => Number(d.linea_id) !== Number(linea_id))
+      prev.filter((d) => Number(d.linea_id) !== Number(linea_id)),
     );
+    // ✅ cuando quitas, esa línea vuelve a aparecer automáticamente en el select
   };
 
   const guardar = () => {
@@ -232,8 +280,6 @@ export default function FormatoModal({
     }
 
     const data = result.data;
-
-    // en edición, normalmente conviene incluir el id
     onSave(isEdit ? { id, ...data } : data);
   };
 
@@ -330,12 +376,21 @@ export default function FormatoModal({
                       onChange={(e) => setLineaSel(e.target.value)}
                     >
                       <option value="">— Selecciona —</option>
-                      {lineas?.map((l) => (
+
+                      {/* ✅ solo mostramos líneas no usadas */}
+                      {lineasDisponibles.map((l) => (
                         <option key={l.id} value={l.id}>
                           {l.nombre} — {l.alias}
                         </option>
                       ))}
                     </select>
+
+                    {/* ✅ mensaje cuando ya no hay más */}
+                    {lineasDisponibles.length === 0 && (
+                      <p className="mt-1 text-xs text-slate-500">
+                        Ya agregaste todas las líneas disponibles.
+                      </p>
+                    )}
                   </div>
 
                   <div className="md:col-span-2">
@@ -352,7 +407,8 @@ export default function FormatoModal({
                     <button
                       type="button"
                       onClick={agregarDetalle}
-                      className="w-full rounded-xl bg-emerald-800 px-3 py-2 text-white hover:bg-emerald-900"
+                      className="w-full rounded-xl bg-emerald-800 px-3 py-2 text-white hover:bg-emerald-900 disabled:opacity-50"
+                      disabled={lineasDisponibles.length === 0}
                     >
                       Agregar
                     </button>

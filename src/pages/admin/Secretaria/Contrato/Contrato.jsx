@@ -14,12 +14,13 @@ import { normalizarFecha } from '@helpers/normalze.helpers';
 import ContratoDetallesModal from './ContratoDetallesModal';
 
 const columnas = [
+  { label: 'Empresa', key: 'empresa' },
   {
     label: 'Numero de contrato o cite',
     key: 'n_contrato_cite',
   },
   { label: 'Area del contrato', key: 'area_contrato' },
-  { label: 'Empresa', key: 'empresa' },
+
   { label: 'Proveedor', key: 'proveedor' },
   {
     label: 'Objeto',

@@ -313,7 +313,7 @@ const TablaReutilizable = forwardRef(function TablaReutilizable(
                             )}
                             {isDelete ? (
                               <button
-                                className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
+                                className="rounded-xl bg-[#bb9457] px-3 py-2 text-white hover:bg-[#a67c3f]"
                                 onClick={() => hanldeDelete?.(data.id)}
                               >
                                 Eliminar

@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
-import {
-  DatosInventarioMedicina,
-  DatosInventarioMedicinaActualziar,
-} from '@schema/OficinaMedica/InventarioMedicina.schema';
+import { DatosActualizarSaldo } from '@schema/OficinaMedica/InventarioMedicina.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 import FieldDetail from '@components/FieldDetail';
 const initialForm = () => ({
-  codigo: '',
-  descripcion: '',
-  cotcion: '',
-  unidad: '',
-  saldo_actual: '',
-  sumar_saldo: '',
+  actualizar_saldo: '',
 });
 export default function InventarioMedicinaModal({
   open,
@@ -97,9 +89,8 @@ export default function InventarioMedicinaModal({
   };
 
   const handleValidation = async () => {
-    const result = isEdit
-      ? DatosInventarioMedicinaActualziar.safeParse(form)
-      : DatosInventarioMedicina.safeParse(form);
+    const result = DatosActualizarSaldo.safeParse(form);
+
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
       setError(fieldErrors);
@@ -144,80 +135,35 @@ export default function InventarioMedicinaModal({
             <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
                 {/* Fila 1 */}
-                <div className="md:col-span-1 lg:col-span-3">
-                  <InputField
-                    label="codigo"
-                    type="text"
-                    name="codigo"
-                    value={form?.codigo || ''}
-                    onChange={updateBase}
-                    error={error.codigo}
-                  />
+                <div className="md:col-span-1 lg:col-span-6">
+                  <FieldDetail label="Codigo" value={form?.codigo} />
+                </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <FieldDetail label="descripcion" value={form?.descripcion} />
                 </div>
 
                 <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Descripcion"
-                    type="text"
-                    name="descripcion"
-                    value={form?.descripcion || ''}
-                    onChange={updateBase}
-                    error={error.descripcion}
-                  />
+                  <FieldDetail label="Cotcion" value={form?.cotcion} />
                 </div>
-
                 <div className="md:col-span-1 lg:col-span-6">
-                  <InputField
-                    label="Cotcion"
-                    type="text"
-                    name="cotcion"
-                    value={form?.cotcion || ''}
-                    onChange={updateBase}
-                    error={error.cotcion}
+                  <FieldDetail label="Unidad" value={form?.unidad} />
+                </div>
+                <div className="md:col-span-1 lg:col-span-6">
+                  <FieldDetail
+                    label="Saldo actual"
+                    value={form?.saldo_actual}
                   />
                 </div>
                 <div className="md:col-span-1 lg:col-span-6">
                   <InputField
-                    label="Unidad"
-                    type="text"
-                    name="unidad"
-                    value={form?.unidad || ''}
+                    label="Actualizar saldo"
+                    type="number"
+                    name="actualizar_saldo"
+                    value={form?.actualizar_saldo || ''}
                     onChange={updateBase}
-                    error={error.unidad}
+                    error={error.actualizar_saldo}
                   />
                 </div>
-
-                {isEdit ? (
-                  <>
-                    <div className="md:col-span-1 lg:col-span-6">
-                      <FieldDetail
-                        label="Saldo actual"
-                        value={form?.saldo_actual}
-                      />
-                    </div>
-                    <div className="md:col-span-1 lg:col-span-6">
-                      <InputField
-                        label="Sumar a saldo actual"
-                        type="number"
-                        name="sumar_saldo"
-                        value={form?.sumar_saldo || ''}
-                        onChange={updateBase}
-                        error={error.sumar_saldo}
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <div className="md:col-span-1 lg:col-span-6">
-                    <InputField
-                      label="Saldo actual"
-                      type="number"
-                      name="saldo_actual"
-                      value={form?.saldo_actual || ''}
-                      onChange={updateBase}
-                      error={error.saldo_actual}
-                    />
-                  </div>
-                )}
               </div>
             </div>
             <div className="flex justify-end gap-2 p-5">

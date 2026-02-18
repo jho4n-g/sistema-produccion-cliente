@@ -196,8 +196,13 @@ export const adminNav = [
         icon: Cog6ToothIcon,
       },
       {
-        label: 'Correspondencia externa-Gerencia',
-        to: '/admin/secretaria/externa',
+        label: 'Correspondencia externa - Gerencia',
+        to: '/admin/secretaria/gerencia',
+        icon: Cog6ToothIcon,
+      },
+      {
+        label: 'Correspondencia externa - Comercial',
+        to: '/admin/secretaria/comercial',
         icon: Cog6ToothIcon,
       },
     ],
@@ -253,6 +258,11 @@ export const adminNav = [
       {
         label: 'Atencion consultorio',
         to: '/admin/administracion/atencion-consultorio',
+        icon: Cog6ToothIcon,
+      },
+      {
+        label: 'Reclamo producto terminado',
+        to: '/admin/administracion/reclamo-producto-terminado',
         icon: Cog6ToothIcon,
       },
     ],

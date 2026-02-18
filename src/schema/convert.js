@@ -1,13 +1,31 @@
 import { z } from 'zod';
 
-export const reqFecha = (label = 'Fecha') =>
-  z
-    .string({
-      required_error: 'Debe llenar este espacio',
-      invalid_type_error: 'Debe llenar este espacio',
-    })
-    .min(1, 'Debe llenar este espacio') // 👈 captura ''
-    .regex(/^\d{4}-\d{2}-\d{2}$/, `${label} debe tener formato AAAA-MM-DD`);
+export const reqFecha = (label = 'Fecha', opcional = false) =>
+  z.preprocess(
+    (val) => {
+      if (val === '' || val === null) return opcional ? undefined : '';
+
+      if (val instanceof Date) {
+        return val.toISOString().slice(0, 10);
+      }
+
+      if (typeof val === 'string' && val.includes('T')) {
+        return val.split('T')[0];
+      }
+
+      return val;
+    },
+    (opcional
+      ? z.string()
+      : z.string({
+          required_error: `Debe llenar ${label}`,
+          invalid_type_error: `Debe llenar ${label}`,
+        })
+    )
+      .min(opcional ? 0 : 1, `Debe llenar ${label}`)
+      .regex(/^\d{4}-\d{2}-\d{2}$/, `${label} debe tener formato AAAA-MM-DD`)
+      .optional(opcional),
+  );
 
 export const reqTime = (label) =>
   z
@@ -150,27 +168,37 @@ export const reqPeriodo = (label = 'Período') => {
 export const reqEntero = (label = 'Valor', opcional = false) =>
   z.preprocess(
     (val) => {
-      if (val === '') return opcional ? undefined : 0;
+      if (val === '' || val === null || val === undefined) return undefined;
 
       if (typeof val === 'string') {
-        const n = Number(val);
-        return Number.isNaN(n) ? (opcional ? undefined : 0) : n;
+        const s = val.trim();
+        if (s === '') return undefined;
+
+        const n = Number(s);
+        return Number.isFinite(n) ? n : undefined;
       }
 
-      return val;
+      if (typeof val === 'number') {
+        return Number.isFinite(val) ? val : undefined;
+      }
+
+      return undefined;
     },
-    (opcional
-      ? z.number({
-          invalid_type_error: `El campo ${label} debe ser numérico`,
-        })
-      : z.number({
-          invalid_type_error: `El campo ${label} debe ser numérico`,
-          required_error: `Se requiere ${label}`,
-        })
-    )
-      .min(0, `${label} debe ser mayor o igual a 0`)
-      .int(`${label} debe ser un número entero`)
-      .optional(), // 👈 solo afecta cuando opcional = true
+    opcional
+      ? z
+          .number({
+            invalid_type_error: `El campo ${label} debe ser numérico`,
+          })
+          .min(0, `${label} debe ser mayor o igual a 0`)
+          .int(`${label} debe ser un número entero`)
+          .optional()
+      : z
+          .number({
+            required_error: `Se requiere ${label}`,
+            invalid_type_error: `El campo ${label} debe ser numérico`,
+          })
+          .min(0, `${label} debe ser mayor o igual a 0`)
+          .int(`${label} debe ser un número entero`),
   );
 
 export const reqEnteroMayorCero = (label) => {
@@ -182,4 +210,77 @@ export const reqEnteroMayorCero = (label) => {
     .finite(`${label} debe ser numérico válido`)
     .min(1, `Debe se mas de un caracter ${label} `)
     .int(`${label} debe ser un número entero`);
+};
+
+export const reqBooleano = (label = 'Valor') =>
+  z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return false;
+
+      if (typeof val === 'string') {
+        const v = val.toLowerCase();
+        if (['true', '1', 'on', 'si', 'yes'].includes(v)) return true;
+        if (['false', '0', 'off', 'no'].includes(v)) return false;
+      }
+
+      if (typeof val === 'number') return val === 1;
+
+      return val;
+    },
+    z
+      .boolean({
+        invalid_type_error: `El campo ${label} debe ser verdadero o falso`,
+      })
+      .default(false),
+  );
+
+export const reqInt = (label) => {
+  return z.preprocess(
+    (val) => {
+      // Si viene como number (a veces pasa), lo convertimos a string
+      if (typeof val === 'number') return String(val);
+
+      // Si no viene nada (undefined/null), lo dejamos como string vacío
+      if (val === undefined || val === null) return '';
+
+      return val; // normalmente será string
+    },
+    z
+      .string({
+        required_error: `Se requiere ${label}`,
+        invalid_type_error: `El campo ${label} debe ser texto `,
+      })
+      .trim()
+      .min(1, `Se requiere ${label} `) // <- aquí cae el vacío
+      .refine((v) => /^-?\d+$/.test(v), {
+        message: ` El campo ${label} debe ser un número entero`,
+      })
+      .transform((v) => parseInt(v, 10)),
+  );
+};
+
+export const reqIntOptional = (label) => {
+  return z.preprocess(
+    (val) => {
+      // vacío → opcional → undefined
+      if (val === '' || val === null || val === undefined) {
+        return undefined;
+      }
+
+      // si viene number, lo pasamos a string
+      if (typeof val === 'number') return String(val);
+
+      return val; // normalmente string
+    },
+    z
+      .string({
+        invalid_type_error: `El campo ${label} debe ser texto`,
+      })
+      .trim()
+      .refine((v) => /^-?\d+$/.test(v), {
+        message: `El campo ${label} debe ser un número entero`,
+      })
+      .transform((v) => parseInt(v, 10))
+      .optional(), // 👈 CLAVE
+  );
 };

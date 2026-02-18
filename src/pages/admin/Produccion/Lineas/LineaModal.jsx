@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { DatosLinea } from '@schema/Produccion/Seccion/Linea.shcema.js';
 
-const initialForm = { nombre: '', alias: '' };
+const initialForm = () => ({ nombre: '', alias: '' });
 
 export default function LineaModal({
   open,
@@ -18,20 +18,35 @@ export default function LineaModal({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!open) {
+      // al cerrar → limpiar TODO
+      setForm(initialForm());
+      setError({});
+      setLoading(false);
+      return;
+    }
+    // al abrir en modo crear
+    if (!isEdit) {
+      setForm(initialForm());
+      setError({});
+    }
+  }, [open, isEdit]);
+
+  useEffect(() => {
     if (!open || !id) return; // evita correr si no aplica
 
     setError({});
 
     // CREAR
     if (!isEdit) {
-      setForm(initialForm);
+      setForm(initialForm());
       setLoading(false);
       return;
     }
 
     // EDITAR (requiere id)
     if (isEdit && !id) {
-      setForm(initialForm);
+      setForm(initialForm());
       setLoading(false);
       return;
     }

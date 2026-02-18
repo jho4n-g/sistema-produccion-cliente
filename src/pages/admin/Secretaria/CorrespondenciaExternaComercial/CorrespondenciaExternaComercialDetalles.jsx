@@ -4,7 +4,7 @@ import { XMarkIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 import { normalizarFecha } from '@helpers/normalze.helpers';
 import FieldDetail from '@components/FieldDetail';
 
-export default function CorrespondenciaExternaDetalles({
+export default function CorrespondenciaExternaComercialDetalles({
   open,
   onClose,
   fetchById,

@@ -20,7 +20,7 @@ const initialForm = () => ({
   derivado_a: '',
 });
 
-export default function CorrespondenciaRecibidaModal({
+export default function CorrespondenciaExternaComerialModal({
   open,
   onClose,
   fetchById,

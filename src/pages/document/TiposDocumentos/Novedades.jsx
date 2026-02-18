@@ -22,10 +22,12 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
         if (!active) return;
 
         if (data?.ok) {
-          setDatosDocumentos(data.datos ?? {});
+          setDatosDocumentos(data?.datos?.data ?? {});
         }
         if (!data?.ok) {
-          const err = new Error(data.message);
+          const err = new Error(
+            data.message || 'Error al obtener los documentos',
+          );
           throw err;
         }
       } catch (e) {
@@ -47,13 +49,13 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
       [p.titulo, p.fecha, p.codigo]
         .join(' ')
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+        .includes(searchQuery.toLowerCase()),
     );
   }, [datosDocumentos, searchQuery]);
 
   const totalPagesDocumentos = Math.max(
     1,
-    Math.ceil(datosDocumentos?.length / rowsDocPage)
+    Math.ceil(datosDocumentos?.length / rowsDocPage),
   );
 
   const paginatedDocs = useMemo(() => {

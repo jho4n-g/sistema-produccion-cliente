@@ -62,7 +62,7 @@ export default function ConfirmModal({
                 className={[
                   'rounded-xl px-4 py-2 text-white disabled:opacity-60',
                   danger
-                    ? 'bg-red-600 hover:bg-red-700'
+                    ? 'bg-[#bb9457] hover:bg-[#a67c3f]'
                     : 'bg-green-900 hover:bg-green-800',
                 ].join(' ')}
               >

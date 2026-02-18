@@ -52,9 +52,10 @@ export default function BarbotinaModal({
 
     (async () => {
       try {
-        const data = await fetchById(id); // ← ahora sí esperamos aquí
+        const data = await fetchById(id); // ← ahora sí esperamos aqui
+
         const turnos = await getObjs();
-        console.log(data);
+
         if (!active) return;
 
         if (turnos.ok) {
@@ -71,7 +72,7 @@ export default function BarbotinaModal({
       } catch (e) {
         if (active) toast.error(e?.message || 'Error del servidor');
       } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
+        if (active) setLoading(false); // ← se apaga al terminar de verdad
       }
     })();
 
@@ -99,7 +100,7 @@ export default function BarbotinaModal({
     setForm((f) => ({
       ...f,
       ObservacionesBarbotinaDatos: f.ObservacionesBarbotinaDatos.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -143,7 +144,7 @@ export default function BarbotinaModal({
       const { fieldErrors } = result.error.flatten();
       const tablaErrors = extractArrayFieldErrors(
         result.error,
-        'TablaBarbotinaDatos'
+        'TablaBarbotinaDatos',
       );
       setTablaError(tablaErrors);
       setError(fieldErrors);
@@ -321,7 +322,7 @@ export default function BarbotinaModal({
                               <XMarkIcon className="h-4 w-4" />
                             </button>
                           </span>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -583,7 +584,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'n_molino_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.n_molino_cargando_molinos}
@@ -623,7 +624,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'tn_lugar_uno_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={
@@ -641,7 +642,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'tn_lugar_dos_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={
@@ -659,7 +660,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'tn_lugar_tres_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={
@@ -677,7 +678,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'tn_lugar_cuantro_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={
@@ -696,7 +697,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'h2o_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.h2o_cargando_molinos}
@@ -712,7 +713,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'deflo_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.deflo_cargando_molinos}
@@ -728,7 +729,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'reoma_cargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.reoma_cargando_molinos}
@@ -744,7 +745,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'dens_descargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.dens_descargando_molinos}
@@ -760,7 +761,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'visc_descargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.visc_descargando_molinos}
@@ -776,7 +777,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'res_descargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={!!tablaError[idx]?.res_descargando_molinos}
@@ -792,7 +793,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'n_fosa_descargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={
@@ -810,7 +811,7 @@ export default function BarbotinaModal({
                               setCargaTabla(
                                 idx,
                                 'producto_descargando_molinos',
-                                e.target.value
+                                e.target.value,
                               );
                             }}
                             error={

@@ -5,13 +5,13 @@ import {
   getIdObj,
   UpdateIdObj,
   deleteObj,
-} from '@service/secretaria/CorrespondenciaExterno.services.js';
+} from '@service/secretaria/CorrespondenciaExternoComercial.services.js';
 import ConfirmModal from '@components/ConfirmModal';
-import CorrespondenciaRecibidaExternaModal from './CorrespondenciaRecibidaExternaModal';
+import CorrespondenciaExternaComerialModal from './CorrespondenciaExternaComerialModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { normalizarFecha } from '@helpers/normalze.helpers';
-import CorrespondenciaExternaDetalles from './CorrespondenciaExternaDetalles';
+import CorrespondenciaExternaComercialDetalles from './CorrespondenciaExternaComercialDetalles';
 
 const columnas = [
   {
@@ -68,7 +68,7 @@ const columnas = [
   },
 ];
 
-export default function CorrespondenciaRecibida() {
+export default function CorrespondenciaExternaComercial() {
   const [idRow, setIdRow] = useState(null);
   const [loading, setLoading] = useState(false);
   const tableRef = useRef(null);
@@ -179,7 +179,7 @@ export default function CorrespondenciaRecibida() {
       <TablaRetutilizable
         ref={tableRef}
         getObj={getObjs}
-        titulo="Secretaria/ Correspondencia externa - Gerencia"
+        titulo="Secretaria/ Correspondencia externa - Comercial"
         datosBusqueda={[
           'entregado_por',
           'documento',
@@ -209,7 +209,7 @@ export default function CorrespondenciaRecibida() {
         onConfirm={hanldeDelete}
       />
 
-      <CorrespondenciaRecibidaExternaModal
+      <CorrespondenciaExternaComerialModal
         open={openUpdate}
         onClose={() => setOpenUpdate(false)}
         onSave={handleOpenConfirmUpdate}
@@ -228,7 +228,7 @@ export default function CorrespondenciaRecibida() {
         onClose={() => setOpenConfirmUpdate(false)}
         onConfirm={handleUpdate}
       />
-      <CorrespondenciaRecibidaExternaModal
+      <CorrespondenciaExternaComerialModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
         onSave={handleCreate}
@@ -246,7 +246,7 @@ export default function CorrespondenciaRecibida() {
         }}
         onConfirm={handleConfirmCreate}
       />
-      <CorrespondenciaExternaDetalles
+      <CorrespondenciaExternaComercialDetalles
         open={openDetails}
         onClose={() => setOpenDetails(false)}
         fetchById={getIdObj}

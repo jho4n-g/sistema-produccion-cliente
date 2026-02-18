@@ -9,6 +9,7 @@ import {
   getObjsUser,
   updateObj,
   registerObj,
+  getIdObj,
 } from '../../../../service/Administracion/AtencionConsultorio.services';
 import ConfirmModal from '@components/ConfirmModal';
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -17,12 +18,33 @@ import { normalizarFecha, normalize } from '@helpers/normalze.helpers';
 import Select from '@components/Select';
 import { getPeriodos } from '@service/auth/Gestion.services.js';
 import AtencionConsultorioMedicoModal from './AtencionConsultorioMedicoModal';
+import { exportAtencionConsultorioExcel } from './ExportAtencionConsultorioExcel';
+
+const cols = [
+  { key: 'prestacion_medica_alergias', label: 'ALERGIAS' },
+  { key: 'prestacion_medica_cardiovasculares', label: 'CARDIOVASCULAR' },
+  { key: 'prestacion_medica_cefaleas', label: 'CEFALEAS' },
+  { key: 'prestacion_medica_oftamologicas', label: 'OFTAMOLOGICAS' },
+  { key: 'prestacion_medica_oticas', label: 'ÓTICAS' },
+  { key: 'prestacion_medica_respiratorias', label: 'RESPIRATORIAS' },
+  { key: 'prestacion_medica_digestivas', label: 'DIGESTIVAS' },
+  { key: 'prestacion_medica_genitourinarias', label: 'GENITOURINARIAS' },
+  { key: 'prestacion_medica_musculo_esqueleticas', label: 'MUSCULO ESQ.' },
+  { key: 'prestacion_medica_odontologia', label: 'ODONTALGIA' },
+  { key: 'prestacion_medica_quemaduras', label: 'QUEMADURAS' },
+  { key: 'prestacion_medica_piel_anexos', label: 'PIEL Y ANEXOS' },
+  { key: 'prestacion_medica_otros', label: 'OTROS' },
+  { key: 'prestacion_medica_curaciones', label: 'CURACIONES' },
+  { key: 'prestacion_medica_inyectables', label: 'INYECTABLES' },
+];
 
 export default function AtencionConsultorio() {
   const [query, setQuery] = useState('');
   const [row, setRow] = useState([]);
   const [loading, setLoading] = useState(false);
   const [turnoId, setTurnoId] = useState(null);
+  //
+  const [datosGrafico, setDatosGrafico] = useState([]);
 
   // paginado (cliente)
   const [page, setPage] = useState(0);
@@ -31,6 +53,84 @@ export default function AtencionConsultorio() {
   const [openCreate, setOpenCreate] = useState(false);
   const [openCreateConfirm, setOpenCreateConfirm] = useState(false);
   const [payloadCreate, setPayloadCreate] = useState(null);
+
+  //Eliminar
+  const [openDelete, setOpenDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState(null);
+
+  //Editar
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openUpdateConfirm, setOpenUpateConfirm] = useState(false);
+  const [idUpdate, setIdUpdate] = useState(null);
+  const [payloadUpdate, setPayloadUpdate] = useState(null);
+
+  //editar
+  const hanldeUpdate = (id) => {
+    setOpenUpdate(true);
+    setIdUpdate(id);
+  };
+
+  const handleUpdateConfirm = (payload) => {
+    setPayloadUpdate(payload);
+    setOpenUpateConfirm(true);
+  };
+  const handleOnUpdate = async () => {
+    try {
+      setLoading(true);
+      const res = await updateObj(idUpdate, payloadUpdate);
+      if (res.ok) {
+        toast.success(res.message || 'Se edito exitosamente');
+        setOpenUpateConfirm(false);
+        setOpenUpdate(false);
+        setIdUpdate(null);
+        reload();
+      }
+      if (!res.ok) {
+        setOpenUpateConfirm(false);
+        throw new Error(res.message || 'Error al editar registro');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al editar');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const closeUpdate = () => {
+    setOpenUpdate(false);
+    setIdUpdate(null);
+    setPayloadUpdate(null);
+  };
+
+  //Delete
+  const hanldeOpenDeleteConfirm = (id) => {
+    setOpenDelete(true);
+    setIdDelete(id);
+  };
+
+  const hanldeOnDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await deleteObj(idDelete);
+      if (res.ok) {
+        toast.success(res.message || 'Se elimino exitosamente');
+        reload();
+        setOpenDelete(false);
+        setIdDelete(null);
+      }
+      if (!res.ok) {
+        setOpenDelete(false);
+        throw new Error(res.message || 'Error al eliminar registro');
+      }
+    } catch (e) {
+      toast.error(e.message || 'Error al eliminar');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setIdDelete(null);
+  };
 
   //crear
   const handleCreate = () => {
@@ -65,9 +165,10 @@ export default function AtencionConsultorio() {
   const reload = useCallback(async () => {
     setLoading(true);
     try {
-      const obj = await getObjsUser(1);
+      const obj = await getObjsUser(turnoId);
       if (obj.ok) {
         setRow(Array.isArray(obj?.datos?.data) ? obj.datos?.data : []);
+        setDatosGrafico(obj?.datos?.datoGrafico || []);
         console.log(obj);
       }
       if (!obj.ok) {
@@ -78,7 +179,7 @@ export default function AtencionConsultorio() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [turnoId]);
 
   useEffect(() => {
     reload();
@@ -173,6 +274,18 @@ export default function AtencionConsultorio() {
                 )}
               </div>
             </div>
+            <button
+              className="rounded-xl bg-emerald-800 px-6 py-2 text-white hover:bg-emerald-900"
+              onClick={() =>
+                exportAtencionConsultorioExcel({
+                  rows: filtered,
+                  cols,
+                  datosGrafico,
+                })
+              }
+            >
+              Exportar Excel
+            </button>
 
             {/* Select */}
             <div className="w-full md:w-90">
@@ -186,31 +299,31 @@ export default function AtencionConsultorio() {
             </div>
           </div>
         </div>
-        <div className=" mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className=" mt-4   rounded-tl-2xl rounded-tr-2xl rounded-bl-none rounded-br-none border border-slate-200 bg-white shadow-sm">
           <div className="max-h-[70vh] overflow-auto rounded-2xl">
             <table className="w-full border-separate border-spacing-0 text-sm">
               <thead className="sticky top-0 z-20 bg-slate-50">
                 <tr className="divide-x divide-slate-200">
                   <th
-                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    className="border border-slate-200 px-2 py-1 font-semibold text-white text-center  [writing-mode:vertical-rl]  rotate-180 bg-sky-700"
                     rowSpan={2}
                   >
                     DIA
                   </th>
                   <th
-                    className="border-b border-slate-200 px-2 py-4 font-semibold text-slate-700"
+                    className="border-b border-slate-200 px-2 py-4 font-semibold text-white bg-sky-700"
                     colSpan={15}
                   >
                     PRESENTACIONES MEDICAS
                   </th>
                   <th
-                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180 bg-lime-100"
                     rowSpan={2}
                   >
                     TOTAL CONSULTAS
                   </th>
                   <th
-                    className="border border-slate-200 px-1 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    className="border border-slate-200 px-1 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl] rotate-180"
                     rowSpan={2}
                   >
                     CONTROL P.A.
@@ -222,13 +335,13 @@ export default function AtencionConsultorio() {
                     GLICEMIA CAPILAR
                   </th>
                   <th
-                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180 bg-red-300"
                     rowSpan={2}
                   >
                     RIESGO PROF.
                   </th>
                   <th
-                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl]  rotate-180"
+                    className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 text-center  [writing-mode:vertical-rl] rotate-180 bg-red-300"
                     rowSpan={2}
                   >
                     RIESGO COMUN
@@ -242,43 +355,49 @@ export default function AtencionConsultorio() {
                 </tr>
 
                 <tr className="divide-x divide-slate-200">
-                  <th className="border  border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border  border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     ALRGIAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     CARDIOVASCULAR
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     CEFALEAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     OFTAMOLOGICAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
+                    ÓTICAS
+                  </th>
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
+                    RESPIRATORIAS
+                  </th>
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     DISGESTIVAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     GENITOURINARIAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     MUSCULO ESQUELETICAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     ODONTALGIA
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     QUEMADURAS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     PIEL Y ANEXOS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     OTROS
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     CURACIONES
                   </th>
-                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180">
+                  <th className="border border-slate-200 px-2 py-1 font-semibold text-slate-700 [writing-mode:vertical-rl]  rotate-180 bg-orange-200">
                     INYECTABLES
                   </th>
                 </tr>
@@ -312,11 +431,11 @@ export default function AtencionConsultorio() {
                       key={data.id ?? `${data.fecha}-${index}`}
                       className="divide-x divide-slate-200 transition-colors odd:bg-white even:bg-slate-50 hover:bg-slate-100"
                     >
-                      <td className="sticky left-0 z-10 bg-inherit px-4 py-3 text-slate-700 whitespace-nowrap">
-                        {data.fecha}
+                      <td className="sticky left-0 z-10 bg-inherit px-4 py-1 text-slate-700 whitespace-nowrap">
+                        {normalizarFecha(data.fecha)}
                       </td>
 
-                      <td className=" left-28 z-10 bg-inherit px-4 py-3 text-slate-900 whitespace-normal">
+                      <td className=" left-28 z-10 bg-inherit px-4 py-3 text-slate-900 whitespace-normal ">
                         {data.prestacion_medica_alergias}
                       </td>
 
@@ -330,16 +449,17 @@ export default function AtencionConsultorio() {
                       <td className="px-4 py-3 text-right tabular-nums text-slate-900">
                         {data.prestacion_medica_oftamologicas}
                       </td>
-
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_oticas}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_respiratorias}
                       </td>
+
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_digestivas}
                       </td>
+
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_genitourinarias}
                       </td>
@@ -356,10 +476,6 @@ export default function AtencionConsultorio() {
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_piel_anexos}
                       </td>
-
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                        {data?.standard ?? 0}
-                      </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                         {data?.prestacion_medica_otros}
                       </td>
@@ -370,12 +486,13 @@ export default function AtencionConsultorio() {
                       <td className="px-4 py-3 text-slate-700 whitespace-nowrap">
                         {data?.prestacion_medica_inyectables}
                       </td>
-                      <td className="px-4 py-3 text-slate-700 whitespace-normal">
-                        {'12'}
+                      <td className="px-4 py-3 text-slate-700 whitespace-nowrap">
+                        {data?.total_consultas}
                       </td>
                       <td className="px-4 py-3 text-slate-700 whitespace-normal">
                         {data?.control_pa}
                       </td>
+
                       <td className="px-4 py-3 text-slate-700 whitespace-normal">
                         {data?.glicemia_capilar}
                       </td>
@@ -390,13 +507,17 @@ export default function AtencionConsultorio() {
                           <button
                             type="button"
                             className="rounded-xl bg-green-800 px-3 py-2 text-white hover:bg-green-900"
-                            onClick={() => {}}
+                            onClick={() => {
+                              hanldeUpdate(data.id);
+                            }}
                           >
                             Editar
                           </button>
                           <button
                             className="rounded-xl bg-red-700 px-3 py-2 text-white hover:bg-red-900"
-                            onClick={() => {}}
+                            onClick={() => {
+                              hanldeOpenDeleteConfirm(data.id);
+                            }}
                           >
                             Eliminar
                           </button>
@@ -406,6 +527,43 @@ export default function AtencionConsultorio() {
                   ))
                 )}
               </tbody>
+              <tfoot className="sticky bottom-0 z-30 bg-white">
+                <tr className="divide-x divide-slate-200">
+                  <th className="border border-slate-200 px-2 py-2 font-semibold text-white text-center [writing-mode:vertical-rl] rotate-180 bg-red-500">
+                    TOTAL
+                  </th>
+
+                  {cols.map((c) => (
+                    <td
+                      key={c.key}
+                      className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500"
+                    >
+                      {datosGrafico?.[
+                        `total_${c.key.replace('prestacion_medica_', '')}`
+                      ] ?? 0}
+                    </td>
+                  ))}
+
+                  {/* extras */}
+                  <td className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500">
+                    {datosGrafico?.total_consultas_sum ?? 0}
+                  </td>
+                  <td className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500">
+                    {datosGrafico?.total_control_pa ?? 0}
+                  </td>
+                  <td className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500">
+                    {datosGrafico?.total_glicemia ?? 0}
+                  </td>
+                  <td className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500">
+                    {datosGrafico?.total_riesgo_prof ?? 0}
+                  </td>
+                  <td className="border-b border-slate-200 px-2 py-2 font-semibold text-white bg-red-500">
+                    {datosGrafico?.total_riesgo ?? 0}
+                  </td>
+
+                  <td className="border-b border-slate-200 bg-red-500" />
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -520,6 +678,37 @@ export default function AtencionConsultorio() {
         danger={false}
         onClose={() => setOpenCreateConfirm(false)}
         onConfirm={handleSaveCreate}
+      />
+      <ConfirmModal
+        open={openDelete}
+        title="Eliminar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, guardar"
+        cancelText="Cancelar"
+        loading={loading}
+        danger
+        onClose={handleCloseDelete}
+        onConfirm={hanldeOnDelete}
+      />
+      <AtencionConsultorioMedicoModal
+        open={openUpdate}
+        onClose={closeUpdate}
+        onSave={handleUpdateConfirm}
+        fetchById={getIdObj}
+        id={idUpdate}
+        isEdit={true}
+      />
+      <ConfirmModal
+        open={openUpdateConfirm}
+        title="Editar registro"
+        message="¿Deseas continuar?"
+        confirmText="Sí, editar"
+        cancelText="Cancelar"
+        loading={loading}
+        onClose={() => {
+          setOpenUpateConfirm(false);
+        }}
+        onConfirm={handleOnUpdate}
       />
     </>
   );
