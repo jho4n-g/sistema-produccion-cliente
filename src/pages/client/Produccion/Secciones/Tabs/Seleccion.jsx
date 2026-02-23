@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
@@ -8,7 +8,8 @@ import { registerObj } from '@service/Produccion/Secciones/Seleccion.services';
 import { DatosEmbalaje } from '@schema/Produccion/Seccion/SeleccionEmbalaje';
 //
 import { getObjs } from '@service/Produccion/Turno.services';
-import { getObjs as getformato } from '@service/Produccion/Secciones/Formato.services';
+import { getIdFormatoLinea } from '@service/Produccion/Secciones/Formato.services';
+import { getObjsUnidos } from '@service/Produccion/Secciones/Lineas.services';
 import Select from '@components/Select';
 
 const rows = 8;
@@ -86,8 +87,19 @@ export default function Prensado() {
   const [turnoError, setTurnoError] = useState(null);
   const [turnoId, setTurnoId] = useState(null);
 
+  const [lineaId, setLineaId] = useState(null);
+  const [lineaError, setLineaError] = useState(null);
+
   const [formatoError, setFormatoError] = useState(null);
   const [formatoId, setFormatoId] = useState(null);
+
+  const getDatosFormatos = useCallback(() => {
+    if (!lineaId) {
+      setFormatoId(null);
+      return Promise.resolve({ ok: true, data: [] });
+    }
+    return getIdFormatoLinea(lineaId);
+  }, [lineaId]);
 
   const addObs = () => {
     const v = obsInput.trim();
@@ -107,7 +119,7 @@ export default function Prensado() {
     setForm((f) => ({
       ...f,
       observacion_embalaje: f.observacion_embalaje.filter(
-        (_, i) => i !== index
+        (_, i) => i !== index,
       ),
     }));
   };
@@ -166,6 +178,11 @@ export default function Prensado() {
   };
 
   const handleValidation = async () => {
+    if (!lineaId) {
+      setLineaError('Selecciona una linea');
+    } else {
+      setLineaError('');
+    }
     if (!formatoId) {
       setFormatoError('Selecciona un formato');
     } else {
@@ -182,14 +199,19 @@ export default function Prensado() {
 
       const tablaErrors = extractArrayFieldErrors(
         result.error,
-        'datos_tabla_esmalte'
+        'datos_tabla_esmalte',
       );
       setTablaError(tablaErrors);
       setError(fieldErrors);
       toast.error('Datos incorrectos');
       return;
     } else {
-      const data = { turno_id: turnoId, formato_id: formatoId, ...result.data };
+      const data = {
+        turno_id: turnoId,
+        linea_id: lineaId,
+        formato_id: formatoId,
+        ...result.data,
+      };
       setDataSave(data);
       setOpenConfirm(true);
     }
@@ -215,7 +237,7 @@ export default function Prensado() {
     <>
       <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
         <h3 className="text-lg font-semibold text-slate-900">
-          Seleccion Modal
+          LLenado planilla de selección y embalaje
         </h3>
       </div>
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-2">
@@ -268,6 +290,7 @@ export default function Prensado() {
               error={error.supervisor_turno}
             />
           </div>
+
           <div className="md:col-span-1 lg:col-span-6">
             <InputField
               label="Producto"
@@ -278,7 +301,21 @@ export default function Prensado() {
               error={error.producto}
             />
           </div>
-          <div className="md:col-span-1 lg:col-span-6">
+
+          <div className="md:col-span-1 lg:col-span-3">
+            <Select
+              label="Linea"
+              value={lineaId}
+              onChange={(v) => {
+                setLineaId(v);
+                setLineaError('');
+              }}
+              placeholder="Selecciona una linea"
+              getDatos={getObjsUnidos}
+              error={lineaError}
+            />
+          </div>
+          <div className="md:col-span-1 lg:col-span-3">
             <InputField
               label="Horno"
               type="text"
@@ -291,14 +328,14 @@ export default function Prensado() {
 
           <div className="md:col-span-1 lg:col-span-3">
             <Select
-              label="Turno"
+              label="Formato"
               value={formatoId}
               onChange={(v) => {
                 setFormatoId(v);
                 setFormatoError('');
               }}
               placeholder="Selecciona un formato"
-              getDatos={getformato}
+              getDatos={getDatosFormatos}
               error={formatoError}
             />
           </div>

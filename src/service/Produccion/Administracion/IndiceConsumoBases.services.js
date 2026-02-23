@@ -1,4 +1,5 @@
 import { api } from '../../api';
+import { toServiceError } from '../../error';
 
 export const getObjsDesempenioMes = async (id) => {
   try {
@@ -7,8 +8,7 @@ export const getObjsDesempenioMes = async (id) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -20,8 +20,7 @@ export const registerObjMetas = async (payload) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getObjPromedios = async () => {
@@ -29,8 +28,7 @@ export const getObjPromedios = async () => {
     const data = await api.get(`/produccion/indice-consumo-bases/promedios/`);
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -41,14 +39,7 @@ export const getAllObj = async (id) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -57,14 +48,7 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/produccion/indice-consumo-bases/${id}`);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -76,8 +60,7 @@ export const updateObj = async (id, payload) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -86,8 +69,7 @@ export const registerObj = async (payload) => {
     const data = await api.post('/produccion/indice-consumo-bases/', payload);
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -96,6 +78,6 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/produccion/indice-consumo-bases/${id}`);
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };

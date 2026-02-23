@@ -1,13 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const getAllObj = async () => {
   try {
     const data = await api.get('/administracion/evolucion-contado');
-    console.log('evolucion');
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -19,8 +18,7 @@ export const updateObj = async (id, payload) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -29,8 +27,7 @@ export const registerObj = async (payload) => {
     const data = await api.post('/administracion/evolucion-contado', payload);
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -39,6 +36,6 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/administracion/evolucion-contado/${id}`);
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };

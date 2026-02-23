@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { XMarkIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 
 import PdfPreviewTW from '@components/PdfPreviewTW';
-import { getDocumentsView } from '@service/secretaria/CorrespondeciaRecibida.services.js';
+import { getDocumentsView } from '@service/secretaria/CorrespondenciaRecibida.services.js';
 import { normalizarFecha } from '@helpers/normalze.helpers';
 import FieldDetail from '@components/FieldDetail';
 

@@ -1,7 +1,7 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   createDocuments,
-  delelteDocument,
+  deleteDocument,
   getDocuments,
   updatedDocument,
   getIdDocument,
@@ -64,7 +64,6 @@ export default function Politica() {
   const [detailId, setDetailId] = useState(null);
 
   const handleView = (id) => {
-    console.log('click');
     setDetailId(id);
     setOpenDetails(true);
   };
@@ -102,7 +101,7 @@ export default function Politica() {
   const hanldeDelete = async () => {
     setLoading(true);
     try {
-      const res = await delelteDocument(idRow);
+      const res = await deleteDocument(idRow);
       if (res.ok) {
         toast.success('Registro eliminado con éxito');
         closeDelete();

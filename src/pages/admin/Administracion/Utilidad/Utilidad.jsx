@@ -3,7 +3,7 @@ import {
   registerObjMetas,
   getObjPromedios,
   getObjsDesempenioMes,
-} from '@service/Administracion/Utilidad.serveces';
+} from '@service/Administracion/Utilidad.services';
 import ConfirmModal from '@components/ConfirmModal';
 import UtilidadModal from './UtilidadModal';
 import { useState, useRef } from 'react';

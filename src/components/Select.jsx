@@ -10,7 +10,7 @@ export default function Select({
   error = '',
   disabled = false,
   hint = 'Selecciona para registrar la planilla.',
-  required = false,
+
   icon, // opcional: ReactNode
 }) {
   const [loading, setLoading] = useState(false);
@@ -73,15 +73,6 @@ export default function Select({
         >
           {label}
         </label>
-
-        <span
-          className={[
-            'text-[11px] font-semibold',
-            required ? 'text-slate-600' : 'text-slate-400',
-          ].join(' ')}
-        >
-          {required ? 'Requerido' : 'Opcional'}
-        </span>
       </div>
 
       <div className={frameClass}>

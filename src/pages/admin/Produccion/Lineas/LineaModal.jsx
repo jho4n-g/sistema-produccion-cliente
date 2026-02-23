@@ -1,7 +1,7 @@
 import InputField from '@components/InputField';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { DatosLinea } from '@schema/Produccion/Seccion/Linea.shcema.js';
+import { DatosLinea } from '@schema/Produccion/Seccion/Linea.schema.js';
 
 const initialForm = () => ({ nombre: '', alias: '' });
 

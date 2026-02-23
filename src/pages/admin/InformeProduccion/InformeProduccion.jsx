@@ -5,10 +5,12 @@ import {
 } from '@service/Produccion/Secciones/DiaInforme.services';
 import ConfirmModal from '@components/ConfirmModal';
 import { useState, useRef } from 'react';
-import { toast } from 'react-toastify';
 import InformeProduccionModal from './InformeProduccionModal';
+import { normalizarFecha } from '@helpers/normalze.helpers';
 
-const columnas = [{ label: 'Fecha', key: 'fecha' }];
+const columnas = [
+  { label: 'Fecha', key: 'fecha', render: (row) => normalizarFecha(row.fecha) },
+];
 
 export default function InformeProduccion() {
   const tableRef = useRef(null);
@@ -26,7 +28,7 @@ export default function InformeProduccion() {
         ref={tableRef}
         getObj={getObjs}
         titulo="Produccion/ Informe Produccion"
-        datosBusqueda={['periodo']}
+        datosBusqueda={['fecha']}
         columnas={columnas}
         handleDetail={hanldeView}
         handleEdit={{}}

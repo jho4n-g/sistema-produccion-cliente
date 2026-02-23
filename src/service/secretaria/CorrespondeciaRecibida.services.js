@@ -1,17 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const getDocuments = async () => {
   try {
     const data = await api.get('/secretaria/correspondencia');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -20,13 +15,7 @@ export const getIdDocument = async (id) => {
     const data = await api.get(`/secretaria/correspondencia/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -37,14 +26,7 @@ export const getDocumentsView = async (id) => {
     });
     return { ok: true, blob: res.data };
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -68,14 +50,7 @@ export const createDocuments = async (payload) => {
     const res = await api.post(`/secretaria/correspondencia`, fd);
     return res.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -92,28 +67,17 @@ export const updatedDocument = async (id, payload) => {
     const res = await api.put(`/secretaria/correspondencia/${id}`, fd);
     return res.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
-export const delelteDocument = async (id) => {
+export const deleteDocument = async (id) => {
   try {
     const res = await api.delete(`/secretaria/correspondencia/${id}`);
     return res.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
+
+export const delelteDocument = deleteDocument;

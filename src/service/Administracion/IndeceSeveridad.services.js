@@ -1,18 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const getObjPromedios = async () => {
   try {
     const data = await api.get(`/administracion/indice-severidad/promedios`);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getObjsDesempenioMes = async (id) => {
@@ -22,14 +16,7 @@ export const getObjsDesempenioMes = async (id) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const registerObjMetas = async (payload) => {
@@ -40,14 +27,7 @@ export const registerObjMetas = async (payload) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getObjsUser = async (id) => {
@@ -57,14 +37,7 @@ export const getObjsUser = async (id) => {
     );
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -73,13 +46,7 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/administracion/indice-severidad/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -91,13 +58,7 @@ export const updateObj = async (id, payload) => {
     );
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -106,13 +67,7 @@ export const registerObj = async (payload) => {
     const data = await api.post('/administracion/indice-severidad', payload);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -121,12 +76,6 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/administracion/indice-severidad/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };

@@ -1,7 +1,7 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   createDocuments,
-  delelteDocument,
+  deleteDocument,
   getDocumentsPolitica,
   updatedDocument,
   getIdDocumentPolitica,
@@ -10,16 +10,27 @@ import ConfirmModal from '@components/ConfirmModal';
 import PoliticaModal from './PoliticaModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { normalizarFecha } from '@helpers/normalze.helpers';
 
 const columnas = [
   {
     label: 'Fecha',
     key: 'fecha',
+    render: (row) => normalizarFecha(row.fecha),
   },
   { label: 'Titulo', key: 'titulo' },
   { label: 'Codigo', key: 'codigo' },
   { label: 'Revision', key: 'revision' },
-  { label: 'Descripcion', key: 'descripcion' },
+  {
+    label: 'Descripcion',
+    key: 'descripcion',
+
+    render: (row) => (
+      <div className="max-w-200 whitespace-normal wrap-break-word">
+        {row.descripcion}
+      </div>
+    ),
+  },
 ];
 
 export default function Politica() {
@@ -45,7 +56,7 @@ export default function Politica() {
   const hanldeDelete = async () => {
     setLoading(true);
     try {
-      const res = await delelteDocument(idRow);
+      const res = await deleteDocument(idRow);
       if (res.ok) {
         toast.success('Registro eliminado con éxito');
         closeDelete();

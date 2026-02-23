@@ -1,17 +1,12 @@
 import { api } from '../../api';
+import { toServiceError } from '../../error';
 
 export const getObjs = async () => {
   try {
     const data = await api.get('/produccion/dia-informe');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getIdObj = async (id) => {
@@ -19,12 +14,6 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/produccion/dia-informe/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };

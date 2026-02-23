@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DatosMetaBases } from '../../../../../schema/Produccion/Administracion/IndiceConsumoBases.shcema';
+import { DatosMetaBases } from '../../../../../schema/Produccion/Administracion/IndiceConsumoBases.schema';
 import InputField from '../../../../../components/InputField';
 import { toast } from 'react-toastify';
 const initialForm = () => ({

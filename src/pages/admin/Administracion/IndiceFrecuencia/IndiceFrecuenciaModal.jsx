@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DatosMetaFrecuencia } from '@schema/Administracion/IndiceFrecuencia.schemal';
+import { DatosMetaFrecuencia } from '@schema/Administracion/IndiceFrecuencia.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 const initialForm = () => ({

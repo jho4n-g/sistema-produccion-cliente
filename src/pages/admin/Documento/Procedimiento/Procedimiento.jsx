@@ -1,7 +1,7 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   createDocuments,
-  delelteDocument,
+  deleteDocument,
   getDocumentsProcedimiento,
   updatedDocument,
   getIdObj,
@@ -72,7 +72,7 @@ export default function Calidad() {
   const hanldeDelete = async () => {
     setLoading(true);
     try {
-      const res = await delelteDocument(idRow);
+      const res = await deleteDocument(idRow);
       if (res.ok) {
         toast.success('Registro eliminado con éxito');
         closeDelete();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DatosIndiceConsumoBases } from '@schema/Produccion/Administracion/IndiceConsumoBases.shcema';
+import { DatosIndiceConsumoBases } from '@schema/Produccion/Administracion/IndiceConsumoBases.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';

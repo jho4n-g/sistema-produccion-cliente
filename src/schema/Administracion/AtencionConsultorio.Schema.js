@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { reqPeriodo, optNum, reqFecha } from '../convert.js';
+import { optNum, reqFecha } from '../convert.js';
 
 export const DatosAtencionConsultorio = z.object({
   fecha: reqFecha(),

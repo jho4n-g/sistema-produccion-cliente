@@ -1,17 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const getObjs = async () => {
   try {
     const data = await api.get('/medicina/inventario');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -20,47 +15,24 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/medicina/inventario/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
 export const updateObj = async (id, payload) => {
   try {
     const data = await api.put(`medicina/inventario/${id}`, payload);
-    console.log(data);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const NextPeriodoObj = async (id, payload) => {
   try {
     const data = await api.put(`medicina/inventario/${id}/siguiente`, payload);
-    console.log('********+++');
-    console.log(data);
-    console.log('********+++');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const registerObj = async (payload) => {
@@ -68,13 +40,7 @@ export const registerObj = async (payload) => {
     const data = await api.post('/medicina/inventario', payload);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -83,31 +49,16 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/medicina/inventario/${id}`);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
 export const getIncrementarObjs = async (id) => {
   try {
     const data = await api.get(`/medicina/inventario/${id}/sumar`);
-    console.log(data.data);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getDecrementarObjs = async (id) => {
@@ -115,13 +66,6 @@ export const getDecrementarObjs = async (id) => {
     const data = await api.get(`/medicina/inventario/${id}/restar`);
     return data.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };

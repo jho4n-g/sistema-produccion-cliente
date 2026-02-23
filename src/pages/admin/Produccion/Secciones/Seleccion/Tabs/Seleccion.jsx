@@ -7,12 +7,15 @@ import {
 } from '@service/Produccion/Secciones/Seleccion.services';
 import ConfirmModal from '@components/ConfirmModal';
 import SeleccionModal from './SeleccionModal';
+import SeleccionEmbalajeDetalleModal from './SeleccionEmbalajeDetalleModal';
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { normalizarFecha } from '@helpers/normalze.helpers';
 
 const columnas = [
-  { label: 'Fecha', key: 'fecha' },
+  { label: 'Fecha', key: 'fecha', render: (row) => normalizarFecha(row.fecha) },
   { label: 'Producto', key: 'producto' },
+  { label: 'Linea', key: 'linea' },
   { label: 'Horno', key: 'horno' },
   { label: 'Formato', key: 'formato' },
   { label: 'Turno', key: 'turno' },
@@ -21,8 +24,11 @@ const columnas = [
   {
     label: 'Observaciones',
     key: 'observacion_embalaje',
-    render: (row) =>
-      row.observacion_embalaje?.map((o) => o.observacion).join(' | '),
+    render: (row) => (
+      <div className="max-w-80 whitespace-normal wrap-break-word">
+        {row.observacion_embalaje?.map((o) => o.observacion).join(' | ')}
+      </div>
+    ),
   },
 ];
 
@@ -36,6 +42,14 @@ export default function Seleccion() {
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [payload, setPayload] = useState(null);
 
+  const [openDetalle, setOpenDetalle] = useState(false);
+
+  //
+  const handleOpenDetalle = (id) => {
+    setIdRow(id);
+    setOpenDetalle(true);
+  };
+  //
   const hanldeOpenConfirmDelete = (id) => {
     setIdRow(id);
     setOpenDelete(true);
@@ -81,6 +95,7 @@ export default function Seleccion() {
   const handleSave = async () => {
     try {
       setLoading(true);
+
       const res = await UpdateIdObj(idRow, payload);
       if (res.ok) {
         toast.success('Registro actualizado con éxito');
@@ -93,7 +108,6 @@ export default function Seleccion() {
         setOpenModalUpdate(false);
       }
     } catch (e) {
-      console.log('error', e);
       toast.error(e.message || 'Error al actualizar el registro');
     } finally {
       setLoading(false);
@@ -106,9 +120,16 @@ export default function Seleccion() {
         ref={tableRef}
         getObj={getObjs}
         titulo="Produccion/ Control de proceso de seleccion y embalaje"
-        datosBusqueda={['fecha', 'turno', 'operador']}
+        datosBusqueda={[
+          'turno',
+          'operador',
+          'producto',
+          'horno',
+          'formato',
+          'grupo',
+        ]}
         columnas={columnas}
-        handleDetail={() => {}}
+        handleDetail={handleOpenDetalle}
         handleEdit={hanldeEdit}
         hanldeDelete={hanldeOpenConfirmDelete}
         enableHorizontalScroll={false}
@@ -141,6 +162,12 @@ export default function Seleccion() {
         danger={false}
         onClose={handleCloseConfirmUpdate}
         onConfirm={handleSave}
+      />
+      <SeleccionEmbalajeDetalleModal
+        open={openDetalle}
+        onClose={() => setOpenDetalle(false)}
+        fetchById={getIdObj} // tu servicio
+        id={idRow}
       />
     </>
   );

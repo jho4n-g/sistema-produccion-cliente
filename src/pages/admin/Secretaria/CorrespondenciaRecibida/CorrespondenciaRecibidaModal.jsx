@@ -6,7 +6,7 @@ import PdfPreviewTW from '@components/PdfPreviewTW'; // tu preview con tailwind
 import InputField from '@components/InputField';
 
 // services + schema (igual que tu MUI)
-import { getDocumentsView } from '@service/secretaria/CorrespondeciaRecibida.services.js';
+import { getDocumentsView } from '@service/secretaria/CorrespondenciaRecibida.services.js';
 import { DatosCorrespondencia } from '@schema/secretaria/CorrespondenciaRecibidaUnidad.schema.js';
 
 const initialForm = () => ({

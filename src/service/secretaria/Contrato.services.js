@@ -1,17 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const getDocuments = async () => {
   try {
     const data = await api.get('/secretaria/contrato');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -20,13 +15,7 @@ export const getIdDocument = async (id) => {
     const data = await api.get(`/secretaria/contrato/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -37,14 +26,7 @@ export const getDocumentsView = async (id) => {
     });
     return { ok: true, blob: res.data };
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -54,7 +36,6 @@ export const getDocumentsDownload = (id) => {
 
 export const createDocuments = async (payload) => {
   try {
-    console.log(payload);
     const fd = new FormData();
 
     // Formatear fechas correctamente
@@ -73,14 +54,7 @@ export const createDocuments = async (payload) => {
     const res = await api.post(`/secretaria/contrato`, fd);
     return res.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -102,28 +76,17 @@ export const updatedDocument = async (id, payload) => {
     const res = await api.put(`/secretaria/contrato/${id}`, fd);
     return res.data;
   } catch (e) {
-    console.log(e);
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
-export const delelteDocument = async (id) => {
+export const deleteDocument = async (id) => {
   try {
     const res = await api.delete(`/secretaria/contrato/${id}`);
     return res.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
+
+export const delelteDocument = deleteDocument;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DatosMetaSeveridad } from '@schema/Administracion/IndiceSeveridad.shcema';
+import { DatosMetaSeveridad } from '@schema/Administracion/IndiceSeveridad.schema';
 import InputField from '@components/InputField';
 import { toast } from 'react-toastify';
 const initialForm = () => ({

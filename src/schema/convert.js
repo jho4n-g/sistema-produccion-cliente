@@ -136,9 +136,8 @@ export const reqFloat = (label) => {
 };
 
 export const reqPeriodo = (label = 'Período') => {
-  return (
+  return z.preprocess(
     (val) => {
-      // Si viene undefined, null o cualquier cosa rara → lo tratamos como ''
       if (typeof val !== 'string') return '';
       return val;
     },
@@ -152,16 +151,14 @@ export const reqPeriodo = (label = 'Período') => {
         /^\d{4}-\d{2}$/,
         `${label}: Formato inválido. Use YYYY-MM (ej: 2024-01)`,
       )
-      // 👉 validar MES usando solo el segundo valor
       .refine((value) => {
-        const [, month] = value.split('-').map(Number); // [year, month]
+        const [, month] = value.split('-').map(Number);
         return month >= 1 && month <= 12;
       }, `${label}: Mes debe estar entre 01 y 12`)
-      // 👉 validar AÑO usando solo el primer valor
       .refine((value) => {
-        const [year] = value.split('-').map(Number); // [year]
+        const [year] = value.split('-').map(Number);
         return year >= 2000 && year <= 2100;
-      }, `${label}: Año debe estar entre 2000 y 2100`)
+      }, `${label}: Año debe estar entre 2000 y 2100`),
   );
 };
 

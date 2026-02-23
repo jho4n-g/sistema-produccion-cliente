@@ -1,11 +1,11 @@
 import TablaRetutilizable from '@components/TablaReutilizable';
 import {
   createDocuments,
-  delelteDocument,
+  deleteDocument,
   getDocuments,
   updatedDocument,
   getIdDocument,
-} from '@service/secretaria/CorrespondeciaRecibida.services.js';
+} from '@service/secretaria/CorrespondenciaRecibida.services.js';
 import ConfirmModal from '@components/ConfirmModal';
 import CorrespondenciaRecibidaModal from './CorrespondenciaRecibidaModal';
 import CorrespondenciaInternaDetallesModal from './CorrespondenciaInternaDetallesModal';
@@ -86,7 +86,7 @@ export default function CorrespondenciaRecibida() {
   const hanldeDelete = async () => {
     setLoading(true);
     try {
-      const res = await delelteDocument(idRow);
+      const res = await deleteDocument(idRow);
       if (res.ok) {
         toast.success('Registro eliminado con éxito');
         closeDelete();

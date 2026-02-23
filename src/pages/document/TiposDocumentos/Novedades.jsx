@@ -4,7 +4,25 @@ import PaginationBar from '../../../components/Cards/PaginationBar';
 import React, { useEffect, useState, useMemo } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-export default function Novedades({ ObtenerDocumentos, searchQuery }) {
+const normalizeText = (value) =>
+  String(value ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+const toTimestamp = (value) => {
+  const timestamp = Date.parse(value ?? '');
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+};
+
+export default function Novedades({
+  ObtenerDocumentos,
+  searchQuery,
+  area,
+  sortBy = 'recientes',
+  onFilteredCountChange,
+  onLoadingChange,
+}) {
   const [datosDocumentos, setDatosDocumentos] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,12 +35,12 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
 
     (async () => {
       try {
-        const data = await ObtenerDocumentos(); // ← ahora sí esperamos aquí
-        console.log(data);
+        const data = await ObtenerDocumentos();
+
         if (!active) return;
 
         if (data?.ok) {
-          setDatosDocumentos(data?.datos?.data ?? {});
+          setDatosDocumentos(data?.datos?.data ?? []);
         }
         if (!data?.ok) {
           const err = new Error(
@@ -35,7 +53,7 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
           toast.error(e?.message || 'Error del servidor');
         }
       } finally {
-        if (active) setLoading(false); // ← se apaga al terminar de verdadfi
+        if (active) setLoading(false);
       }
     })();
 
@@ -45,23 +63,73 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
   }, [ObtenerDocumentos]);
 
   const filteredDocumentos = useMemo(() => {
-    return datosDocumentos?.filter((p) =>
-      [p.titulo, p.fecha, p.codigo]
-        .join(' ')
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()),
-    );
-  }, [datosDocumentos, searchQuery]);
+    const query = normalizeText(searchQuery);
+    const selectedArea = normalizeText(area);
+    const applyAreaFilter = selectedArea && selectedArea !== 'todas';
+
+    return datosDocumentos.filter((p) => {
+      const hayTexto = normalizeText(
+        [p.titulo, p.fecha, p.codigo, p.descripcion].join(' '),
+      ).includes(query);
+      const areaDoc = normalizeText(p.area);
+      const areaCoincide =
+        applyAreaFilter && areaDoc ? areaDoc === selectedArea : true;
+
+      return hayTexto && areaCoincide;
+    });
+  }, [datosDocumentos, searchQuery, area]);
 
   const totalPagesDocumentos = Math.max(
     1,
-    Math.ceil(datosDocumentos?.length / rowsDocPage),
+    Math.ceil(filteredDocumentos.length / rowsDocPage),
   );
+
+  useEffect(() => {
+    setPageDocumentos(1);
+  }, [searchQuery, area, sortBy]);
+
+  useEffect(() => {
+    if (pageDocumentos > totalPagesDocumentos) {
+      setPageDocumentos(totalPagesDocumentos);
+    }
+  }, [pageDocumentos, totalPagesDocumentos]);
+
+  const sortedDocumentos = useMemo(() => {
+    if (sortBy === 'original') {
+      return filteredDocumentos;
+    }
+
+    const docs = [...filteredDocumentos];
+
+    switch (sortBy) {
+      case 'antiguos':
+        return docs.sort((a, b) => toTimestamp(a.fecha) - toTimestamp(b.fecha));
+      case 'titulo':
+        return docs.sort((a, b) =>
+          normalizeText(a.titulo).localeCompare(normalizeText(b.titulo), 'es'),
+        );
+      case 'codigo':
+        return docs.sort((a, b) =>
+          normalizeText(a.codigo).localeCompare(normalizeText(b.codigo), 'es'),
+        );
+      case 'recientes':
+      default:
+        return docs.sort((a, b) => toTimestamp(b.fecha) - toTimestamp(a.fecha));
+    }
+  }, [filteredDocumentos, sortBy]);
+
+  useEffect(() => {
+    onFilteredCountChange?.(sortedDocumentos.length);
+  }, [sortedDocumentos.length, onFilteredCountChange]);
+
+  useEffect(() => {
+    onLoadingChange?.(loading);
+  }, [loading, onLoadingChange]);
 
   const paginatedDocs = useMemo(() => {
     const start = (pageDocumentos - 1) * rowsDocPage;
-    return filteredDocumentos?.slice(start, start + rowsDocPage);
-  }, [pageDocumentos, rowsDocPage, filteredDocumentos]);
+    return sortedDocumentos.slice(start, start + rowsDocPage);
+  }, [pageDocumentos, rowsDocPage, sortedDocumentos]);
 
   const handleChangePage = (_evt, value) => {
     setPageDocumentos(value);
@@ -83,30 +151,25 @@ export default function Novedades({ ObtenerDocumentos, searchQuery }) {
           </div>
         ) : (filteredDocumentos?.length ?? 0) > 0 ? (
           <>
-            {/* Cards */}
-            {/* Ideal: aquí haces map */}
-            <>
-              {paginatedDocs?.map((r) => (
-                <DocumentCard
-                  key={r.id}
-                  id={r.id}
-                  area={r.area}
-                  codigo={r.codigo}
-                  descripcion={r.descripcion}
-                  fecha={r.fecha}
-                  revision={r.fecha}
-                  tipo={r.tipo}
-                  titulo={r.titulo}
-                />
-              ))}
-            </>
+            {paginatedDocs.map((r) => (
+              <DocumentCard
+                key={r.id}
+                id={r.id}
+                area={r.area}
+                codigo={r.codigo}
+                descripcion={r.descripcion}
+                fecha={r.fecha}
+                revision={r.revision}
+                tipo={r.tipo}
+                titulo={r.titulo}
+              />
+            ))}
 
-            {/* Pagination ocupa toda la fila */}
             <div className="col-span-full">
               <PaginationBar
                 filteredLength={filteredDocumentos.length}
                 page={pageDocumentos}
-                pageSize={2}
+                pageSize={rowsDocPage}
                 totalPages={totalPagesDocumentos}
                 onPageChange={(newPage) => handleChangePage(null, newPage)}
               />

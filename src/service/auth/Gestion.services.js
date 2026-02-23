@@ -1,11 +1,12 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 export const createObj = async (payload) => {
   try {
     const data = await api.post(`/gestion/`, payload);
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -14,7 +15,7 @@ export const getObjs = async () => {
     const data = await api.get('/gestion');
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -23,7 +24,7 @@ export const getPeriodos = async () => {
     const data = await api.get('/gestion/periodo');
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -32,7 +33,7 @@ export const getIdObj = async (id) => {
     const data = await api.get(`/gestion/${id}`);
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -41,8 +42,7 @@ export const updateObj = async (id, payload) => {
     const data = await api.put(`/gestion/${id}`, payload);
     return data.data;
   } catch (e) {
-    console.log(e);
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const deleteObj = async (id) => {
@@ -50,6 +50,6 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/gestion/${id}`);
     return data.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };

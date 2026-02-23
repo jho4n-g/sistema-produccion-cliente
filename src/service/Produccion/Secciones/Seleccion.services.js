@@ -1,17 +1,17 @@
 import { api } from '../../api.js';
+import { toServiceError } from '../../error';
 
 export const registerObj = async (payload) => {
   try {
     const response = await api.post('/produccion/seleccion-embalaje', payload);
+    console.log(response);
     return response.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    console.log('STATUS:', e?.response?.status);
+    console.log('BACKEND:', e?.response?.data);
+    console.log('SENT:', e?.config?.data);
+
+    return toServiceError(e);
   }
 };
 
@@ -20,13 +20,7 @@ export const getObjs = async () => {
     const data = await api.get('/produccion/seleccion-embalaje');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -35,13 +29,7 @@ export const getIdObj = async (id) => {
     const res = await api.get(`/produccion/seleccion-embalaje/${id}`);
     return res.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -49,17 +37,12 @@ export const UpdateIdObj = async (id, updateddata) => {
   try {
     const data = await api.put(
       `/produccion/seleccion-embalaje/${id}`,
-      updateddata
+      updateddata,
     );
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    console.log('BACKEND:', e?.response?.data);
+    return toServiceError(e);
   }
 };
 
@@ -68,12 +51,6 @@ export const deleteObj = async (id) => {
     const data = await api.delete(`/produccion/seleccion-embalaje/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };

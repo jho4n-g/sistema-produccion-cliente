@@ -1,4 +1,5 @@
 import { api } from '../api';
+import { toServiceError } from '../error';
 
 const formatDate = (date) => {
   if (!date) return null;
@@ -24,13 +25,7 @@ export const getDocumentsPolitica = async () => {
     const data = await api.get('/documento/politica');
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -39,13 +34,7 @@ export const getIdDocumentPolitica = async (id) => {
     const data = await api.get(`/documento/politica/${id}`);
     return data.data;
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 
@@ -56,13 +45,7 @@ export const getDocumentsViewPolitica = async (id) => {
     });
     return { ok: true, blob: res.data };
   } catch (e) {
-    if (e.code == 'ERR_NETWORK') {
-      return {
-        ok: false,
-        message: 'Error en el servidor',
-      };
-    }
-    return e.response.data;
+    return toServiceError(e);
   }
 };
 export const getDocumentsDownloadPolitica = (id) => {
@@ -85,8 +68,8 @@ export const createDocuments = async (payload) => {
 
     const res = await api.post(`/documento/politica`, fd);
     return res.data;
-  } catch (err) {
-    return err.response?.data || err.message;
+  } catch (e) {
+    return toServiceError(e);
   }
 };
 
@@ -104,16 +87,18 @@ export const updatedDocument = async (id, payload) => {
 
     const res = await api.put(`/documento/politica/${id}`, fd);
     return res.data;
-  } catch (err) {
-    return err.response?.data || err.message;
+  } catch (e) {
+    return toServiceError(e);
   }
 };
 
-export const delelteDocument = async (id) => {
+export const deleteDocument = async (id) => {
   try {
     const res = await api.delete(`/documento/politica/${id}`);
     return res.data;
   } catch (e) {
-    return e.response.data;
+    return toServiceError(e);
   }
 };
+
+export const delelteDocument = deleteDocument;

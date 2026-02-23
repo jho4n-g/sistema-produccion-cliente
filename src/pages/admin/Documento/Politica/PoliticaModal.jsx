@@ -26,7 +26,7 @@ export default function PoliticaModal({
   id,
   onSave,
 }) {
-  const [form, setForm] = useState(null);
+  const [form, setForm] = useState(initialForm());
   const [file, setFile] = useState(null);
   const [error, setError] = useState({});
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -100,8 +100,13 @@ export default function PoliticaModal({
 
   const validate = () => {
     const result = DatosPolitica.safeParse(form);
+    console.log('***************');
+    console.log(result);
+    console.log('***************');
+
     if (!result.success) {
       setError(result.error.flatten().fieldErrors);
+
       toast.error('Datos incorrectos');
     }
     if (!isEditing && !file) {

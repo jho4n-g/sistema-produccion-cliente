@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
 import {
-  reqPeriodo,
-  optNum,
   optStr,
   reqStr,
   reqEntero,
